@@ -1,9 +1,11 @@
 import demo from "../assets/images/demo.png";
 
+import Toggle from "../components/Toggle";
+
 const HomePage = () => {
     return (
         <div className="flex flex-col gap-0 items-start justify-start w-full absolute left-0 top-[104px]">
-            <div className="bg-[#ffffff] flex flex-col gap-[45px] items-center justify-start self-stretch shrink-0 h-[551px] relative">
+            <div className="bg-white flex flex-col gap-[45px] items-center justify-start self-stretch shrink-0 h-[551px] relative">
                 <div className="flex flex-col gap-0 items-start justify-start self-stretch shrink-0 h-[339px] relative">
                     <div className="bg-[#299792] self-stretch shrink-0 h-[339px] relative"></div>
                     <div className="flex flex-row gap-[71px] items-center justify-start shrink-0 absolute left-[351px] top-11">
@@ -104,9 +106,9 @@ const HomePage = () => {
                                 </div>
                             </div>
                             <div className="bg-[#000000] rounded pt-2 pr-4 pb-2 pl-4 flex flex-row gap-1 items-center justify-center shrink-0 relative">
-                                <div className="text-gray02-10 text-center font-['Inter-Bold',_sans-serif] text-sm leading-5 font-bold text-white relative">
+                                <button className="text-gray02-10 text-center font-['Inter-Bold',_sans-serif] text-sm leading-5 font-bold text-white relative">
                                     레포트 작성하러 가기{" "}
-                                </div>
+                                </button>
                                 <svg
                                     className="shrink-0 w-4 h-4 relative overflow-visible"
                                     width="16"
@@ -147,147 +149,38 @@ const HomePage = () => {
                     </div>
                 </div>
             </div>
-            <div className="bg-[#cae5e4] flex flex-col gap-0 items-center justify-center self-stretch shrink-0 h-[825px] relative">
+            <div
+                className={
+                    "bg-[#cae5e4] flex flex-col gap-0 items-center justify-center self-stretch shrink-0 h-[825px] relative "
+                }
+            >
                 <div className="text-[#000000] text-left font-['Inter-Bold',_sans-serif] text-[25px] font-bold absolute left-14 top-7">
                     FAQ.
                     <br />
                     레포터블, 어떻게 사용하나요?{" "}
                 </div>
                 <div className="flex flex-col gap-6 items-start justify-start shrink-0 w-[1322.5px] absolute left-[58.75px] top-[124px]">
-                    <div className="shrink-0 w-[1319px] h-[132px] relative">
-                        <div
-                            className="bg-neutral-100 rounded-[18px] w-[100%] h-[100%] absolute right-[0%] left-[0%] bottom-[0%] top-[0%]"
-                            style={{
-                                boxShadow:
-                                    "var(--cards-short-default-box-shadow,  0px 5px 16px 0px rgba(8, 15, 52, 0.06))",
-                            }}
-                        ></div>
-                        <div className="text-neutral-800 text-left font-headings-typography-size-4-font-family text-headings-typography-size-4-font-size leading-headings-typography-size-4-line-height font-headings-typography-size-4-font-weight absolute right-[34.84%] left-[4.33%] w-[60.83%] bottom-[39.65%] top-[39.14%] h-[21.21%]">
-                            레포터블은 어떤 기능이 있나요?{" "}
-                        </div>
-                        <svg
-                            className="w-[4.97%] h-[46.81%] absolute right-[3.54%] left-[91.49%] bottom-[26.67%] top-[26.52%] overflow-visible"
-                            width="67"
-                            height="62"
-                            viewBox="0 0 67 62"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <g filter="url(#filter0_d_15_494)">
-                                <ellipse
-                                    cx="33.3344"
-                                    cy="30.895"
-                                    rx="32.7751"
-                                    ry="30.895"
-                                    fill="white"
-                                />
-                            </g>
-                            <path
-                                d="M29.3108 40.9652L39.9456 30.895L29.3108 20.8248"
-                                stroke="#4A3AFF"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                            <defs>
-                                <filter
-                                    id="filter0_d_15_494"
-                                    x="-15.4408"
-                                    y="-11"
-                                    width="97.5502"
-                                    height="93.79"
-                                    filterUnits="userSpaceOnUse"
-                                    colorInterpolationFilters="sRGB"
-                                >
-                                    <feFlood
-                                        floodOpacity="0"
-                                        result="BackgroundImageFix"
-                                    />
-                                    <feColorMatrix
-                                        in="SourceAlpha"
-                                        type="matrix"
-                                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                                        result="hardAlpha"
-                                    />
-                                    <feOffset dy="5" />
-                                    <feGaussianBlur stdDeviation="8" />
-                                    <feColorMatrix
-                                        type="matrix"
-                                        values="0 0 0 0 0.0323264 0 0 0 0 0.0598209 0 0 0 0 0.204167 0 0 0 0.06 0"
-                                    />
-                                    <feBlend
-                                        mode="normal"
-                                        in2="BackgroundImageFix"
-                                        result="effect1_dropShadow_15_494"
-                                    />
-                                    <feBlend
-                                        mode="normal"
-                                        in="SourceGraphic"
-                                        in2="effect1_dropShadow_15_494"
-                                        result="shape"
-                                    />
-                                </filter>
-                            </defs>
-                        </svg>
-                    </div>
-                    <div
-                        className="bg-neutral-100 rounded-[14px] border-solid border-[#94cbc8] border-2 pt-4 pr-[39px] pb-4 pl-[39px] flex flex-col gap-2.5 items-center justify-center self-stretch shrink-0 h-[229px] relative"
-                        style={{
-                            boxShadow:
-                                "var(--buttons-color-default-box-shadow,  0px 6px 16px 0px rgba(74, 58, 255, 0.19))",
-                        }}
-                    >
-                        <div className="shrink-0 w-[1232.66px] h-[147px] static">
-                            <div className="text-neutral-600 text-left font-paragraph-default-font-family text-paragraph-default-font-size leading-paragraph-default-line-height font-paragraph-default-font-weight absolute left-[44.92px] top-[98px] w-[1130px]">
-                                저희 서비스는 다양한 종류의 레포트 작성을
-                                도와드릴 수 있습니다. 단순한 감상문부터 논리적
-                                비평, 인문학 에세이, 심지어는 과학 실험 보고서,
-                                공학 프로젝트 보고서까지 다룰 수 있습니다.
-                                원하는 분량에 맞게 레포트의 내용을 확장할 수도
-                                있고, AI를 이용해 레포트에 실증 분석내용을
-                                포함할 수도 있습니다. 간단한 입력만으로 필요한
-                                콘텐츠와 스타일이 담긴 맞춤형 레포트를 생성해
-                                보세요.{" "}
-                            </div>
-                            <div className="w-[1232.66px] h-[50.66px] static">
-                                <div className="text-neutral-800 text-left font-headings-typography-size-4-font-family text-headings-typography-size-4-font-size leading-headings-typography-size-4-line-height font-headings-typography-size-4-font-weight absolute left-[44.92px] top-[52px] w-[715px]">
-                                    어떤 종류의 레포트를 작성할 수 있나요?{" "}
-                                </div>
-                                <svg
-                                    className="w-[50.66px] h-[50.66px] absolute left-[1226.92px] top-[41px] overflow-visible"
-                                    width="52"
-                                    height="51"
-                                    viewBox="0 0 52 51"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <circle
-                                        cx="26"
-                                        cy="25.3309"
-                                        r="25.3309"
-                                        fill="black"
-                                    />
-                                    <path
-                                        d="M17.7433 22.2212L25.9999 30.4405L34.2565 22.2212"
-                                        stroke="white"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                    <div
-                        className="bg-neutral-100 rounded-[14px] border-solid border-[#94cbc8] border-2 pt-4 pr-[39px] pb-4 pl-[39px] flex flex-col gap-2.5 items-center justify-center self-stretch shrink-0 h-[229px] relative"
-                        style={{
-                            boxShadow:
-                                "var(--buttons-color-default-box-shadow,  0px 6px 16px 0px rgba(74, 58, 255, 0.19))",
-                        }}
-                    >
-                        <div className="shrink-0 w-[1232.66px] h-[177px] static">
-                            <div className="text-neutral-600 text-left font-paragraph-default-font-family text-paragraph-default-font-size leading-paragraph-default-line-height font-paragraph-default-font-weight absolute left-[44.92px] top-[83px] w-[1130px]">
-                                당연히, 가능합니다! 현재 가능한 레포트 종류는 총
+                    <Toggle
+                        question="레포터블은 어떤 기능이 있나요?"
+                        answer="레포터블은 개쩌는 서비스에요! 엄청나게 많은 기능들이 있답니다 한 번 돈부터 내고 사용해보세요."
+                        isOpened={false}
+                    />
+                    <Toggle
+                        question="어떤 종류의 레포트를 작성할 수 있나요?"
+                        answer="저희 서비스는 다양한 종류의 레포트 작성을
+                                    도와드릴 수 있습니다. 단순한 감상문부터
+                                    논리적 비평, 인문학 에세이, 심지어는 과학
+                                    실험 보고서, 공학 프로젝트 보고서까지 다룰
+                                    수 있습니다. 원하는 분량에 맞게 레포트의
+                                    내용을 확장할 수도 있고, AI를 이용해
+                                    레포트에 실증 분석내용을 포함할 수도
+                                    있습니다. 간단한 입력만으로 필요한 콘텐츠와
+                                    스타일이 담긴 맞춤형 레포트를 생성해 보세요."
+                        isOpened={true}
+                    />
+                    <Toggle
+                        question="공대생인데, 실험보고서도 작성할 수 있나요?"
+                        answer="당연히, 가능합니다! 현재 가능한 레포트 종류는 총
                                 두가지로, 에세이와 보고서 유형입니다. 에세이는
                                 주로 특정 주제에 관해 작성자의 개인적인 의견,
                                 경험 등을 담는 글이며 본인의 생각을 펼치는데
@@ -296,37 +189,9 @@ const HomePage = () => {
                                 기록하고 정해진 양식에 맞춰 결론을 도출하는데
                                 특화된 유형입니다. 레포터블은 보고서를 작성할
                                 때, 담겨야 하는 데이터 등을 생성하는데 도움을
-                                주며 결과 요약에 탁월합니다.{" "}
-                            </div>
-                            <div className="w-[1232.66px] h-[50.66px] static">
-                                <div className="text-neutral-800 text-left font-headings-typography-size-4-font-family text-headings-typography-size-4-font-size leading-headings-typography-size-4-line-height font-headings-typography-size-4-font-weight absolute left-[44.92px] top-[37px] w-[715px]">
-                                    공대생인데, 실험보고서도 작성할 수 있나요?{" "}
-                                </div>
-                                <svg
-                                    className="w-[50.66px] h-[50.66px] absolute left-[1226.92px] top-[26px] overflow-visible"
-                                    width="52"
-                                    height="51"
-                                    viewBox="0 0 52 51"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <circle
-                                        cx="26"
-                                        cy="25.3309"
-                                        r="25.3309"
-                                        fill="black"
-                                    />
-                                    <path
-                                        d="M17.7433 22.2212L25.9999 30.4405L34.2565 22.2212"
-                                        stroke="white"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
+                                주며 결과 요약에 탁월합니다."
+                        isOpened={true}
+                    />
                 </div>
             </div>
         </div>
