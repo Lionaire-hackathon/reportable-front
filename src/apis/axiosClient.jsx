@@ -1,24 +1,8 @@
-/*
 import axios, { AxiosInstance } from "axios";
 import { getCookie } from "cookies-next";
 import { getNewAccessToken, getRefreshTokenFromCookie } from "./user";
 
-
-const SERVER_API_URL =
-    import.meta.env.VITE_ENVIRONMENT === "production"
-        ? import.meta.env.VITE_SERVER_API_URL
-        : import.meta.env.VITE_SERVER_API_URL_DEV;
-
-axios.defaults.withCredentials = true;
-axios.defaults.headers.common["x-mn-api-version"] = "v1";
-axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
-
-if (!SERVER_API_URL) {
-    console.log("API URL:", SERVER_API_URL);
-    throw new Error("API URL MISSING");
-}
-
-const baseURL = SERVER_API_URL;
+const baseURL = "http://localhost:8080";
 
 if (!baseURL) {
     throw new Error("BASE_URL IS MISSING");
@@ -66,4 +50,3 @@ axiosClient.interceptors.response.use(
 );
 
 export default axiosClient;
-*/

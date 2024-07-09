@@ -23,7 +23,8 @@ const SignInPage = () => {
     const handleSignInSubmit = async (e) => {
         e.preventDefault(); // to prevent reloading the page
         try {
-            await login(signInData);
+            const { rememberMe, ...submitSignInData } = signInData;
+            await login(submitSignInData);
             navigate("/");
         } catch (error) {
             console.error("Login failed", error);

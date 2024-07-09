@@ -1,6 +1,7 @@
 import background from "../assets/images/background.jpg";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { signup } from "../apis/user";
 
 const SignUpPage = () => {
     const [signUpData, setSignUpData] = useState({
@@ -38,8 +39,14 @@ const SignUpPage = () => {
 
     const handleSignUpSubmit = (e) => {
         e.preventDefault(); // to prevent reloading the page
-        if (validatePasswords()) {
-            console.log(signUpData);
+        const form = e.target;
+        if (form.checkValidity()) {
+            const { passwordConfirm, ...submitSignUpData } = signUpData;
+            signup(submitSignUpData);
+            console.log("good!");
+        } else {
+            // 폼이 유효하지 않으면 기본 브라우저 메시지 표시
+            form.reportValidity();
         }
     };
 
