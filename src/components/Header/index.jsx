@@ -1,4 +1,5 @@
 import logo from "../../assets/images/logo.png";
+import { Link } from "react-router-dom";
 
 const Header = () => {
     return (
@@ -17,13 +18,19 @@ const Header = () => {
                         <button className="button-text">Contents</button>
                     </div>
                 </div>
-                <div className="flex flex-row gap-5 items-center justify-end relative">
-                    <button className="button text-[#131313] border border-neutral-900">
+                <div className="flex flex-row gap-5 items-center justify-start shrink-0 relative">
+                    <Link
+                        className="button text-[#131313] border border-neutral-900"
+                        to="/signup"
+                    >
                         Sign Up
-                    </button>
-                    <button className="button bg-[#131313] text-[#FFFFFF]">
+                    </Link>
+                    <Link
+                        className="button bg-[#131313] text-[#FFFFFF]"
+                        to="/signin"
+                    >
                         Login
-                    </button>
+                    </Link>
                 </div>
             </div>
         </div>
