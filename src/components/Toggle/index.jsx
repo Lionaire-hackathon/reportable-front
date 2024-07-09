@@ -1,13 +1,9 @@
 import { useState, useParams } from "react";
 
 const Toggle = ({ question, answer, isOpened }) => {
-    const [isClicked, SetIsClicked] = useState(isOpened);
+    const [isClicked, setIsClicked] = useState(isOpened);
     const handleClick = (e) => {
-        if (isClicked) {
-            SetIsClicked(false);
-        } else {
-            SetIsClicked(true);
-        }
+        setIsClicked(!isClicked);
     };
 
     return (
