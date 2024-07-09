@@ -21,9 +21,26 @@ const SignUpPage = () => {
         });
     };
 
+    const validatePasswords = () => {
+        const password = document.getElementById("password");
+        const passwordConfirm = document.getElementById("passwordConfirm");
+
+        if (password.value !== passwordConfirm.value) {
+            passwordConfirm.setCustomValidity(
+                "비밀번호가 일치하지 않습니다. 다시 한 번 확인해주세요."
+            );
+            return false;
+        } else {
+            passwordConfirm.setCustomValidity("");
+            return true;
+        }
+    };
+
     const handleSignUpSubmit = (e) => {
         e.preventDefault(); // to prevent reloading the page
-        console.log(signUpData);
+        if (validatePasswords()) {
+            console.log(signUpData);
+        }
     };
 
     const togglePasswordVisibility = () => {
@@ -199,7 +216,10 @@ const SignUpPage = () => {
                                                 value={
                                                     signUpData.passwordConfirm
                                                 }
-                                                onChange={handleSignUpData}
+                                                onChange={(e) => {
+                                                    handleSignUpData(e);
+                                                    validatePasswords();
+                                                }}
                                                 className="custom-input no-selection text-[#ababab] font-['Poppins-Light',_sans-serif] text-left text-sm font-light relative w-[90%]"
                                             />
                                             <div
@@ -261,6 +281,8 @@ const SignUpPage = () => {
                                             required
                                             type="text"
                                             id="phoneNumber"
+                                            pattern="\d{11}"
+                                            title="정확한 형식의 전화번호를 입력해주세요."
                                             placeholder="Enter your phone number"
                                             value={signUpData.phoneNumber}
                                             onChange={handleSignUpData}

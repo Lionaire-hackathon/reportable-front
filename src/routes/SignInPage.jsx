@@ -1,8 +1,10 @@
 import background from "../assets/images/background.jpg";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { login } from "../apis/user";
 
 const SignInPage = () => {
+    const navigate = useNavigate();
     const [signInData, setSignInData] = useState({
         email: "",
         password: "",
@@ -18,9 +20,14 @@ const SignInPage = () => {
         });
     };
 
-    const handleSignInSubmit = (e) => {
+    const handleSignInSubmit = async (e) => {
         e.preventDefault(); // to prevent reloading the page
-        console.log(signInData);
+        try {
+            await login(signInData);
+            navigate("/");
+        } catch (error) {
+            console.error("Login failed", error);
+        }
     };
 
     const togglePasswordVisibility = () => {

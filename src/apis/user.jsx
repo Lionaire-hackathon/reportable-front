@@ -1,3 +1,4 @@
+/*
 import axiosClient from "./axiosClient";
 import axios from "axios";
 
@@ -32,3 +33,5 @@ export const userApi = {
         return axiosClient.delete(`/user/${id}`);
     },
   };
+
+*/
