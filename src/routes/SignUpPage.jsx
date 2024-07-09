@@ -1,6 +1,6 @@
 import background from "../assets/images/background.jpg";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { signup } from "../apis/user";
 
 const SignUpPage = () => {
@@ -13,6 +13,7 @@ const SignUpPage = () => {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+    const navigate = useNavigate();
 
     const handleSignUpData = (e) => {
         const { id, type, value, checked } = e.target;
@@ -37,16 +38,23 @@ const SignUpPage = () => {
         }
     };
 
-    const handleSignUpSubmit = (e) => {
+    const handleSignUpSubmit = async (e) => {
         e.preventDefault(); // to prevent reloading the page
         const form = e.target;
+        try{
         if (form.checkValidity()) {
             const { passwordConfirm, ...submitSignUpData } = signUpData;
-            signup(submitSignUpData);
+            await signup(submitSignUpData);
             console.log("good!");
+            alert("회원가입이 완료되었습니다. 로그인해주세요.");
+            navigate("/signin");
         } else {
             // 폼이 유효하지 않으면 기본 브라우저 메시지 표시
             form.reportValidity();
+        }} catch (error) {
+            console.error(error);
+            alert("회원가입에 실패했습니다. 다시 시도해주세요.", error);
+            window.location.reload();
         }
     };
 
