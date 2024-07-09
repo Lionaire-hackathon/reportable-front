@@ -8,14 +8,14 @@ const Toggle = ({ question, answer, isOpened }) => {
 
     return (
         <div
-            className="bg-neutral-100 rounded-[14px] border-solid border-[#94cbc8] border-2 pt-[16px] pr-[39px] pb-[16px] pl-[39px] flex flex-col gap-2.5 items-center justify-center self-stretch shrink-0 h-auto relative"
+            className="bg-neutral-100 rounded-[14px] border-solid border-[#94cbc8] border-2 pt-[16px] pr-[39px] pb-[16px] pl-[39px] flex flex-col gap-2.5 items-center justify-between self-stretch shrink-0 h-auto relative"
             style={{
                 boxShadow:
                     "var(--buttons-color-default-box-shadow,  0px 6px 16px 0px rgba(74, 58, 255, 0.19))",
             }}
         >
             {isClicked ? (
-                <div className="flex flex-col gap-1.5 items-start justify-start shrink-0 w-[1232.66px] relative">
+                <div className="flex flex-col gap-1.5 items-start justify-start shrink-0 w-full relative">
                     <div className="shrink-0 w-[1232.66px] h-auto relative">
                         <div className="text-neutral-800 text-left font-headings-typography-size-4-font-family text-headings-typography-size-4-font-size leading-headings-typography-size-4-line-height font-bold pt-[24px] pb-[24px] left-[44.75px] top-[51.75px] w-[715px]">
                             {question}

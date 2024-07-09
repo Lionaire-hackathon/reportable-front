@@ -28,7 +28,7 @@ const HomePage = () => {
                                     <div className="flex flex-row gap-0 items-center justify-center shrink-0 h-[77px] relative">
                                         <div className="flex flex-col gap-[9px] items-end justify-center shrink-0 w-[62px] h-[71px] relative">
                                             <svg
-                                                className="shrink-0 w-[45px] h-[45px] relative overflow-visible"
+                                                className="shrink-0 w-[45px] h-[45px] relative overflow-visible !shrink-0"
                                                 width="45"
                                                 height="45"
                                                 viewBox="0 0 45 45"
@@ -45,7 +45,7 @@ const HomePage = () => {
                                             </div>
                                         </div>
                                         <svg
-                                            className="shrink-0 w-6 h-6 relative overflow-visible"
+                                            className="shrink-0 w-6 h-6 relative overflow-visible !shrink-0"
                                             width="24"
                                             height="24"
                                             viewBox="0 0 24 24"
@@ -60,7 +60,7 @@ const HomePage = () => {
                                         </svg>
                                         <div className="flex flex-col gap-[13px] items-center justify-start shrink-0 w-[59px] h-[71px] relative">
                                             <svg
-                                                className="shrink-0 w-10 h-10 relative overflow-visible"
+                                                className="shrink-0 w-10 h-10 relative overflow-visible !shrink-0 !w-10 !h-10"
                                                 width="41"
                                                 height="41"
                                                 viewBox="0 0 41 41"
@@ -77,7 +77,7 @@ const HomePage = () => {
                                             </div>
                                         </div>
                                         <svg
-                                            className="shrink-0 w-6 h-6 relative overflow-visible"
+                                            className="shrink-0 w-6 h-6 relative overflow-visible !shrink-0"
                                             width="24"
                                             height="24"
                                             viewBox="0 0 24 24"
@@ -92,7 +92,7 @@ const HomePage = () => {
                                         </svg>
                                         <div className="flex flex-col gap-3.5 items-center justify-start shrink-0 w-20 relative">
                                             <svg
-                                                className="shrink-0 w-[39px] h-[39px] relative overflow-visible"
+                                                className="shrink-0 w-[39px] h-[39px] relative overflow-visible !shrink-0 !w-[39px] !h-[39px]"
                                                 width="40"
                                                 height="40"
                                                 viewBox="0 0 40 40"
@@ -172,28 +172,28 @@ const HomePage = () => {
                             <Toggle
                                 question="어떤 종류의 레포트를 작성할 수 있나요?"
                                 answer="저희 서비스는 다양한 종류의 레포트 작성을
-                                            도와드릴 수 있습니다. 단순한 감상문부터
-                                            논리적 비평, 인문학 에세이, 심지어는 과학
-                                            실험 보고서, 공학 프로젝트 보고서까지 다룰
-                                            수 있습니다. 원하는 분량에 맞게 레포트의
-                                            내용을 확장할 수도 있고, AI를 이용해
-                                            레포트에 실증 분석내용을 포함할 수도
-                                            있습니다. 간단한 입력만으로 필요한 콘텐츠와
-                                            스타일이 담긴 맞춤형 레포트를 생성해 보세요."
+                                    도와드릴 수 있습니다. 단순한 감상문부터
+                                    논리적 비평, 인문학 에세이, 심지어는 과학
+                                    실험 보고서, 공학 프로젝트 보고서까지 다룰
+                                    수 있습니다. 원하는 분량에 맞게 레포트의
+                                    내용을 확장할 수도 있고, AI를 이용해
+                                    레포트에 실증 분석내용을 포함할 수도
+                                    있습니다. 간단한 입력만으로 필요한 콘텐츠와
+                                    스타일이 담긴 맞춤형 레포트를 생성해 보세요."
                                 isOpened={true}
                             />
                             <Toggle
                                 question="공대생인데, 실험보고서도 작성할 수 있나요?"
                                 answer="당연히, 가능합니다! 현재 가능한 레포트 종류는 총
-                                        두가지로, 에세이와 보고서 유형입니다. 에세이는
-                                        주로 특정 주제에 관해 작성자의 개인적인 의견,
-                                        경험 등을 담는 글이며 본인의 생각을 펼치는데
-                                        AI가 도움을 줍니다. 반면, 보고서는 주로 프로젝트
-                                        요약 보고서나 실험 보고서로 연구나 실험의 과정을
-                                        기록하고 정해진 양식에 맞춰 결론을 도출하는데
-                                        특화된 유형입니다. 레포터블은 보고서를 작성할
-                                        때, 담겨야 하는 데이터 등을 생성하는데 도움을
-                                        주며 결과 요약에 탁월합니다."
+                                두가지로, 에세이와 보고서 유형입니다. 에세이는
+                                주로 특정 주제에 관해 작성자의 개인적인 의견,
+                                경험 등을 담는 글이며 본인의 생각을 펼치는데
+                                AI가 도움을 줍니다. 반면, 보고서는 주로 프로젝트
+                                요약 보고서나 실험 보고서로 연구나 실험의 과정을
+                                기록하고 정해진 양식에 맞춰 결론을 도출하는데
+                                특화된 유형입니다. 레포터블은 보고서를 작성할
+                                때, 담겨야 하는 데이터 등을 생성하는데 도움을
+                                주며 결과 요약에 탁월합니다."
                                 isOpened={true}
                             />
                         </div>
