@@ -4,58 +4,9 @@ import twitterLogo from "../../assets/images/TwitterX.png";
 
 const Footer = () => {
     return (
-        <div className="bg-[#ffffff] w-full h-[472px] absolute left-0 top-[1480px] overflow-hidden">
-            <div className="pt-[17px] pb-[17px] flex flex-col gap-2.5 items-start justify-start h-[312px] absolute left-[183px] top-[93px]">
-                <div className="flex flex-col gap-[27px] items-center justify-start shrink-0 w-[1074px] absolute left-0 top-0">
-                    <div className="shrink-0 w-[1074px] h-[247px] static">
-                        <div
-                            className="bg-[#102047] border-solid border-[#102047] border w-[100%] h-[0.24%] absolute right-[0%] left-[0%] bottom-[20.83%] top-[78.93%]"
-                            style={{ opacity: "0.06" }}
-                        ></div>
-                        <div
-                            className="bg-[#102047] border-solid border-[#102047]  border w-[100%] h-[0.24%] absolute right-[0%] left-[0%] bottom-[99.76%] top-[0%]"
-                            style={{ opacity: "0.06" }}
-                        ></div>
-                    </div>
-                    <div className="flex flex-row gap-3.5 items-center justify-start shrink-0 relative">
-                        <img
-                            className="shrink-0 w-[38px] h-[38px] relative"
-                            style={{ objectFit: "cover" }}
-                            src={instagramLogo}
-                        />
-                        <svg
-                            className="shrink-0 w-[38px] h-[38px] relative overflow-visible"
-                            width="38"
-                            height="38"
-                            viewBox="0 0 38 38"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <g clipPath="url(#clip0_23_72)">
-                                <path
-                                    d="M34.8333 18.9998C34.8333 10.2598 27.74 3.1665 19 3.1665C10.26 3.1665 3.16667 10.2598 3.16667 18.9998C3.16667 26.6632 8.61333 33.044 15.8333 34.5165V23.7498H12.6667V18.9998H15.8333V15.0415C15.8333 11.9857 18.3192 9.49984 21.375 9.49984H25.3333V14.2498H22.1667C21.2958 14.2498 20.5833 14.9623 20.5833 15.8332V18.9998H25.3333V23.7498H20.5833V34.754C28.5792 33.9623 34.8333 27.2173 34.8333 18.9998Z"
-                                    fill="black"
-                                />
-                            </g>
-                            <defs>
-                                <clipPath id="clip0_23_72">
-                                    <rect
-                                        width="38"
-                                        height="38"
-                                        fill="white"
-                                        transform="translate(0 -0.000244141)"
-                                    />
-                                </clipPath>
-                            </defs>
-                        </svg>
-                        <img
-                            className="shrink-0 w-[38px] h-[38px] relative"
-                            style={{ objectFit: "cover" }}
-                            src={twitterLogo}
-                        />
-                    </div>
-                </div>
-                <div className="flex flex-row gap-[106px] items-center justify-start shrink-0 relative">
+        <div className="bg-[#ffffff] px-36 py-24 flex flex-col gap-2.5 items-center justify-center relative overflow-hidden ">
+            <div className="flex flex-col gap-[30px] items-center justify-start self-stretch shrink-0 relative">
+                <div className="border-solid border-[#cfcfcf] border-t border-b pt-[25px] pb-[25px] pl-2.5 flex flex-row items-center justify-between shrink-0 relative">
                     <div className="flex flex-row gap-[15px] items-center justify-start shrink-0 relative">
                         <div className="flex flex-col gap-3.5 items-start justify-start shrink-0 w-[200px] h-[200px] relative">
                             <div className="flex flex-col gap-3.5 items-start justify-start self-stretch shrink-0 relative">
@@ -63,19 +14,19 @@ const Footer = () => {
                                     제품{" "}
                                 </div>
                                 <div
-                                    className="text-[#102047] text-left font-['Inter-Regular',_sans-serif] text-base font-normal relative self-stretch"
+                                    className="text-dark text-left font-['Inter-Regular',_sans-serif] text-base font-normal relative self-stretch"
                                     style={{ opacity: "0.5" }}
                                 >
                                     이용약관{" "}
                                 </div>
                                 <div
-                                    className="text-[#102047] text-left font-['Inter-Regular',_sans-serif] text-base font-normal relative self-stretch"
+                                    className="text-dark text-left font-['Inter-Regular',_sans-serif] text-base font-normal relative self-stretch"
                                     style={{ opacity: "0.5" }}
                                 >
                                     개인정보 보호정책{" "}
                                 </div>
                                 <div
-                                    className="text-[#102047]  text-left font-['Inter-Regular',_sans-serif] text-base font-normal relative self-stretch"
+                                    className="text-dark text-left font-['Inter-Regular',_sans-serif] text-base font-normal relative self-stretch"
                                     style={{ opacity: "0.5" }}
                                 >
                                     쿠키 정책{" "}
@@ -134,8 +85,8 @@ const Footer = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="bg-[rgba(43,161,156,0.80)] rounded-[10px] border-solid border-[#979797] border shrink-0 w-[338px] h-[205px] relative overflow-hidden">
-                        <div className="flex flex-col gap-0 items-start justify-start w-[266px] absolute left-9 top-3">
+                    <div className="bg-[rgba(43,161,156,0.80)] rounded-[10px] flex items-center justify-center border-solid border-[#979797] border shrink-0 pr-2.5 w-[338px] h-[205px] relative overflow-hidden">
+                        <div className="flex flex-col gap-0 items-start justify-start w-[78%] relative">
                             <div className="flex flex-col gap-2 items-start justify-start self-stretch shrink-0 relative">
                                 <div className="text-[#fcfcfc] text-left font-['Inter-Bold',_sans-serif] text-base leading-7 font-bold relative self-stretch h-[31px]">
                                     만든 사람들{" "}
@@ -171,6 +122,38 @@ const Footer = () => {
                             </div>
                         </div>
                     </div>
+                </div>
+                <div className="flex flex-row gap-3.5 items-center justify-center shrink-0 relative">
+                    <img
+                        className="shrink-0 w-[38px] h-[38px] relative"
+                        style={{ objectFit: "cover" }}
+                        src={instagramLogo}
+                    />
+                    <svg
+                        className="shrink-0 w-[38px] h-[38px] relative overflow-visible"
+                        width="38"
+                        height="38"
+                        viewBox="0 0 38 38"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <g clipPath="url(#clip0_76_203)">
+                            <path
+                                d="M34.8333 19.0001C34.8333 10.2601 27.74 3.16675 19 3.16675C10.26 3.16675 3.16667 10.2601 3.16667 19.0001C3.16667 26.6634 8.61333 33.0442 15.8333 34.5167V23.7501H12.6667V19.0001H15.8333V15.0417C15.8333 11.9859 18.3192 9.50008 21.375 9.50008H25.3333V14.2501H22.1667C21.2958 14.2501 20.5833 14.9626 20.5833 15.8334V19.0001H25.3333V23.7501H20.5833V34.7543C28.5792 33.9626 34.8333 27.2176 34.8333 19.0001Z"
+                                fill="black"
+                            />
+                        </g>
+                        <defs>
+                            <clipPath id="clip0_76_203">
+                                <rect width="38" height="38" fill="white" />
+                            </clipPath>
+                        </defs>
+                    </svg>
+                    <img
+                        className="shrink-0 w-[38px] h-[38px] relative"
+                        style={{ objectFit: "cover" }}
+                        src={twitterLogo}
+                    />
                 </div>
             </div>
         </div>

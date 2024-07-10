@@ -3,7 +3,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { getNewAccessToken, getRefreshTokenFromCookie } from "./user";
 
-const baseURL = process.env.REACT_APP_SERVER_URL;
+const baseURL = "http://localhost:8080";
 
 if (!baseURL) {
     throw new Error("BASE_URL IS MISSING");
@@ -30,7 +30,10 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
     (response) => response,
     async (error) => {
-        const { config, response: { status } } = error;
+        const {
+            config,
+            response: { status },
+        } = error;
         if (status === 403 || status === 401) {
             const originalRequest = config;
             const getRefreshTokenRes = await getRefreshTokenFromCookie();
