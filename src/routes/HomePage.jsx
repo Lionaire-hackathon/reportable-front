@@ -15,7 +15,7 @@ const HomePage = () => {
                             <div className="flex flex-col gap-[27px] items-start justify-start shrink-0 w-[315px] relative">
                                 <div className="text-left font-['Inter-Bold',_sans-serif] text-3xl font-bold relative self-stretch">
                                     <span>
-                                        <span className="div-span">
+                                        <span className="div-span" style={{ color: "#FFFFFF" }}>
                                             쉽고, 편리한 <br />
                                             레포트의 완성
                                         </span>
