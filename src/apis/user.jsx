@@ -19,6 +19,8 @@ export const login = async (loginDto) =>
 
 export const logout = async () => axiosClient.post("/auth/logout");
 
+export const verify = async () => axiosClient.post("/auth/verify");
+
 export const userApi = {
     update(id, updateUserDto) {
         return axiosClient.put(`/user/${id}`, updateUserDto);

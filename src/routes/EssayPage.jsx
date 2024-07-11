@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../components/common/Header";
+import useMe from "../apis/hook/useMe";
+import { useNavigate } from "react-router-dom";
 
 const EssayPage = () => {
+  const { me, isLoadingMe } = useMe();
+  const navigate = useNavigate();
   const [essayData, setEssayData] = useState({
     topic: "",
     length: "",
@@ -21,6 +25,15 @@ const EssayPage = () => {
     e.preventDefault(); // to prevent reloading the page
     console.log(essayData);
   };
+
+  useEffect(() => {
+    if (!me) {
+      alert("로그인이 필요합니다.");
+      navigate("/")
+      navigate("/signin");
+    }
+  }, [me]);
+
   return (
     <>
       <Header className="relative" />
