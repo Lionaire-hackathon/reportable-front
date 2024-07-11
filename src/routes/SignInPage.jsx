@@ -27,7 +27,9 @@ const SignInPage = () => {
       await login(submitSignInData);
       navigate("/");
     } catch (error) {
-      console.error("Login failed", error);
+        console.error('로그인 오류:', error);
+        const errorMessage = error.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        alert(`${errorMessage} 로그인에 실패했습니다.`);
     }
   };
 
@@ -35,7 +37,8 @@ const SignInPage = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = (e) => {
+    e.preventDefault()
     const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
     const GOOGLE_REDIRECT_URI = process.env.REACT_APP_GOOGLE_REDIRECT_URI;
     window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&response_type=code&client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}`;

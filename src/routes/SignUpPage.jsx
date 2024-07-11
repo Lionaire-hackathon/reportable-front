@@ -53,9 +53,7 @@ const SignUpPage = () => {
         form.reportValidity();
       }
     } catch (error) {
-      console.error(error);
-      alert("회원가입에 실패했습니다. 다시 시도해주세요.", error);
-      window.location.reload();
+      alert(`${error.response.data.message} 회원가입에 실패하였습니다.`);
     }
   };
 
