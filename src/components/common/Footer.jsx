@@ -91,7 +91,13 @@ const Footer = () => {
                                 <div className="text-[#fcfcfc] text-left font-['Inter-Bold',_sans-serif] text-base leading-7 font-bold relative self-stretch h-[31px]">
                                     만든 사람들{" "}
                                 </div>
-                                <div class="w-full h-[43px] relative">
+                                <div
+                                    class="cursor-pointer w-full h-[43px] relative"
+                                    onClick={() => {
+                                        window.location.href =
+                                            "https://www.snulion.com/";
+                                    }}
+                                >
                                     <img
                                         className="w-full h-full object-contain"
                                         src={likelionsnu}
@@ -125,12 +131,16 @@ const Footer = () => {
                 </div>
                 <div className="flex flex-row gap-3.5 items-center justify-center shrink-0 relative">
                     <img
-                        className="shrink-0 w-[38px] h-[38px] relative"
+                        className="cursor-pointer shrink-0 w-[38px] h-[38px] relative"
                         style={{ objectFit: "cover" }}
                         src={instagramLogo}
+                        onClick={() => {
+                            window.location.href =
+                                "https://www.instagram.com/likelion_snu/";
+                        }}
                     />
                     <svg
-                        className="shrink-0 w-[38px] h-[38px] relative overflow-visible"
+                        className="cursor-pointer shrink-0 w-[38px] h-[38px] relative overflow-visible"
                         width="38"
                         height="38"
                         viewBox="0 0 38 38"
@@ -150,7 +160,7 @@ const Footer = () => {
                         </defs>
                     </svg>
                     <img
-                        className="shrink-0 w-[38px] h-[38px] relative"
+                        className="cursor-pointer shrink-0 w-[38px] h-[38px] relative"
                         style={{ objectFit: "cover" }}
                         src={twitterLogo}
                     />
