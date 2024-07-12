@@ -27,7 +27,9 @@ const SignInPage = () => {
       await login(submitSignInData);
       navigate("/");
     } catch (error) {
-      console.error("Login failed", error);
+        console.error('로그인 오류:', error);
+        const errorMessage = error.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        alert(`${errorMessage} 로그인에 실패했습니다.`);
     }
   };
 
@@ -35,14 +37,8 @@ const SignInPage = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleCheckboxChange = (event) => {
-    setSignInData({
-        ...signInData,
-        rememberMe: event.target.checked,
-        });
-  };
-
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = (e) => {
+    e.preventDefault();
     const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
     const GOOGLE_REDIRECT_URI = process.env.REACT_APP_GOOGLE_REDIRECT_URI;
     window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&response_type=code&client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}`;
@@ -87,7 +83,7 @@ const SignInPage = () => {
                 >
                   이메일 주소{" "}
                 </label>
-                <div className="bg-[#ffffff] rounded-md border-solid border-[#000000] border-[0.7px] w-full py-4 flex items-center justify-center">
+                <div className="bg-[#ffffff] rounded-md w-full flex items-center justify-center">
                   <input
                     required
                     type="email"
@@ -96,7 +92,7 @@ const SignInPage = () => {
                     value={signInData.email}
                     onChange={handleSignInData}
                     autoComplete="off"
-                    className="custom-input text-[#ababab] text-left font-['Poppins-Light',_sans-serif] text-sm font-light relative w-[90%]"
+                    className="custom-input text-[#ababab] text-left font-['Poppins-Light',_sans-serif] text-sm font-light relative w-full py-4 px-4 border border-solid border-[#000000] rounded-md"
                   />
                 </div>
               </div>
@@ -107,8 +103,8 @@ const SignInPage = () => {
                 >
                   비밀번호{" "}
                 </label>
-                <div className="bg-[#ffffff] rounded-md border-solid border-[#000000] border-[0.7px] w-full py-4 flex items-center justify-center">
-                  <div className="flex w-[90%] items-center justify-between">
+                <div className="bg-[#ffffff] rounded-md w-full flex items-center justify-center">
+                  <div className="flex w-full items-center justify-between px-4 py-4 border border-solid border-[#000000] rounded-md">
                     <input
                       required
                       type={showPassword ? "text" : "password"}
@@ -116,10 +112,11 @@ const SignInPage = () => {
                       placeholder="Enter your password"
                       value={signInData.password}
                       onChange={handleSignInData}
-                      className="custom-input no-selection text-[#ababab] font-['Poppins-Light',_sans-serif] text-left text-sm font-light relative w-[90%]"
+                      autoComplete="off"
+                      className="custom-input text-[#ababab] font-['Poppins-Light',_sans-serif] text-left text-sm font-light relative w-full border-none"
                     />
                     <div
-                      className="shrink-0 w-[24.41px] h-[21.45px] relative overflow-hidden cursor-pointer"
+                      className="shrink-0 w-[24.41px] h-[21.45px] relative overflow-hidden cursor-pointer ml-2"
                       onClick={togglePasswordVisibility}
                     >
                       {showPassword ? (

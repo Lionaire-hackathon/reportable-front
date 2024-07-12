@@ -15,13 +15,13 @@ const Toggle = ({ question, answer, isOpened }) => {
             }}
         >
             {isClicked ? (
-                <div className="flex flex-col gap-1.5 items-start justify-start shrink-0 w-full relative">
-                    <div className="shrink-0 w-[1232.66px] h-auto relative">
-                        <div className="text-neutral-800 text-left font-headings-typography-size-4-font-family text-headings-typography-size-4-font-size leading-headings-typography-size-4-line-height font-bold pt-[24px] pb-[24px] left-[44.75px] top-[51.75px] w-[715px]">
+                <div className="flex flex-col gap-8 items-start justify-start shrink-0 w-full relative">
+                    <div className="flex flex-row items-center justify-between shrink-0 w-full h-auto relative">
+                        <div className="text-neutral-800 text-left font-headings-typography-size-4-font-family text-headings-typography-size-4-font-size leading-headings-typography-size-4-line-height font-bold pt-[24px] pb-[24px] left-[44.75px] top-[51.75px]">
                             {question}
                         </div>
                         <svg
-                            className="w-[50.66px] h-[50.66px] absolute left-[1182px] top-1/2 transform -translate-y-1/2 overflow-visible"
+                            className="cursor-pointer w-[50.66px] h-[50.66px] relative overflow-visible"
                             width="52"
                             height="51"
                             viewBox="0 0 52 51"
@@ -44,17 +44,17 @@ const Toggle = ({ question, answer, isOpened }) => {
                             />
                         </svg>
                     </div>
-                    <div className="text-neutral-600 text-left font-paragraph-default-font-family text-paragraph-default-font-size leading-paragraph-default-line-height font-paragraph-default-font-weight relative pb-[24px] w-[1130px]">
+                    <div className="text-neutral-600 text-left font-paragraph-default-font-family text-paragraph-default-font-size leading-paragraph-default-line-height font-paragraph-default-font-weight relative pb-[24px] w-full">
                         {answer}
                     </div>
                 </div>
             ) : (
-                <div className="shrink-0 w-[1232.99px] h-auto relative">
-                    <div className="text-neutral-800 text-left font-headings-typography-size-4-font-family text-headings-typography-size-4-font-size leading-headings-typography-size-4-line-height font-bold pt-[24px] pb-[24px] left-[44.75px] top-[51.75px] w-[715px]">
+                <div className="flex flex-row items-center justify-between shrink-0 w-full h-auto relative">
+                    <div className="text-neutral-800 text-left font-headings-typography-size-4-font-family text-headings-typography-size-4-font-size leading-headings-typography-size-4-line-height font-bold pt-[24px] pb-[24px] left-[44.75px] top-[51.75px]">
                         {question}
                     </div>
                     <svg
-                        className="w-[50.66px] h-[50.66px] absolute right-[3.38%] left-[1182px] top-1/2 transform -translate-y-1/2 overflow-visible"
+                        className="cursor-pointer w-[50.66px] h-[50.66px] relative overflow-visible"
                         width="52"
                         height="52"
                         viewBox="0 0 52 52"
