@@ -155,9 +155,12 @@ const HomePage = () => {
                             >
                                 에세이 작성하기
                             </Link>
-                            <button className="flex w-[297px] h-[62px] p-2 pr-4 justify-center items-center gap-1.5 rounded border-2 border-[#299792] bg-white text-[#299792]">
+                            <Link
+                                className="flex w-[297px] h-[62px] p-2 pr-4 justify-center items-center gap-1.5 rounded border-2 border-[#299792] bg-white text-[#299792]"
+                                to="/report"
+                            >
                                 보고서 작성하기
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </div>

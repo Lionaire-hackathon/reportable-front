@@ -37,27 +37,27 @@ const EssayPage = () => {
     return (
         <>
             <Header className="relative" />
-            <div className="flex flex-row items-center justify-between relative w-[100%]">
+            <div className="flex flex-row items-center justify-between relative h-[950px] w-[100%]">
                 <form
-                    className="flex flex-col gap-2.5 items-center justify-center shrink-0 w-[313px] h-[950px] relative"
+                    className="flex flex-col gap-2.5 items-center justify-center shrink-0 w-[313px] h-full relative"
                     style={{
                         background:
                             "linear-gradient(to left, #cae5e4, #cae5e4)",
                     }}
                     onSubmit={handleEssaySubmit}
                 >
-                    <div className="flex flex-col gap-[250px] items-start justify-start shrink-0 w-[289px] relative">
+                    <div className="flex flex-col items-center justify-between shrink-0 w-[289px] h-full py-4 relative">
                         <div className="flex flex-col gap-[11px] items-start justify-start self-stretch shrink-0 relative">
                             <div
-                                className="bg-[#ffffff] rounded-[10px] p-4 flex flex-col gap-0 items-center justify-center shrink-0 relative"
+                                className="bg-[#ffffff] rounded-[10px] p-4 flex flex-col gap-0 items-center justify-center shrink-0 relative w-[98.5%] "
                                 style={{
                                     boxShadow:
                                         "0px 4px 64px 0px rgba(0, 0, 0, 0.05)",
                                 }}
                             >
-                                <div className="flex flex-col gap-4 items-start justify-start shrink-0 w-[257px] relative">
-                                    <div className="flex flex-row gap-2.5 items-center justify-start self-stretch shrink-0 relative">
-                                        <div className="text-left font-['Inter-SemiBold',_sans-serif] text-base font-semibold relative">
+                                <div className="flex flex-col gap-2.5 items-start justify-start shrink-0 w-[98.5%] relative">
+                                    <div className="flex flex-row items-center justify-start self-stretch shrink-0 relative w-full">
+                                        <div className="px-1 text-left font-['Inter-SemiBold',_sans-serif] text-base font-semibold relative">
                                             <span>
                                                 <span className="div-span">
                                                     에세이 주제
@@ -78,15 +78,15 @@ const EssayPage = () => {
                                 </div>
                             </div>
                             <div
-                                className="bg-[#ffffff] rounded-[10px] p-4 flex flex-col gap-2.5 items-start justify-start shrink-0 relative"
+                                className="bg-[#ffffff] rounded-[10px] p-4 flex flex-col gap-2.5 items-start justify-start shrink-0 relative w-[98.5%] "
                                 style={{
                                     boxShadow:
                                         "0px 4px 64px 0px rgba(0, 0, 0, 0.05)",
                                 }}
                             >
-                                <div className="flex flex-col gap-4 items-start justify-start shrink-0 w-[252.5px] relative">
-                                    <div className="flex flex-row items-center justify-between self-stretch shrink-0 relative">
-                                        <div className="text-left font-['Inter-SemiBold',_sans-serif] text-base font-semibold relative">
+                                <div className="flex flex-col gap-2.5 items-start justify-start shrink-0 w-full relative">
+                                    <div className="flex flex-row items-center justify-between self-stretch shrink-0 relative w-full">
+                                        <div className="px-1 text-left font-['Inter-SemiBold',_sans-serif] text-base font-semibold relative">
                                             <span>
                                                 <span className="div-span3">
                                                     분량
@@ -127,12 +127,12 @@ const EssayPage = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="bg-[#ffffff] rounded-[10px] p-4 flex flex-col gap-2.5 items-center justify-center shrink-0 relative">
-                                <div className="flex flex-col gap-4 items-center justify-center shrink-0 w-64 relative">
-                                    <div className="flex flex-row items-center justify-between self-stretch shrink-0 relative">
-                                        <div className="text-[#000000] text-left font-['Inter-SemiBold',_sans-serif] text-base font-semibold relative">
+                            <div className="bg-[#ffffff] rounded-[10px] p-4 flex flex-col gap-2.5 items-center justify-center shrink-0 relative w-[98.5%] ">
+                                <div className="flex flex-col gap-2.5 items-center justify-center shrink-0 w-full relative">
+                                    <div className="flex flex-row items-center justify-between self-stretch shrink-0 relative w-full">
+                                        <span className="px-1 text-[#000000] text-left font-['Inter-SemiBold',_sans-serif] text-base font-semibold relative">
                                             양식{" "}
-                                        </div>
+                                        </span>
                                         <svg
                                             className="shrink-0 w-4 h-4 relative overflow-visible"
                                             width="16"
@@ -160,13 +160,13 @@ const EssayPage = () => {
                                     />
                                 </div>
                             </div>
-                            <div className="bg-[#ffffff] rounded-[10px] p-4 flex flex-col gap-4 items-center justify-start shrink-0 w-[289px] relative">
-                                <div className="flex flex-col gap-2.5 items-start justify-start shrink-0 w-[258px] relative">
-                                    <div className="flex flex-row items-center justify-between shrink-0 w-[258px] relative">
-                                        <div className="flex flex-row items-center justify-between shrink-0 w-[81px] relative">
-                                            <div className="text-[#000000] text-left font-['Inter-SemiBold',_sans-serif] text-base font-semibold relative">
+                            <div className="bg-[#ffffff] rounded-[10px] p-4 flex flex-col gap-2.5 items-center justify-start shrink-0 relative w-[98.5%] ">
+                                <div className="flex flex-col gap-2 items-start justify-start shrink-0 w-full relative">
+                                    <div className="flex flex-row items-center justify-between shrink-0 w-full relative">
+                                        <div className="flex flex-row items-center justify-between shrink-0 relative">
+                                            <span className="px-1 text-[#000000] text-left font-['Inter-SemiBold',_sans-serif] text-base font-semibold relative">
                                                 프롬프트{" "}
-                                            </div>
+                                            </span>
                                             <svg
                                                 className="shrink-0 w-5 h-5 relative overflow-visible"
                                                 width="21"
@@ -197,12 +197,12 @@ const EssayPage = () => {
                                             />
                                         </svg>
                                     </div>
-                                    <div className="text-[#000000] text-left font-['Inter-Regular',_sans-serif] text-[9px] font-normal relative">
+                                    <span className="px-1 text-[#000000] text-left font-['Inter-Regular',_sans-serif] text-[9px] font-normal relative">
                                         레포트의 내용을 세밀하게 조정하고
                                         싶다면, 아래 항목에 필요 사항을
                                         <br />
                                         작성해주세요{" "}
-                                    </div>
+                                    </span>
                                 </div>
                                 <textarea
                                     id="requirement"
