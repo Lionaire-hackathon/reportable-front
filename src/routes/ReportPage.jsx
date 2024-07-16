@@ -8,55 +8,56 @@ const EssayPage = () => {
     const { me, isLoadingMe } = useMe();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newContent, setNewContent] = useState("");
-    const [contents, setContents] = useState(
-        new Set([
-            "Abstracts",
-            "Introduction",
-            "Methods",
-            "Results",
-            "Discussions",
-        ])
-    );
+
     const navigate = useNavigate();
-    const [essayData, setEssayData] = useState({
+    const [reportData, setReportData] = useState({
         topic: "",
         length: "",
-        format: "",
+        contents: new Set([
+            "초록",
+            "연구 목적",
+            "연구 방법",
+            "연구 결과",
+            "결론",
+            "논의",
+        ]),
+        purposeAndMethod: "",
+        files: [],
         requirement: "",
     });
     const fileUploadRef = useRef(null);
-    const [fileNames, setFileNames] = useState([]);
-    const [uploadedFiles, setUploadedFiles] = useState([]);
+    //const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [isOutputCreated, setIsOutputCreated] = useState(false);
 
     const handleFileChange = async (e) => {
         const newFiles = Array.from(e.target.files);
-        setUploadedFiles((prevFiles) => [...prevFiles, ...newFiles]);
+        setReportData({
+            ...reportData,
+            files: [...reportData.files, ...newFiles],
+        });
+        //setUploadedFiles((prevFiles) => [...prevFiles, ...newFiles]);
     };
-
-    useEffect(() => {
-        const selectedFileNames = uploadedFiles.map((file) => file.name);
-        setFileNames(selectedFileNames);
-    }, [uploadedFiles]);
 
     const handleUpload = () => {
         fileUploadRef.current.click();
     };
 
-    const handleFileDelete = (targetfile) => {
-        setUploadedFiles(
-            uploadedFiles.filter((file) => file.name !== targetfile)
-        );
+    const handleFileDelete = (index) => {
+        setReportData({
+            ...reportData,
+            files: reportData.files.filter((_, idx) => idx !== index),
+        });
     };
 
     const handleContentDelete = (targetContent) => {
-        setContents(
-            new Set(
-                Array.from(contents).filter(
+        setReportData({
+            ...reportData,
+            contents: new Set(
+                Array.from(reportData.contents).filter(
                     (content) => content !== targetContent
                 )
-            )
-        );
-        console.log(targetContent);
+            ),
+        });
     };
 
     const changeNewContent = (e) => {
@@ -65,7 +66,10 @@ const EssayPage = () => {
 
     const addNewContent = () => {
         if (newContent.trim() !== "") {
-            setContents(new Set([...contents, newContent]));
+            setReportData({
+                ...reportData,
+                contents: new Set([...reportData.contents, newContent]),
+            });
             setNewContent(""); // 입력 필드를 비웁니다.
         }
     };
@@ -75,17 +79,67 @@ const EssayPage = () => {
         setIsModalOpen(!isModalOpen);
     };
 
-    const handleEssayData = (e) => {
+    const handleReportData = (e) => {
         const { id, value } = e.target;
-        setEssayData({
-            ...essayData,
+        setReportData({
+            ...reportData,
             [id]: value,
         });
     };
 
+    const resetReportData = (e) => {
+        const { id } = e.target;
+        if (id === "contents") {
+            setReportData({
+                ...reportData,
+                contents: new Set(),
+            });
+        } else if (id === "files") {
+            setReportData({
+                ...reportData,
+                files: [],
+            });
+        } else {
+            setReportData({
+                ...reportData,
+                [id]: "",
+            });
+        }
+    };
+
     const handleEssaySubmit = (e) => {
         e.preventDefault(); // to prevent reloading the page
-        console.log(essayData);
+        setIsOutputCreated(!isOutputCreated);
+        console.log(reportData);
+    };
+
+    const handleFileName = (e) => {
+        setReportData({
+            ...reportData,
+            files: reportData.files.map((file, idx) => {
+                if (idx === e.target.key) {
+                    const [pureName, extension] = splitFileName(file.name);
+                    return { ...file, name: e.target.value + extension };
+                } else {
+                    return file;
+                }
+            }),
+        });
+    };
+
+    const handleKeyDown = (e) => {
+        console.log(e.key);
+        if (e.key === "Enter") {
+            console.log("엔터!");
+            e.preventDefault(); // 기본 Enter 키 동작을 방지
+            e.target.blur(); // 포커스를 제거
+        }
+    };
+
+    const splitFileName = (fileName) => {
+        const dotIndex = fileName.lastIndexOf(".");
+        if (dotIndex === -1) return [fileName, ""];
+        return [fileName.substring(0, dotIndex), fileName.substring(dotIndex)];
     };
 
     /*
@@ -120,7 +174,7 @@ const EssayPage = () => {
                                 }}
                             >
                                 <div className="flex flex-col gap-2.5 items-start justify-start shrink-0 w-full relative">
-                                    <div className="flex flex-row gap-2.5 items-center justify-start self-stretch shrink-0 relative">
+                                    <div className="flex flex-row gap-2.5 items-center justify-between self-stretch shrink-0 relative">
                                         <div className="px-1 text-left font-['Inter-SemiBold',_sans-serif] text-base font-semibold relative">
                                             <span>
                                                 <span>보고서 주제</span>
@@ -129,13 +183,36 @@ const EssayPage = () => {
                                                 </span>
                                             </span>{" "}
                                         </div>
+                                        <svg
+                                            className="cursor-pointer shrink-0 w-4 h-4 relative overflow-visible"
+                                            width="17"
+                                            height="17"
+                                            viewBox="0 0 17 17"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            id="topic"
+                                            onClick={resetReportData}
+                                        >
+                                            <path
+                                                fillRule="evenodd"
+                                                clipRule="evenodd"
+                                                d="M7.82 0.528976C9.20071 0.411147 10.5884 0.653982 11.847 1.23369C13.1056 1.81341 14.1921 2.71011 15 3.83598V2.24998C15 2.05106 15.079 1.8603 15.2197 1.71965C15.3603 1.57899 15.5511 1.49998 15.75 1.49998C15.9489 1.49998 16.1397 1.57899 16.2803 1.71965C16.421 1.8603 16.5 2.05106 16.5 2.24998V6.49998H12.25C12.0511 6.49998 11.8603 6.42096 11.7197 6.28031C11.579 6.13965 11.5 5.94889 11.5 5.74998C11.5 5.55106 11.579 5.3603 11.7197 5.21965C11.8603 5.07899 12.0511 4.99998 12.25 4.99998H13.977C13.2931 3.92988 12.3107 3.08356 11.1512 2.56556C9.9917 2.04757 8.70584 1.88058 7.45248 2.08524C6.19912 2.2899 5.03316 2.85723 4.09864 3.71715C3.16412 4.57708 2.50198 5.69192 2.194 6.92398C2.17128 7.02076 2.12955 7.11206 2.07123 7.19257C2.01291 7.27308 1.93917 7.34119 1.85429 7.39294C1.76942 7.4447 1.6751 7.47906 1.57682 7.49403C1.47854 7.50901 1.37827 7.5043 1.28182 7.48017C1.18538 7.45604 1.0947 7.41298 1.01505 7.3535C0.935404 7.29401 0.868375 7.21928 0.817865 7.13366C0.767355 7.04803 0.734371 6.95322 0.720832 6.85473C0.707293 6.75625 0.713469 6.65605 0.739 6.55998C1.14354 4.9424 2.0434 3.49166 3.31279 2.41052C4.58218 1.32939 6.15766 0.671906 7.819 0.529976L7.82 0.528976ZM4.42 15.381C5.49199 16.0164 6.69758 16.3925 7.94068 16.4795C9.18378 16.5665 10.43 16.3618 11.58 15.8819C12.73 15.402 13.752 14.6601 14.5646 13.7153C15.3771 12.7704 15.9577 11.6489 16.26 10.44C16.305 10.2482 16.2728 10.0464 16.1702 9.87814C16.0676 9.70993 15.903 9.58883 15.7119 9.54101C15.5207 9.4932 15.3185 9.52251 15.1488 9.62261C14.9791 9.72271 14.8556 9.88557 14.805 10.076C14.4969 11.3078 13.8347 12.4223 12.9002 13.282C11.9658 14.1417 10.8 14.7089 9.54688 14.9136C8.29373 15.1182 7.00809 14.9513 5.84871 14.4336C4.68933 13.9158 3.70699 13.0698 3.023 12H4.75C4.94891 12 5.13968 11.921 5.28033 11.7803C5.42098 11.6397 5.5 11.4489 5.5 11.25C5.5 11.0511 5.42098 10.8603 5.28033 10.7196C5.13968 10.579 4.94891 10.5 4.75 10.5H0.5V14.75C0.5 14.9489 0.579018 15.1397 0.71967 15.2803C0.860322 15.421 1.05109 15.5 1.25 15.5C1.44891 15.5 1.63968 15.421 1.78033 15.2803C1.92098 15.1397 2 14.9489 2 14.75V13.164C2.64478 14.0623 3.46879 14.8172 4.42 15.381Z"
+                                                fill="black"
+                                            />
+                                        </svg>
                                     </div>
                                     <textarea
                                         placeholder="작성할 보고서의 주제를 알려주세요."
                                         id="topic"
-                                        vlaue={essayData.topic}
-                                        onChange={handleEssayData}
-                                        className="bg-[#ffffff] rounded border-solid border-gray02-50 border self-stretch shrink-0 h-[74px] relative overflow-hidden text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                        value={reportData.topic}
+                                        readOnly={isOutputCreated}
+                                        onChange={handleReportData}
+                                        style={{
+                                            backgroundColor: isOutputCreated
+                                                ? "#f5f5f5"
+                                                : "#ffffff",
+                                        }}
+                                        className="rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-hidden text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                                     />
                                 </div>
                             </div>
@@ -157,12 +234,14 @@ const EssayPage = () => {
                                             </span>{" "}
                                         </div>
                                         <svg
-                                            className="shrink-0 w-4 h-4 relative overflow-visible"
+                                            className="cursor-pointer shrink-0 w-4 h-4 relative overflow-visible"
                                             width="17"
                                             height="17"
                                             viewBox="0 0 17 17"
                                             fill="none"
                                             xmlns="http://www.w3.org/2000/svg"
+                                            id="length"
+                                            onClick={resetReportData}
                                         >
                                             <path
                                                 fillRule="evenodd"
@@ -175,11 +254,21 @@ const EssayPage = () => {
                                     <div className="flex flex-row gap-2.5 items-center justify-start self-stretch shrink-0 relative">
                                         <input
                                             id="length"
+                                            type="number"
+                                            min="0"
+                                            max="10000"
+                                            step="500"
                                             placeholder="1500"
-                                            value={essayData.length}
-                                            onChange={handleEssayData}
+                                            value={reportData.length}
+                                            onChange={handleReportData}
                                             autoComplete="off"
-                                            className="bg-gray02-10 rounded border-solid border-gray02-50 border px-3 flex flex-row gap-1 items-end justify-start shrink-0 w-[80%] h-8 relative overflow-hidden text-gray02-70 text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal"
+                                            readOnly={isOutputCreated}
+                                            style={{
+                                                backgroundColor: isOutputCreated
+                                                    ? "#f5f5f5"
+                                                    : "#ffffff",
+                                            }}
+                                            className="rounded border-solid border-[#C2C2C2] border px-3 flex flex-row gap-1 items-end justify-start shrink-0 w-[80%] h-8 relative overflow-hidden text-gray02-70 text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal"
                                         />
                                         <div className="text-[#000000] text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal relative">
                                             자 이상{" "}
@@ -200,12 +289,14 @@ const EssayPage = () => {
                                         </div>
                                         <div className="flex flex-row gap-[11px] items-center justify-start shrink-0 relative">
                                             <svg
-                                                className="shrink-0 w-4 h-4 relative overflow-visible "
+                                                className="cursor-pointer shrink-0 w-4 h-4 relative overflow-visible "
                                                 width="17"
                                                 height="17"
                                                 viewBox="0 0 17 17"
                                                 fill="none"
                                                 xmlns="http://www.w3.org/2000/svg"
+                                                id="contents"
+                                                onClick={resetReportData}
                                             >
                                                 <path
                                                     fillRule="evenodd"
@@ -237,11 +328,14 @@ const EssayPage = () => {
                                 )}
                                 <div className="flex flex-col gap-2.5 items-start justify-start shrink-0 w-full relative">
                                     <div className="flex flex-row flex-wrap gap-[7px] items-start justify-start self-stretch shrink-0 relative">
-                                        {contents &&
-                                            Array.from(contents).map(
+                                        {reportData.contents &&
+                                            Array.from(reportData.contents).map(
                                                 (content) => (
                                                     <Tag
                                                         content={content}
+                                                        isOutputCreated={
+                                                            isOutputCreated
+                                                        }
                                                         handleContentDelete={
                                                             handleContentDelete
                                                         }
@@ -251,7 +345,9 @@ const EssayPage = () => {
                                         <button
                                             type="button"
                                             onClick={handleModal}
-                                            className="bg-white rounded-[50px] border-solid border-[#B5D0C9] border pb-[0.15rem] flex flex-row gap-1 items-center justify-center relative w-[24px] h-[24px]"
+                                            className={`${
+                                                isOutputCreated ? "hidden" : ""
+                                            } bg-white rounded-[50px] border-solid border-[#B5D0C9] border pb-[0.15rem] flex flex-row gap-1 items-center justify-center relative w-[24px] h-[24px]`}
                                         >
                                             <span>+</span>
                                         </button>
@@ -263,19 +359,21 @@ const EssayPage = () => {
                                     <div className="flex flex-row items-center justify-between self-stretch shrink-0 relative">
                                         <div className="px-1 text-[#000000] text-left font-['Inter-SemiBold',_sans-serif] text-base font-semibold relative">
                                             <span>
-                                                <span>보고서 핵심 내용</span>
+                                                <span>연구 목적 및 방법</span>
                                                 <span className="text-orange-500">
                                                     *
                                                 </span>
                                             </span>{" "}
                                         </div>
                                         <svg
-                                            className="shrink-0 w-4 h-4 relative overflow-visible"
+                                            className="cursor-pointer shrink-0 w-4 h-4 relative overflow-visible"
                                             width="16"
                                             height="17"
                                             viewBox="0 0 16 17"
                                             fill="none"
                                             xmlns="http://www.w3.org/2000/svg"
+                                            id="purposeAndMethod"
+                                            onClick={resetReportData}
                                         >
                                             <path
                                                 fillRule="evenodd"
@@ -286,13 +384,17 @@ const EssayPage = () => {
                                         </svg>
                                     </div>
                                     <textarea
-                                        id="format"
-                                        placeholder="서론, 본론, 결론, 참고문헌 등 따라야
-                                            할 에세이의 양식이 있다면
-                                            알려주세요."
-                                        value={essayData.format}
-                                        onChange={handleEssayData}
-                                        className="bg-[#ffffff] rounded border-solid border-gray02-50 border self-stretch shrink-0 h-[74px] relative overflow-hidden text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                        id="purposeAndMethod"
+                                        placeholder="진행한 실험이나 연구에 대한 핵심적인 내용을 설명해주세요."
+                                        value={reportData.purposeAndMethod}
+                                        onChange={handleReportData}
+                                        readOnly={isOutputCreated}
+                                        style={{
+                                            backgroundColor: isOutputCreated
+                                                ? "#f5f5f5"
+                                                : "#ffffff",
+                                        }}
+                                        className="rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-hidden text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                                     />
                                 </div>
                             </div>
@@ -303,12 +405,14 @@ const EssayPage = () => {
                                             결과 보고서{" "}
                                         </div>
                                         <svg
-                                            className="shrink-0 w-4 h-4 relative overflow-visible"
+                                            className="cursor-pointer shrink-0 w-4 h-4 relative overflow-visible"
                                             width="17"
                                             height="16"
                                             viewBox="0 0 17 16"
                                             fill="none"
                                             xmlns="http://www.w3.org/2000/svg"
+                                            id="files"
+                                            onClick={resetReportData}
                                         >
                                             <path
                                                 fillRule="evenodd"
@@ -323,29 +427,64 @@ const EssayPage = () => {
                                         이름을 정확히 작성해주시고 첨부해주세요.{" "}
                                     </div>
                                     <div className="px-1 text-[11px] font-semibold w-full">
-                                        {" "}
-                                        {fileNames.length > 0 && (
-                                            <ul>
-                                                {fileNames.map(
-                                                    (fileName, index) => (
-                                                        <div className="flex items-center justify-between">
-                                                            <li key={index}>
-                                                                {fileName}
-                                                            </li>
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    handleFileDelete(
-                                                                        fileName
-                                                                    );
-                                                                }}
-                                                            >
-                                                                x
-                                                            </button>
-                                                        </div>
-                                                    )
+                                        {reportData.files.length > 0 && (
+                                            <div>
+                                                {reportData.files.map(
+                                                    (file, index) => {
+                                                        const [
+                                                            pureName,
+                                                            extension,
+                                                        ] = splitFileName(
+                                                            file.name
+                                                        );
+                                                        return (
+                                                            <div>
+                                                                <div className="flex items-center justify-between ">
+                                                                    <div className="flex-grow">
+                                                                        <span
+                                                                            contentEditable="true"
+                                                                            className="editable flex-grow"
+                                                                            onInput={
+                                                                                handleFileName
+                                                                            }
+                                                                            onKeyDown={
+                                                                                handleKeyDown
+                                                                            }
+                                                                            key={
+                                                                                index
+                                                                            }
+                                                                        >
+                                                                            {
+                                                                                pureName
+                                                                            }
+                                                                        </span>
+                                                                        <span>
+                                                                            {
+                                                                                extension
+                                                                            }
+                                                                        </span>
+                                                                    </div>
+                                                                    <button
+                                                                        type="button"
+                                                                        className="text-center"
+                                                                        onClick={() => {
+                                                                            handleFileDelete(
+                                                                                index
+                                                                            );
+                                                                        }}
+                                                                    >
+                                                                        x
+                                                                    </button>
+                                                                </div>
+                                                                <textarea
+                                                                    placeholder="파일에 대한 설명을 입력해 주세요."
+                                                                    className="border w-full"
+                                                                />
+                                                            </div>
+                                                        );
+                                                    }
                                                 )}
-                                            </ul>
+                                            </div>
                                         )}
                                     </div>
                                 </div>
@@ -359,7 +498,12 @@ const EssayPage = () => {
                                 <button
                                     type="button"
                                     onClick={handleUpload}
-                                    className="bg-[#F7F5FF] self-stretch border border-[#694df9] text-[#694DF9] rounded-[4px]"
+                                    disabled={isOutputCreated}
+                                    className={`${
+                                        isOutputCreated
+                                            ? "bg-[#F5F5F5] border-[#c5c5c5] text-[#9e9e9e]"
+                                            : "bg-[#F7F5FF] border-[#694df9] text-[#694DF9]"
+                                    } self-stretch border border-[#694df9] text-[#694DF9] rounded-[4px]`}
                                 >
                                     파일 업로드
                                 </button>
@@ -386,12 +530,14 @@ const EssayPage = () => {
                                             </svg>
                                         </div>
                                         <svg
-                                            className="shrink-0 w-4 h-4 relative overflow-visible"
+                                            className="cursor-pointer shrink-0 w-4 h-4 relative overflow-visible"
                                             width="17"
                                             height="16"
                                             viewBox="0 0 17 16"
                                             fill="none"
                                             xmlns="http://www.w3.org/2000/svg"
+                                            id="requirement"
+                                            onClick={resetReportData}
                                         >
                                             <path
                                                 fillRule="evenodd"
@@ -412,9 +558,15 @@ const EssayPage = () => {
                                     id="requirement"
                                     placeholder="ex) 서론 부분을 독자들의 흥미를 이끄는
                                     내용으로 시작할 수 있게 해줘"
-                                    value={essayData.requirement}
-                                    onChange={handleEssayData}
-                                    className="bg-[#ffffff] rounded border-solid border-gray02-50 border self-stretch shrink-0 h-[74px] relative overflow-hidden text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                    value={reportData.requirement}
+                                    onChange={handleReportData}
+                                    readOnly={isOutputCreated}
+                                    style={{
+                                        backgroundColor: isOutputCreated
+                                            ? "#f5f5f5"
+                                            : "#ffffff",
+                                    }}
+                                    className="rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-hidden text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                                 />
                             </div>
                         </div>

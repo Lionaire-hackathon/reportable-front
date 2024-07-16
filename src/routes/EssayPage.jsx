@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import Header from "../components/common/Header";
 import useMe from "../apis/hook/useMe";
 import { useNavigate } from "react-router-dom";
+import dummyQuestions from "../data/dummyQuestions";
+import Questionbox from "../components/common/Questionbox";
 
 const EssayPage = () => {
     const { me, isLoadingMe } = useMe();
@@ -12,6 +14,10 @@ const EssayPage = () => {
         format: "",
         requirement: "",
     });
+    const [hasAdditionalQuestions, setHasAdditionalQuestions] = useState(false);
+    const [additionalQuestions, setAdditionalQuestions] =
+        useState(dummyQuestions);
+    const [isOutputCreated, setIsOutputCreated] = useState(false);
 
     const handleEssayData = (e) => {
         const { id, value } = e.target;
@@ -21,11 +27,22 @@ const EssayPage = () => {
         });
     };
 
+    const resetEssayData = (e) => {
+        const { id } = e.target;
+        setEssayData({
+            ...essayData,
+            [id]: "",
+        });
+    };
+
     const handleEssaySubmit = (e) => {
         e.preventDefault(); // to prevent reloading the page
+        setHasAdditionalQuestions(true);
+        setIsOutputCreated(!isOutputCreated);
         console.log(essayData);
     };
 
+    /*
     useEffect(() => {
         if (!me) {
             alert("로그인이 필요합니다.");
@@ -33,11 +50,63 @@ const EssayPage = () => {
             navigate("/signin");
         }
     }, [me]);
+    */
 
     return (
         <>
             <Header className="relative" />
-            <div className="flex flex-row items-center justify-between relative h-[950px] w-[100%]">
+            {hasAdditionalQuestions && (
+                <div
+                    className="fixed top-0 bottom-0 left-0 right-0 bg-[rgba(217,217,217,0.20)] z-40 flex items-center justify-center"
+                    style={{ backdropFilter: "blur(5px)" }}
+                >
+                    <div className="bg-[#ffffff] rounded-[10px] border-solid border-[#a0a0a0] border px-4 py-6 flex flex-col gap-[25px] items-center justify-center relative w-[500px]">
+                        <div className="px-1 text-left text-xl font-semibold relative">
+                            <span>
+                                <span className="div-span">추가질문</span>
+                                <span className="div-span2  text-orange-500">
+                                    *
+                                </span>
+                            </span>{" "}
+                        </div>
+                        <div className="flex flex-col gap-5 items-start justify-start shrink-0 w-full relative">
+                            {additionalQuestions.map((question) => (
+                                <Questionbox question={question} />
+                            ))}
+                        </div>
+                        <button
+                            className="bg-[#299792] rounded-[10px] flex flex-row items-center justify-center w-full h-[60px] relative shrink-0"
+                            style={{
+                                boxShadow:
+                                    "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                            }}
+                            onClick={() => {
+                                setHasAdditionalQuestions(false);
+                            }}
+                        >
+                            <div className="flex flex-row gap-1.5 items-center justify-center shrink-0 relative">
+                                <div className="text-white text-center relative">
+                                    CREATE{" "}
+                                </div>
+                                <svg
+                                    className="shrink-0 w-5 h-5 relative overflow-visible "
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 20 20"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M7.39799 12.809C7.57421 12.9334 7.78476 13 8.00047 12.9994C8.21619 12.9989 8.4264 12.9313 8.60199 12.806C8.77999 12.676 8.91499 12.496 8.98899 12.288L9.43599 10.915C9.5507 10.5709 9.74385 10.2581 10.0002 10.0014C10.2565 9.74474 10.569 9.55117 10.913 9.436L12.304 8.986C12.5097 8.91154 12.6868 8.77443 12.8104 8.59399C12.934 8.41354 12.9978 8.19887 12.993 7.9802C12.9881 7.76153 12.9148 7.5499 12.7833 7.37513C12.6518 7.20036 12.4688 7.07125 12.26 7.006L10.885 6.558C10.5407 6.44343 10.2277 6.25034 9.97085 5.994C9.71399 5.73766 9.52027 5.42509 9.40499 5.081L8.95299 3.693C8.88021 3.48851 8.7455 3.31179 8.56761 3.18743C8.38972 3.06307 8.17749 2.99724 7.96044 2.99911C7.7434 3.00098 7.53233 3.07045 7.35661 3.19787C7.18088 3.32528 7.04924 3.50429 6.97999 3.71L6.52299 5.11C6.40827 5.44486 6.21907 5.74934 5.96965 6.0005C5.72022 6.25166 5.41706 6.44296 5.08299 6.56L3.69299 7.007C3.48859 7.07994 3.31197 7.2147 3.18764 7.39259C3.06332 7.57048 2.99747 7.78267 2.99923 7.99969C3.00098 8.21671 3.07027 8.4278 3.19746 8.60365C3.32465 8.7795 3.50343 8.91138 3.70899 8.981L5.08299 9.426C5.42907 9.54084 5.74336 9.73531 6.00058 9.99375C6.25781 10.2522 6.45078 10.5674 6.56399 10.914L7.01599 12.305C7.08799 12.509 7.22199 12.685 7.39799 12.809ZM7.48299 5.394L8.00999 4.017L8.44999 5.394C8.61352 5.88708 8.89013 6.33506 9.25772 6.70213C9.62531 7.0692 10.0737 7.34518 10.567 7.508L11.973 8.038L10.591 8.485C10.0981 8.64909 9.65029 8.92588 9.28314 9.29338C8.91599 9.66088 8.63962 10.109 8.47599 10.602L7.95299 11.98L7.50399 10.601C7.34264 10.1081 7.06874 9.65964 6.70399 9.291C6.33467 8.92337 5.88578 8.64555 5.39199 8.479L4.01399 7.957L5.39999 7.507C5.88662 7.33844 6.32798 7.06028 6.68999 6.694C7.04922 6.32619 7.32035 5.88171 7.48299 5.394ZM13.535 16.851C13.6373 16.9229 13.7549 16.97 13.8786 16.9887C14.0022 17.0073 14.1285 16.9969 14.2474 16.9583C14.3663 16.9196 14.4747 16.8539 14.5638 16.7662C14.6529 16.6785 14.7204 16.5713 14.761 16.453L15.009 15.691C15.0627 15.5331 15.1516 15.3895 15.269 15.271C15.387 15.151 15.531 15.063 15.689 15.011L16.461 14.759C16.6203 14.704 16.7582 14.6001 16.8549 14.4622C16.9517 14.3242 17.0024 14.1592 16.9999 13.9907C16.9973 13.8222 16.9416 13.6588 16.8407 13.5238C16.7398 13.3888 16.5989 13.2891 16.438 13.239L15.674 12.989C15.516 12.9361 15.3725 12.8473 15.2545 12.7297C15.1365 12.6121 15.0474 12.4688 14.994 12.311L14.742 11.538C14.6879 11.379 14.5851 11.2411 14.4482 11.1438C14.3114 11.0465 14.1473 10.9947 13.9794 10.9958C13.8114 10.9969 13.6481 11.0508 13.5125 11.1499C13.377 11.249 13.276 11.3883 13.224 11.548L12.977 12.31C12.926 12.4668 12.8394 12.6096 12.724 12.7274C12.6087 12.8452 12.4677 12.9347 12.312 12.989L11.539 13.241C11.3799 13.2949 11.2419 13.3975 11.1444 13.5342C11.0469 13.671 10.9949 13.8349 10.9958 14.0029C10.9967 14.1708 11.0504 14.3342 11.1493 14.4699C11.2483 14.6056 11.3874 14.7068 11.547 14.759L12.31 15.006C12.47 15.06 12.614 15.149 12.732 15.267C12.851 15.386 12.939 15.53 12.99 15.689L13.243 16.463C13.2978 16.6195 13.3998 16.755 13.535 16.851ZM12.622 14.058L12.443 14L12.627 13.936C12.9295 13.8297 13.2038 13.6558 13.4291 13.4276C13.6543 13.1994 13.8246 12.9229 13.927 12.619L13.985 12.441L14.045 12.622C14.1471 12.9285 14.3192 13.207 14.5476 13.4354C14.776 13.6638 15.0545 13.8359 15.361 13.938L15.556 14.001L15.376 14.061C15.0689 14.1634 14.7899 14.336 14.5613 14.5652C14.3327 14.7943 14.1607 15.0737 14.059 15.381L14 15.562L13.942 15.382C13.8404 15.0738 13.6682 14.7936 13.4389 14.5639C13.2097 14.3342 12.93 14.1613 12.622 14.059"
+                                        fill="white"
+                                    />
+                                </svg>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            )}
+            <div className="flex flex-row items-center justify-between relative h-[950px] w-[100%] ">
                 <form
                     className="flex flex-col gap-2.5 items-center justify-center shrink-0 w-[313px] h-full relative"
                     style={{
@@ -56,7 +125,7 @@ const EssayPage = () => {
                                 }}
                             >
                                 <div className="flex flex-col gap-2.5 items-start justify-start shrink-0 w-[98.5%] relative">
-                                    <div className="flex flex-row items-center justify-start self-stretch shrink-0 relative w-full">
+                                    <div className="flex flex-row items-center justify-between self-stretch shrink-0 relative w-full">
                                         <div className="px-1 text-left font-['Inter-SemiBold',_sans-serif] text-base font-semibold relative">
                                             <span>
                                                 <span className="div-span">
@@ -67,13 +136,36 @@ const EssayPage = () => {
                                                 </span>
                                             </span>{" "}
                                         </div>
+                                        <svg
+                                            className="cursor-pointer shrink-0 w-4 h-4 relative overflow-visible"
+                                            width="17"
+                                            height="17"
+                                            viewBox="0 0 17 17"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            id="topic"
+                                            onClick={resetEssayData}
+                                        >
+                                            <path
+                                                fillRule="evenodd"
+                                                clipRule="evenodd"
+                                                d="M7.82 0.528976C9.20071 0.411147 10.5884 0.653982 11.847 1.23369C13.1056 1.81341 14.1921 2.71011 15 3.83598V2.24998C15 2.05106 15.079 1.8603 15.2197 1.71965C15.3603 1.57899 15.5511 1.49998 15.75 1.49998C15.9489 1.49998 16.1397 1.57899 16.2803 1.71965C16.421 1.8603 16.5 2.05106 16.5 2.24998V6.49998H12.25C12.0511 6.49998 11.8603 6.42096 11.7197 6.28031C11.579 6.13965 11.5 5.94889 11.5 5.74998C11.5 5.55106 11.579 5.3603 11.7197 5.21965C11.8603 5.07899 12.0511 4.99998 12.25 4.99998H13.977C13.2931 3.92988 12.3107 3.08356 11.1512 2.56556C9.9917 2.04757 8.70584 1.88058 7.45248 2.08524C6.19912 2.2899 5.03316 2.85723 4.09864 3.71715C3.16412 4.57708 2.50198 5.69192 2.194 6.92398C2.17128 7.02076 2.12955 7.11206 2.07123 7.19257C2.01291 7.27308 1.93917 7.34119 1.85429 7.39294C1.76942 7.4447 1.6751 7.47906 1.57682 7.49403C1.47854 7.50901 1.37827 7.5043 1.28182 7.48017C1.18538 7.45604 1.0947 7.41298 1.01505 7.3535C0.935404 7.29401 0.868375 7.21928 0.817865 7.13366C0.767355 7.04803 0.734371 6.95322 0.720832 6.85473C0.707293 6.75625 0.713469 6.65605 0.739 6.55998C1.14354 4.9424 2.0434 3.49166 3.31279 2.41052C4.58218 1.32939 6.15766 0.671906 7.819 0.529976L7.82 0.528976ZM4.42 15.381C5.49199 16.0164 6.69758 16.3925 7.94068 16.4795C9.18378 16.5665 10.43 16.3618 11.58 15.8819C12.73 15.402 13.752 14.6601 14.5646 13.7153C15.3771 12.7704 15.9577 11.6489 16.26 10.44C16.305 10.2482 16.2728 10.0464 16.1702 9.87814C16.0676 9.70993 15.903 9.58883 15.7119 9.54101C15.5207 9.4932 15.3185 9.52251 15.1488 9.62261C14.9791 9.72271 14.8556 9.88557 14.805 10.076C14.4969 11.3078 13.8347 12.4223 12.9002 13.282C11.9658 14.1417 10.8 14.7089 9.54688 14.9136C8.29373 15.1182 7.00809 14.9513 5.84871 14.4336C4.68933 13.9158 3.70699 13.0698 3.023 12H4.75C4.94891 12 5.13968 11.921 5.28033 11.7803C5.42098 11.6397 5.5 11.4489 5.5 11.25C5.5 11.0511 5.42098 10.8603 5.28033 10.7196C5.13968 10.579 4.94891 10.5 4.75 10.5H0.5V14.75C0.5 14.9489 0.579018 15.1397 0.71967 15.2803C0.860322 15.421 1.05109 15.5 1.25 15.5C1.44891 15.5 1.63968 15.421 1.78033 15.2803C1.92098 15.1397 2 14.9489 2 14.75V13.164C2.64478 14.0623 3.46879 14.8172 4.42 15.381Z"
+                                                fill="black"
+                                            />
+                                        </svg>
                                     </div>
                                     <textarea
                                         placeholder="작성할 에세이의 주제를 알려주세요."
                                         id="topic"
-                                        vlaue={essayData.topic}
+                                        value={essayData.topic}
                                         onChange={handleEssayData}
-                                        className="bg-[#ffffff] rounded border-solid border-gray02-50 border self-stretch shrink-0 h-[74px] relative overflow-hidden text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                        readOnly={isOutputCreated}
+                                        style={{
+                                            backgroundColor: isOutputCreated
+                                                ? "#f5f5f5"
+                                                : "#ffffff",
+                                        }}
+                                        className="rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-hidden text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                                     />
                                 </div>
                             </div>
@@ -97,12 +189,14 @@ const EssayPage = () => {
                                             </span>{" "}
                                         </div>
                                         <svg
-                                            className="shrink-0 w-4 h-4 relative overflow-visible"
+                                            className="cursor-pointer shrink-0 w-4 h-4 relative overflow-visible"
                                             width="17"
                                             height="17"
                                             viewBox="0 0 17 17"
                                             fill="none"
                                             xmlns="http://www.w3.org/2000/svg"
+                                            id="length"
+                                            onClick={resetEssayData}
                                         >
                                             <path
                                                 fillRule="evenodd"
@@ -115,11 +209,21 @@ const EssayPage = () => {
                                     <div className="flex flex-row gap-2.5 items-center justify-start self-stretch shrink-0 relative">
                                         <input
                                             id="length"
+                                            type="number"
+                                            min="0"
+                                            max="10000"
+                                            step="500"
                                             placeholder="1500"
                                             value={essayData.length}
                                             onChange={handleEssayData}
+                                            readOnly={isOutputCreated}
                                             autoComplete="off"
-                                            className="bg-gray02-10 rounded border-solid border-gray02-50 border px-3 flex flex-row gap-1 items-end justify-start shrink-0 w-[80%] h-8 relative overflow-hidden text-gray02-70 text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal"
+                                            style={{
+                                                backgroundColor: isOutputCreated
+                                                    ? "#f5f5f5"
+                                                    : "#ffffff",
+                                            }}
+                                            className="rounded border-solid border-[#C2C2C2] border px-3 flex flex-row gap-1 items-end justify-start shrink-0 w-[80%] h-8 relative overflow-hidden text-gray02-70 text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal"
                                         />
                                         <div className="text-[#000000] text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal relative">
                                             자 이상{" "}
@@ -134,12 +238,14 @@ const EssayPage = () => {
                                             양식{" "}
                                         </span>
                                         <svg
-                                            className="shrink-0 w-4 h-4 relative overflow-visible"
+                                            className="cursor-pointer shrink-0 w-4 h-4 relative overflow-visible"
                                             width="16"
                                             height="17"
                                             viewBox="0 0 16 17"
                                             fill="none"
                                             xmlns="http://www.w3.org/2000/svg"
+                                            id="format"
+                                            onClick={resetEssayData}
                                         >
                                             <path
                                                 fillRule="evenodd"
@@ -156,7 +262,13 @@ const EssayPage = () => {
                                             알려주세요."
                                         value={essayData.format}
                                         onChange={handleEssayData}
-                                        className="bg-[#ffffff] rounded border-solid border-gray02-50 border self-stretch shrink-0 h-[74px] relative overflow-hidden text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                        readOnly={isOutputCreated}
+                                        style={{
+                                            backgroundColor: isOutputCreated
+                                                ? "#f5f5f5"
+                                                : "#ffffff",
+                                        }}
+                                        className="ounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-hidden text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                                     />
                                 </div>
                             </div>
@@ -182,12 +294,14 @@ const EssayPage = () => {
                                             </svg>
                                         </div>
                                         <svg
-                                            className="shrink-0 w-4 h-4 relative overflow-visible"
+                                            className="cursor-pointer shrink-0 w-4 h-4 relative overflow-visible"
                                             width="17"
                                             height="16"
                                             viewBox="0 0 17 16"
                                             fill="none"
                                             xmlns="http://www.w3.org/2000/svg"
+                                            id="requirement"
+                                            onClick={resetEssayData}
                                         >
                                             <path
                                                 fillRule="evenodd"
@@ -209,8 +323,14 @@ const EssayPage = () => {
                                     placeholder="ex) 서론 부분을 독자들의 흥미를 이끄는
                                     내용으로 시작할 수 있게 해줘"
                                     value={essayData.requirement}
+                                    readOnly={isOutputCreated}
                                     onChange={handleEssayData}
-                                    className="bg-[#ffffff] rounded border-solid border-gray02-50 border self-stretch shrink-0 h-[74px] relative overflow-hidden text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                    style={{
+                                        backgroundColor: isOutputCreated
+                                            ? "#f5f5f5"
+                                            : "#ffffff",
+                                    }}
+                                    className="rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-hidden text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                                 />
                             </div>
                         </div>
