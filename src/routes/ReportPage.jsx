@@ -3,6 +3,16 @@ import Header from "../components/common/Header";
 import useMe from "../apis/hook/useMe";
 import { useNavigate } from "react-router-dom";
 import Tag from "../components/common/Tag";
+import AWS from "aws-sdk";
+
+// AWS 자격 증명을 환경 변수로부터 설정합니다.
+AWS.config.update({
+    accessKeyId: process.env.REACT_APP_ACCESS_KEY_ID,
+    secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY,
+    region: process.env.REACT_APP_REGION,
+});
+
+const s3 = new AWS.S3();
 
 const EssayPage = () => {
     const { me, isLoadingMe } = useMe();
@@ -107,9 +117,10 @@ const EssayPage = () => {
         }
     };
 
-    const handleEssaySubmit = (e) => {
+    const handleReportSubmit = (e) => {
         e.preventDefault(); // to prevent reloading the page
         setIsOutputCreated(!isOutputCreated);
+        reportData.files.map((file) => uploadedFile(file));
         console.log(reportData);
     };
 
@@ -142,6 +153,24 @@ const EssayPage = () => {
         return [fileName.substring(0, dotIndex), fileName.substring(dotIndex)];
     };
 
+    const uploadedFile = (file) => {
+        const params = {
+            ACL: "public-read",
+            Bucket: process.env.REACT_APP_BUCKET_NAME,
+            Key: "upload/" + file.name,
+            Body: file,
+            ContentType: file.type,
+        };
+
+        s3.upload(params, (err, data) => {
+            if (err) {
+                console.error("파일 업로드 실패: ", err);
+            } else {
+                console.log("파일 업로드 성공: ", data);
+                console.log(data.Location); // 저장된 url
+            }
+        });
+    };
     /*
     useEffect(() => {
         if (!me) {
@@ -162,7 +191,7 @@ const EssayPage = () => {
                         background:
                             "linear-gradient(to left, #cae5e4, #cae5e4)",
                     }}
-                    onSubmit={handleEssaySubmit}
+                    onSubmit={handleReportSubmit}
                 >
                     <div className="flex flex-col items-center justify-center shrink-0 w-[289px] top-4 pt-[64px] relative h-[800px] overflow-scroll">
                         <div className="flex flex-col gap-[11px] items-start justify-start shrink-0 relative ">
@@ -453,11 +482,10 @@ const EssayPage = () => {
                                                                             key={
                                                                                 index
                                                                             }
-                                                                        >
-                                                                            {
-                                                                                pureName
-                                                                            }
-                                                                        </span>
+                                                                            dangerouslySetInnerHTML={{
+                                                                                __html: pureName,
+                                                                            }}
+                                                                        ></span>
                                                                         <span>
                                                                             {
                                                                                 extension

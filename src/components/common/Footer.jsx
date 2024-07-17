@@ -92,7 +92,7 @@ const Footer = () => {
                                     만든 사람들{" "}
                                 </div>
                                 <div
-                                    class="cursor-pointer w-full h-[43px] relative"
+                                    className="cursor-pointer w-full h-[43px] relative"
                                     onClick={() => {
                                         window.location.href =
                                             "https://www.snulion.com/";
