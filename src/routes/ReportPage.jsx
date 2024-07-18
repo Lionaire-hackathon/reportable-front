@@ -4,6 +4,7 @@ import useMe from "../apis/hook/useMe";
 import { useNavigate } from "react-router-dom";
 import Tag from "../components/common/Tag";
 import AWS from "aws-sdk";
+import { documentApi } from "../apis/document";
 
 // AWS 자격 증명을 환경 변수로부터 설정합니다.
 AWS.config.update({
@@ -14,7 +15,7 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
-const EssayPage = () => {
+const ReportPage = () => {
     const { me, isLoadingMe } = useMe();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newContent, setNewContent] = useState("");
@@ -22,7 +23,7 @@ const EssayPage = () => {
     const navigate = useNavigate();
     const [reportData, setReportData] = useState({
         topic: "",
-        length: "",
+        length: 1000,
         contents: new Set([
             "초록",
             "연구 목적",
@@ -117,10 +118,40 @@ const EssayPage = () => {
         }
     };
 
-    const handleReportSubmit = (e) => {
-        e.preventDefault(); // to prevent reloading the page
+    const handleReportSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            // document api 호출
+            const reportSubmitData = {
+                title: reportData.topic,
+                amount: reportData.length,
+                type: "research",
+                prompt: reportData.requirement,
+                form: "",
+                elements: Array.from(reportData.contents).join(", "),
+                core: reportData.purposeAndMethod,
+            };
+            const documentResponse = await documentApi(reportSubmitData);
+            console.log("제출 완료");
+            console.log(documentResponse.data.id);
+
+            // file을 s3에 업로드
+            const fileUrls = [];
+            for (const file of reportData.files) {
+                const fileUrl = uploadedFile(file);
+                fileUrls.push(fileUrl);
+            }
+
+            // file api 호출
+            const fileResponse = [];
+        } catch (error) {
+            console.error("문서 생성 오류:", error);
+            const errorMessage =
+                error.response?.data?.message ||
+                "An unexpected error occurred. Please try again.";
+            alert(`${errorMessage} 문서 생성에 실패했습니다.`);
+        }
         setIsOutputCreated(!isOutputCreated);
-        reportData.files.map((file) => uploadedFile(file));
         console.log(reportData);
     };
 
@@ -157,7 +188,7 @@ const EssayPage = () => {
         const params = {
             ACL: "public-read",
             Bucket: process.env.REACT_APP_BUCKET_NAME,
-            Key: "upload/" + file.name,
+            Key: "input/" + file.name,
             Body: file,
             ContentType: file.type,
         };
@@ -165,13 +196,14 @@ const EssayPage = () => {
         s3.upload(params, (err, data) => {
             if (err) {
                 console.error("파일 업로드 실패: ", err);
+                return null;
             } else {
                 console.log("파일 업로드 성공: ", data);
-                console.log(data.Location); // 저장된 url
+                return data.Location;
             }
         });
     };
-    /*
+
     useEffect(() => {
         if (!me) {
             alert("로그인이 필요합니다.");
@@ -179,7 +211,6 @@ const EssayPage = () => {
             navigate("/signin");
         }
     }, [me]);
-    */
 
     return (
         <>
@@ -634,4 +665,4 @@ const EssayPage = () => {
     );
 };
 
-export default EssayPage;
+export default ReportPage;

@@ -4,13 +4,14 @@ import useMe from "../apis/hook/useMe";
 import { useNavigate } from "react-router-dom";
 import dummyQuestions from "../data/dummyQuestions";
 import Questionbox from "../components/common/Questionbox";
+import { documentApi } from "../apis/document";
 
 const EssayPage = () => {
     const { me, isLoadingMe } = useMe();
     const navigate = useNavigate();
     const [essayData, setEssayData] = useState({
         topic: "",
-        length: "",
+        length: 1000,
         format: "",
         requirement: "",
     });
@@ -35,14 +36,33 @@ const EssayPage = () => {
         });
     };
 
-    const handleEssaySubmit = (e) => {
-        e.preventDefault(); // to prevent reloading the page
+    const handleEssaySubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const essaySubmitData = {
+                title: essayData.topic,
+                amount: essayData.length,
+                type: "essay",
+                prompt: essayData.requirement,
+                form: essayData.format,
+                elements: "",
+                core: "",
+            };
+            const result = await documentApi(essaySubmitData);
+            console.log("제출 완료");
+            console.log(result.data.id);
+        } catch (error) {
+            console.error("문서 생성 오류:", error);
+            const errorMessage =
+                error.response?.data?.message ||
+                "An unexpected error occurred. Please try again.";
+            alert(`${errorMessage} 문서 생성에 실패했습니다.`);
+        }
         setHasAdditionalQuestions(true);
         setIsOutputCreated(!isOutputCreated);
         console.log(essayData);
     };
 
-    /*
     useEffect(() => {
         if (!me) {
             alert("로그인이 필요합니다.");
@@ -50,7 +70,6 @@ const EssayPage = () => {
             navigate("/signin");
         }
     }, [me]);
-    */
 
     return (
         <>
