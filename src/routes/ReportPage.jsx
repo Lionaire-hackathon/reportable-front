@@ -302,7 +302,7 @@ const ReportPage = () => {
                                                 ? "#f5f5f5"
                                                 : "#ffffff",
                                         }}
-                                        className="rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-hidden text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                        className="rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                                     />
                                 </div>
                             </div>
@@ -484,7 +484,7 @@ const ReportPage = () => {
                                                 ? "#f5f5f5"
                                                 : "#ffffff",
                                         }}
-                                        className="rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-hidden text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                        className="rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                                     />
                                 </div>
                             </div>
@@ -576,7 +576,7 @@ const ReportPage = () => {
                                                                 </div>
                                                                 <textarea
                                                                     placeholder="파일에 대한 설명을 입력해 주세요."
-                                                                    className="border w-full"
+                                                                    className="overflow-auto border w-full"
                                                                     readOnly={
                                                                         isOutputCreated
                                                                     }
@@ -687,7 +687,7 @@ const ReportPage = () => {
                                             ? "#f5f5f5"
                                             : "#ffffff",
                                     }}
-                                    className="rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-hidden text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                    className="rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                                 />
                             </div>
                         </div>

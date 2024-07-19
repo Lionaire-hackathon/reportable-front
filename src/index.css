@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.multiline-truncate {
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* 보여줄 줄 수 */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .button {
     @apply flex p-[10px_24px] justify-center items-center gap-[10px] rounded-[22px] font-sans text-[16px] font-bold leading-normal;
 }
