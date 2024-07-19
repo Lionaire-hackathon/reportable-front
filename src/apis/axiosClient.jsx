@@ -4,6 +4,10 @@ import { getNewAccessToken, getRefreshTokenFromCookie } from "./user";
 
 const baseURL = "http://localhost:8080";
 
+axios.defaults.withCredentials = true;
+axios.defaults.headers.common['x-mn-api-version'] = 'v1';
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
 if (!baseURL) {
     throw new Error("BASE_URL IS MISSING");
 }
@@ -29,20 +33,22 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
     (response) => response,
     async (error) => {
-        const {
-            config,
-            response: { status },
-        } = error;
+        const { config, response: { status } } = error;
         if (status === 403 || status === 401) {
             const originalRequest = config;
-            const getRefreshTokenRes = await getRefreshTokenFromCookie();
-            const refreshToken = getRefreshTokenRes.data.refreshToken;
-            if (!refreshToken) return Promise.reject(error);
-            await getNewAccessToken(refreshToken);
-            const token = Cookies.get("accessToken");
-            originalRequest.headers["Authorization"] = `Bearer ${token}`;
-            console.log("refreshed token");
-            return axios(originalRequest);
+            try {
+                const getRefreshTokenRes = await getRefreshTokenFromCookie();
+                const refreshToken = getRefreshTokenRes.data.refreshToken;
+                if (!refreshToken) return Promise.reject(error);
+                await getNewAccessToken(refreshToken);
+                const token = Cookies.get("accessToken");
+                console.log('accessToken', token);
+                originalRequest.headers["Authorization"] = `Bearer ${token}`;
+                console.log("refreshed token");
+                return axios(originalRequest);
+            } catch (err) {
+                return Promise.reject(err);
+            }
         }
         return Promise.reject(error);
     }

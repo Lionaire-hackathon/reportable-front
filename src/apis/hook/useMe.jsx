@@ -7,7 +7,7 @@ const useMe = (options = {}) => {
     const hasAccessToken = Cookies.get('accessToken'); 
     if (!hasAccessToken) return null;
     const response = await axiosClient.get('/auth/verify');
-    return response.data;
+    return response;
   };
 
   const { data: me, mutate: mutateMe, isValidating: isLoadingMe } = useSWR('/auth/verify', fetcher, {
@@ -23,7 +23,7 @@ const useMe = (options = {}) => {
   const resetMeData = () => {
     mutate('/auth/verify', null, false);
   };
-
+  
   return {
     me,
     mutateMe,
