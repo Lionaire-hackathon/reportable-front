@@ -1,10 +1,10 @@
 import useSWR, { mutate } from 'swr';
-import { getCookie } from 'cookies-next';
+import Cookies from 'js-cookie'; // Import js-cookie
 import axiosClient from '../axiosClient';
 
 const useMe = (options = {}) => {
   const fetcher = async () => {
-    const hasAccessToken = getCookie('accessToken');
+    const hasAccessToken = Cookies.get('accessToken'); 
     if (!hasAccessToken) return null;
     const response = await axiosClient.get('/auth/verify');
     return response.data;
@@ -20,7 +20,7 @@ const useMe = (options = {}) => {
     refreshInterval: 0,
   });
 
-  const resetMedata = () => {
+  const resetMeData = () => {
     mutate('/auth/verify', null, false);
   };
 
@@ -28,7 +28,7 @@ const useMe = (options = {}) => {
     me,
     mutateMe,
     isLoadingMe,
-    resetMedata,
+    resetMeData, // Fixed the typo in function name
   };
 };
 
