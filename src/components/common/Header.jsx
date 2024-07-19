@@ -29,7 +29,7 @@ const Header = ({ className }) => {
     return (
         <div
             className={
-                "z-50 bg-white border-solid border-[#dddddd] border-b top-0 pt-3.5 pr-[18px] pb-3.5 pl-[18px] flex flex-row gap-2.5 items-center justify-between h-[104px] w-full overflow-hidden " +
+                "z-30 bg-white border-solid border-[#dddddd] border-b top-0 pt-3.5 pr-[18px] pb-3.5 pl-[18px] flex flex-row gap-2.5 items-center justify-between h-[104px] w-full " +
                 (className ? className : "")
             }
         >

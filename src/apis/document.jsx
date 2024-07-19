@@ -8,4 +8,14 @@ axios.defaults.baseURL = SERVER_API_URL;
 export const documentApi = async (documentDto) =>
     axiosClient.post("/document", documentDto);
 
-export const fileApi = async (fileDto) => axiosClient.post("/file", fileDto);
+export const askAdditionalQuestion = async (documentId) =>
+    axiosClient.post(`/document/first-prompt/${documentId}`);
+
+export const answerAdditionalQuestion = async (documentIdAndAddingPrompt) =>
+    axiosClient.put("/document/edit-prompt", documentIdAndAddingPrompt);
+
+export const createReport = async (documentId) =>
+    axiosClient.put(`/document/content/${documentId}`);
+
+export const getCreatedReport = async (documentId) =>
+    axiosClient.get(`/document/text/${documentId}`);
