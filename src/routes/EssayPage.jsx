@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import dummyQuestions from "../data/dummyQuestions";
 import Questionbox from "../components/common/Questionbox";
 import { documentApi } from "../apis/document";
-import JSZip from "jszip";
 import WordDocumentViewer from "../components/html/WordDocumentViewer";
 import ResetIcon from "../components/atom/ResetIcon";
 import CreateIcon from "../components/atom/CreateIcon";
@@ -56,55 +55,6 @@ const EssayPage = () => {
       const result = await documentApi(essaySubmitData);
       console.log("제출 완료");
       console.log(result.data.id);
-
-      // S3 URL from the result
-      const s3Url =
-        "https://reportable-file-bucket.s3.ap-northeast-2.amazonaws.com/documents/1997%EB%85%84%EC%9D%98+%EB%8F%99%EC%95%84%EC%8B%9C%EC%95%84+%EC%99%B8%ED%99%98%EC%9C%84%EA%B8%B0%EC%99%80+2007~2008%EB%85%84%EC%97%90+%EB%B0%9C%EC%83%9D%ED%95%9C+%EA%B8%80%EB%A1%9C%EB%B2%8C+%EA%B8%88%EC%9C%B5%EC%9C%84%EA%B8%B0%EC%9D%98+%EC%9B%90%EC%9D%B8+%EB%B0%8F+%EB%8B%B9%EC%8B%9C+%EC%99%B8%ED%99%98%EC%8B%9C%EC%9E%A5%EA%B3%BC+%EA%B8%88%EC%9C%B5%EC%8B%9C%EC%9E%A5+%EB%93%B1%EC%9D%84+%EC%A1%B0%EC%82%AC%ED%95%98%EC%97%AC+%EA%B8%B0%EC%88%A0%ED%95%98%EC%8B%9C%EC%98%A4.-529c087b-bfe8-4572-8001-fc46c5e043bf.docx";
-
-      // Fetch the Word file from S3 URL
-      const response = await fetch(s3Url);
-      const arrayBuffer = await response.arrayBuffer();
-      console.log("파일 가져오기 완료");
-
-      // Use JSZip to unzip the docx file
-      const zip = await JSZip.loadAsync(arrayBuffer);
-      const documentContent = await zip.file("word/document.xml").async("text");
-      
-      // Parse the document.xml and convert it to HTML
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(documentContent, "application/xml");
-      const paragraphs = xmlDoc.getElementsByTagName("w:p");
-      const htmlArray = Array.from(paragraphs).map(p => {
-        const texts = p.getElementsByTagName("w:t");
-        return `<p>${Array.from(texts).map(t => t.textContent).join("")}</p>`;
-      });
-      const htmlString = htmlArray.join("");
-      console.log("HTML 변환 완료");
-
-      // Split HTML string into A4 pages
-      const pageHeight = 1122; // Approximate height of an A4 page in pixels
-      const div = document.createElement("div");
-      div.innerHTML = htmlString;
-      document.body.appendChild(div);
-
-      const totalHeight = div.scrollHeight;
-      const numberOfPages = Math.ceil(totalHeight / pageHeight);
-      console.log("총 페이지 수:", numberOfPages);
-
-      const pagesArray = [];
-      for (let i = 0; i < numberOfPages; i++) {
-        const page = div.cloneNode(true);
-        page.style.height = `${pageHeight}px`;
-        page.style.overflow = "hidden";
-        page.style.position = "relative";
-        page.style.top = `-${i * pageHeight}px`;
-        document.body.appendChild(page);
-        pagesArray.push(page.innerHTML);
-        document.body.removeChild(page);
-      }
-
-      document.body.removeChild(div);
-      setPages(pagesArray);
     } catch (error) {
       console.error("문서 생성 오류:", error);
       const errorMessage =
