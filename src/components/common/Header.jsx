@@ -3,9 +3,15 @@ import { Link } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 import useMe from "../../apis/hook/useMe";
 import { logout } from "../../apis/user";
+import { useNavigate } from "react-router-dom";
 
 const Header = ({ className }) => {
     const { me, isLoadingMe } = useMe();
+    const navigate = useNavigate();
+
+    const handleSvgClick = () => {
+        navigate("/mypage");
+    };
 
     const handleLogout = async () => {
         try {
@@ -23,7 +29,7 @@ const Header = ({ className }) => {
     return (
         <div
             className={
-                "z-50 bg-white border-solid border-[#dddddd] border-b pt-3.5 pr-[18px] pb-3.5 pl-[18px] flex flex-row gap-2.5 items-center justify-between h-[104px] w-full overflow-hidden " +
+                "z-50 bg-white border-solid border-[#dddddd] border-b top-0 pt-3.5 pr-[18px] pb-3.5 pl-[18px] flex flex-row gap-2.5 items-center justify-between h-[104px] w-full overflow-hidden " +
                 (className ? className : "")
             }
         >
@@ -54,7 +60,10 @@ const Header = ({ className }) => {
                             >
                                 Logout
                             </button>
-                            <div className="flex flex-row gap-3 items-center mx-4 mt-1">
+                            <div
+                                className="cursor-pointer flex flex-row gap-3 items-center mx-4 mt-1"
+                                onClick={handleSvgClick}
+                            >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width="40"
