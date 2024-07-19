@@ -4,7 +4,8 @@ import useMe from "../apis/hook/useMe";
 import { useNavigate } from "react-router-dom";
 import Tag from "../components/common/Tag";
 import AWS from "aws-sdk";
-import { documentApi, fileApi } from "../apis/document";
+import { documentApi } from "../apis/document";
+import { fileApi } from "../apis/file";
 
 // AWS 자격 증명을 환경 변수로부터 설정합니다.
 AWS.config.update({

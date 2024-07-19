@@ -4,10 +4,16 @@ import useMe from "../apis/hook/useMe";
 import { useNavigate } from "react-router-dom";
 import dummyQuestions from "../data/dummyQuestions";
 import Questionbox from "../components/common/Questionbox";
-import { documentApi } from "../apis/document";
 import WordDocumentViewer from "../components/html/WordDocumentViewer";
 import ResetIcon from "../components/atom/ResetIcon";
 import CreateIcon from "../components/atom/CreateIcon";
+import {
+    documentApi,
+    askAdditionalQuestion,
+    answerAdditionalQuestion,
+    createReport,
+    getCreatedReport,
+} from "../apis/document";
 
 const EssayPage = () => {
   const { me, isLoadingMe } = useMe();
@@ -40,6 +46,12 @@ const EssayPage = () => {
     });
   };
 
+  // JSON 문자열의 큰따옴표를 올바르게 변환하는 함수
+  const fixQuotes = (jsonStr) => {
+    // 유니코드 이스케이프 시퀀스를 사용해 큰따옴표로 대체
+    return jsonStr.replace(/“|”/g, '"').replace(/”/g, '"').replace(/‘|’/g, "'");
+  };
+
   const handleEssaySubmit = async (e) => {
     e.preventDefault();
     try {
@@ -52,9 +64,21 @@ const EssayPage = () => {
         elements: "",
         core: "",
       };
-      const result = await documentApi(essaySubmitData);
+      const documentResponse = await documentApi(essaySubmitData);
       console.log("제출 완료");
-      console.log(result.data.id);
+      setDocumentId(documentResponse.data.id);
+      // 추가 질문 유무 물어보기
+      const responseObject = await askAdditionalQuestion(
+        documentResponse.data.id
+      );
+      console.log(responseObject.data.content[0].text);
+      const processedResponse = JSON.parse(
+        fixQuotes(responseObject.data.content[0].text)
+      );
+      setResponseJSON(processedResponse);
+      setHasAdditionalQuestions(processedResponse.needMorePrompt);
+      setAdditionalAnswers(Array(processedResponse.prompt.length).fill(""));
+      setIsOutputCreated(!isOutputCreated);
     } catch (error) {
       console.error("문서 생성 오류:", error);
       const errorMessage =
@@ -62,9 +86,49 @@ const EssayPage = () => {
         "An unexpected error occurred. Please try again.";
       alert(`${errorMessage} 문서 생성에 실패했습니다.`);
     }
-    setHasAdditionalQuestions(true);
-    setIsOutputCreated(!isOutputCreated);
     console.log(essayData);
+  };
+
+  const mergeQnA = (questions, answers) => {
+    if (questions.length !== answers.length) {
+      throw new Error("The arrays must have the same length");
+    }
+
+    let mergedString =
+      " <다음은 너와 이전에 나누었던 에세이 작성에 대한 질의응답 정보야> ";
+    for (let i = 0; i < questions.length; i++) {
+      if (answers[i].trim() !== "") {
+        mergedString +=
+          " {질문: " + questions[i] + " 답변: " + answers[i] + "}";
+      }
+    }
+    console.log(mergedString);
+    return mergedString;
+  };
+
+  const handleFinalSubmit = async (e) => {
+    e.preventDefault();
+    const addPrompt = mergeQnA(responseJSON.prompt, additionalAnswers);
+    const documentIdAndAddingPrompt = {
+      documentId: documentId,
+      addPrompt: addPrompt,
+    };
+    await answerAdditionalQuestion(documentIdAndAddingPrompt);
+    const finalResponse = await createReport(documentId);
+    setCreatedEssayUrl(finalResponse.data.url);
+    const essay = await getCreatedReport(documentId);
+    setCreatedEssay(essay.data);
+    console.log(essay.data);
+    setIsOutputCreated(true);
+    setHasAdditionalQuestions(false);
+  };
+
+  const updateAdditionalAnswer = (index, answer) => {
+    setAdditionalAnswers((prevAnswers) => {
+      const newAnswers = [...prevAnswers];
+      newAnswers[index] = answer;
+      return newAnswers;
+    });
   };
 
   useEffect(() => {
@@ -259,7 +323,11 @@ const EssayPage = () => {
         </button>
       </form>
       <div className="bg-[#d9d9d9] pt-[104px] pl-[313px] h-screen overflow-y-auto">
-        <WordDocumentViewer documentUrl={"https://reportable-file-bucket.s3.ap-northeast-2.amazonaws.com/documents/1997%EB%85%84%EC%9D%98+%EB%8F%99%EC%95%84%EC%8B%9C%EC%95%84+%EC%99%B8%ED%99%98%EC%9C%84%EA%B8%B0%EC%99%80+2007~2008%EB%85%84%EC%97%90+%EB%B0%9C%EC%83%9D%ED%95%9C+%EA%B8%80%EB%A1%9C%EB%B2%8C+%EA%B8%88%EC%9C%B5%EC%9C%84%EA%B8%B0%EC%9D%98+%EC%9B%90%EC%9D%B8+%EB%B0%8F+%EB%8B%B9%EC%8B%9C+%EC%99%B8%ED%99%98%EC%8B%9C%EC%9E%A5%EA%B3%BC+%EA%B8%88%EC%9C%B5%EC%8B%9C%EC%9E%A5+%EB%93%B1%EC%9D%84+%EC%A1%B0%EC%82%AC%ED%95%98%EC%97%AC+%EA%B8%B0%EC%88%A0%ED%95%98%EC%8B%9C%EC%98%A4.-529c087b-bfe8-4572-8001-fc46c5e043bf.docx" } />
+        <WordDocumentViewer
+          documentUrl={
+            "https://reportable-file-bucket.s3.ap-northeast-2.amazonaws.com/documents/1997%EB%85%84%EC%9D%98+%EB%8F%99%EC%95%84%EC%8B%9C%EC%95%84+%EC%99%B8%ED%99%98%EC%9C%84%EA%B8%B0%EC%99%80+2007~2008%EB%85%84%EC%97%90+%EB%B0%9C%EC%83%9D%ED%95%9C+%EA%B8%80%EB%A1%9C%EB%B2%8C+%EA%B8%88%EC%9C%B5%EC%9C%84%EA%B8%B0%EC%9D%98+%EC%9B%90%EC%9D%B8+%EB%B0%8F+%EB%8B%B9%EC%8B%9C+%EC%99%B8%ED%99%98%EC%8B%9C%EC%9E%A5%EA%B3%BC+%EA%B8%88%EC%9C%B5%EC%8B%9C%EC%9E%A5+%EB%93%B1%EC%9D%84+%EC%A1%B0%EC%82%AC%ED%95%98%EC%97%AC+%EA%B8%B0%EC%88%A0%ED%95%98%EC%8B%9C%EC%98%A4.-529c087b-bfe8-4572-8001-fc46c5e043bf.docx"
+          }
+        />
       </div>
     </>
   );
