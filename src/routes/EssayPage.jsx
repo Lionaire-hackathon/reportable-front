@@ -4,7 +4,13 @@ import useMe from "../apis/hook/useMe";
 import { useNavigate } from "react-router-dom";
 import dummyQuestions from "../data/dummyQuestions";
 import Questionbox from "../components/common/Questionbox";
-import { documentApi } from "../apis/document";
+import {
+    documentApi,
+    askAdditionalQuestion,
+    answerAdditionalQuestion,
+    createReport,
+    getCreatedReport,
+} from "../apis/document";
 
 const EssayPage = () => {
     const { me, isLoadingMe } = useMe();
@@ -16,9 +22,15 @@ const EssayPage = () => {
         requirement: "",
     });
     const [hasAdditionalQuestions, setHasAdditionalQuestions] = useState(false);
-    const [additionalQuestions, setAdditionalQuestions] =
-        useState(dummyQuestions);
+    const [additionalAnswers, setAdditionalAnswers] = useState([]);
     const [isOutputCreated, setIsOutputCreated] = useState(false);
+    const [documentId, setDocumentId] = useState();
+    const [responseJSON, setResponseJSON] = useState({
+        needMorePrompt: 0,
+        prompt: [""],
+    });
+    const [createdEssayUrl, setCreatedEssayUrl] = useState();
+    const [createdEssay, setCreatedEssay] = useState("에세이 들어올 자리");
 
     const handleEssayData = (e) => {
         const { id, value } = e.target;
@@ -36,6 +48,15 @@ const EssayPage = () => {
         });
     };
 
+    // JSON 문자열의 큰따옴표를 올바르게 변환하는 함수
+    const fixQuotes = (jsonStr) => {
+        // 유니코드 이스케이프 시퀀스를 사용해 큰따옴표로 대체
+        return jsonStr
+            .replace(/“|”/g, '"')
+            .replace(/”/g, '"')
+            .replace(/‘|’/g, "'");
+    };
+
     const handleEssaySubmit = async (e) => {
         e.preventDefault();
         try {
@@ -48,9 +69,23 @@ const EssayPage = () => {
                 elements: "",
                 core: "",
             };
-            const result = await documentApi(essaySubmitData);
+            const documentResponse = await documentApi(essaySubmitData);
             console.log("제출 완료");
-            console.log(result.data.id);
+            setDocumentId(documentResponse.data.id);
+            // 추가 질문 유무 물어보기
+            const responseObject = await askAdditionalQuestion(
+                documentResponse.data.id
+            );
+            console.log(responseObject.data.content[0].text);
+            const processedResponse = JSON.parse(
+                fixQuotes(responseObject.data.content[0].text)
+            );
+            setResponseJSON(processedResponse);
+            setHasAdditionalQuestions(processedResponse.needMorePrompt);
+            setAdditionalAnswers(
+                Array(processedResponse.prompt.length).fill("")
+            );
+            setIsOutputCreated(!isOutputCreated);
         } catch (error) {
             console.error("문서 생성 오류:", error);
             const errorMessage =
@@ -58,9 +93,49 @@ const EssayPage = () => {
                 "An unexpected error occurred. Please try again.";
             alert(`${errorMessage} 문서 생성에 실패했습니다.`);
         }
-        setHasAdditionalQuestions(true);
-        setIsOutputCreated(!isOutputCreated);
         console.log(essayData);
+    };
+
+    const mergeQnA = (questions, answers) => {
+        if (questions.length !== answers.length) {
+            throw new Error("The arrays must have the same length");
+        }
+
+        let mergedString =
+            " <다음은 너와 이전에 나누었던 에세이 작성에 대한 질의응답 정보야> ";
+        for (let i = 0; i < questions.length; i++) {
+            if (answers[i].trim() !== "") {
+                mergedString +=
+                    " {질문: " + questions[i] + " 답변: " + answers[i] + "}";
+            }
+        }
+        console.log(mergedString);
+        return mergedString;
+    };
+
+    const handleFinalSubmit = async (e) => {
+        e.preventDefault();
+        const addPrompt = mergeQnA(responseJSON.prompt, additionalAnswers);
+        const documentIdAndAddingPrompt = {
+            documentId: documentId,
+            addPrompt: addPrompt,
+        };
+        await answerAdditionalQuestion(documentIdAndAddingPrompt);
+        const finalResponse = await createReport(documentId);
+        setCreatedEssayUrl(finalResponse.data.url);
+        const essay = await getCreatedReport(documentId);
+        setCreatedEssay(essay.data);
+        console.log(essay.data);
+        setIsOutputCreated(true);
+        setHasAdditionalQuestions(false);
+    };
+
+    const updateAdditionalAnswer = (index, answer) => {
+        setAdditionalAnswers((prevAnswers) => {
+            const newAnswers = [...prevAnswers];
+            newAnswers[index] = answer;
+            return newAnswers;
+        });
     };
 
     useEffect(() => {
@@ -71,15 +146,29 @@ const EssayPage = () => {
         }
     }, [me]);
 
+    /*
+    const [response, setResponse] = useState(
+        JSON.parse(
+            '{\n  "needMorePrompt": 1,\n  "prompt": [\n    "자원봉사의 개념에 대해 어떤 견해를 가지고 계신가요?",\n    "현대사회에서 자원봉사가 더 필요해졌다고 생각하시나요? 그렇게 생각하는 이유는 무엇인가요?",\n    "개인적으로 자원봉사 경험이 있으신가요? 있다면 그 경험에서 어떤 의미를 찾으셨나요?",\n    "자원봉사가 사회에 미치는 긍정적인 영향은 무엇이라고 생각하시나요?"\n  ]\n}'
+        )
+    );
+
+    console.log(response.needMorePrompt);
+    */
+
     return (
         <>
             {hasAdditionalQuestions && (
-                <div
-                    className="fixed top-0 bottom-0 left-0 right-0 bg-[rgba(217,217,217,0.20)] z-40 flex items-center justify-center"
-                    style={{ backdropFilter: "blur(5px)" }}
-                >
-                    <div className="bg-[#ffffff] rounded-[10px] border-solid border-[#a0a0a0] border px-4 py-6 flex flex-col gap-[25px] items-center justify-center relative w-[500px]">
-                        <div className="px-1 text-left text-xl font-semibold relative">
+                <>
+                    <div
+                        className="fixed top-0 bottom-0 left-0 right-0 bg-[rgba(217,217,217,0.20)] z-40 flex "
+                        style={{ backdropFilter: "blur(5px)" }}
+                        onClick={() => {
+                            setHasAdditionalQuestions(false);
+                        }}
+                    ></div>
+                    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-[#ffffff] rounded-[10px] border-solid border-[#a0a0a0] border px-4 flex flex-col gap-[25px] items-center justify-center w-[40%] max-h-[600px]">
+                        <div className="mt-8 min-h-[20%] text-left text-xl font-semibold ">
                             <span>
                                 <span className="div-span">추가질문</span>
                                 <span className="div-span2  text-orange-500">
@@ -87,20 +176,26 @@ const EssayPage = () => {
                                 </span>
                             </span>{" "}
                         </div>
-                        <div className="flex flex-col gap-5 items-start justify-start shrink-0 w-full relative">
-                            {additionalQuestions.map((question) => (
-                                <Questionbox question={question} />
+                        <div className="flex flex-col gap-5 items-start justify-start shrink-0 w-[95%] mx-auto !max-h-[400px] overflow-auto">
+                            {responseJSON.prompt.map((question, index) => (
+                                <Questionbox
+                                    question={question}
+                                    key={index}
+                                    index={index}
+                                    additionalAnswers={additionalAnswers}
+                                    updateAdditionalAnswer={
+                                        updateAdditionalAnswer
+                                    }
+                                />
                             ))}
                         </div>
                         <button
-                            className="bg-[#299792] rounded-[10px] flex flex-row items-center justify-center w-full h-[60px] relative shrink-0"
+                            className="mb-8 min-h-[20%] bg-[#299792] rounded-[10px] flex flex-row items-center justify-center w-[95%] mx-auto h-[60px] shrink-0"
                             style={{
                                 boxShadow:
                                     "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                             }}
-                            onClick={() => {
-                                setHasAdditionalQuestions(false);
-                            }}
+                            onClick={handleFinalSubmit}
                         >
                             <div className="flex flex-row gap-1.5 items-center justify-center shrink-0 relative">
                                 <div className="text-white text-center relative">
@@ -122,7 +217,7 @@ const EssayPage = () => {
                             </div>
                         </button>
                     </div>
-                </div>
+                </>
             )}
             <Header className="fixed" />
             <form
@@ -374,7 +469,11 @@ const EssayPage = () => {
                 </button>
             </form>
             <div className="bg-[#d9d9d9] pt-[104px] pl-[313px] flex flex-row items-center justify-center shrink-0 h-auto relative overflow-auto -z-10">
-                <div className="my-4 bg-[#ffffff] shrink-0 w-[629px] h-[891px] relative"></div>
+                <textarea
+                    className="p-10 bg-[#ffffff] shrink-0 w-[629px] h-[3000px] relative overflow-auto"
+                    value={createdEssay}
+                    readOnly
+                />
             </div>
         </>
     );
