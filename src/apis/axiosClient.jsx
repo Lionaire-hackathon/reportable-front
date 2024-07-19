@@ -39,7 +39,7 @@ axiosClient.interceptors.response.use(
             const getRefreshTokenRes = await getRefreshTokenFromCookie();
             const refreshToken = getRefreshTokenRes.data.refreshToken;
             if (!refreshToken) return Promise.reject(error);
-            await getNewAccessToken({ refreshToken });
+            await getNewAccessToken(refreshToken);
             const token = Cookies.get("accessToken");
             originalRequest.headers["Authorization"] = `Bearer ${token}`;
             console.log("refreshed token");

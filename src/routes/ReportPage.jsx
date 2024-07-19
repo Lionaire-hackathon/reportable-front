@@ -4,6 +4,7 @@ import useMe from "../apis/hook/useMe";
 import { useNavigate } from "react-router-dom";
 import Tag from "../components/common/Tag";
 import AWS from "aws-sdk";
+import { documentApi, fileApi } from "../apis/document";
 
 // AWS 자격 증명을 환경 변수로부터 설정합니다.
 AWS.config.update({
@@ -14,15 +15,14 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
-const EssayPage = () => {
+const ReportPage = () => {
     const { me, isLoadingMe } = useMe();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newContent, setNewContent] = useState("");
-
     const navigate = useNavigate();
     const [reportData, setReportData] = useState({
         topic: "",
-        length: "",
+        length: 1000,
         contents: new Set([
             "초록",
             "연구 목적",
@@ -32,19 +32,24 @@ const EssayPage = () => {
             "논의",
         ]),
         purposeAndMethod: "",
-        files: [],
         requirement: "",
     });
+    const [filesWithDescript, setFilesWithDescript] = useState([]);
     const fileUploadRef = useRef(null);
     //const [uploadedFiles, setUploadedFiles] = useState([]);
     const [isOutputCreated, setIsOutputCreated] = useState(false);
 
     const handleFileChange = async (e) => {
         const newFiles = Array.from(e.target.files);
-        setReportData({
-            ...reportData,
-            files: [...reportData.files, ...newFiles],
-        });
+        const newFilesWithDescript = [];
+        for (const newFile of newFiles) {
+            newFilesWithDescript.push({
+                file: newFile,
+                description: "",
+                url: "",
+            });
+        }
+        setFilesWithDescript([...filesWithDescript, ...newFilesWithDescript]);
         //setUploadedFiles((prevFiles) => [...prevFiles, ...newFiles]);
     };
 
@@ -53,10 +58,9 @@ const EssayPage = () => {
     };
 
     const handleFileDelete = (index) => {
-        setReportData({
-            ...reportData,
-            files: reportData.files.filter((_, idx) => idx !== index),
-        });
+        setFilesWithDescript(
+            filesWithDescript.filter((_, idx) => idx !== index)
+        );
     };
 
     const handleContentDelete = (targetContent) => {
@@ -105,10 +109,7 @@ const EssayPage = () => {
                 contents: new Set(),
             });
         } else if (id === "files") {
-            setReportData({
-                ...reportData,
-                files: [],
-            });
+            setFilesWithDescript([]);
         } else {
             setReportData({
                 ...reportData,
@@ -117,31 +118,74 @@ const EssayPage = () => {
         }
     };
 
-    const handleReportSubmit = (e) => {
-        e.preventDefault(); // to prevent reloading the page
+    const handleReportSubmit = async (e) => {
+        e.preventDefault();
+        for (const fileWithDescript of filesWithDescript) {
+            console.log(fileWithDescript.file);
+        }
+        try {
+            // document api 호출
+            const documentDto = {
+                title: reportData.topic,
+                amount: reportData.length,
+                type: "research",
+                prompt: reportData.requirement,
+                form: "",
+                elements: Array.from(reportData.contents).join(", "),
+                core: reportData.purposeAndMethod,
+            };
+            const documentResponse = await documentApi(documentDto);
+            console.log("제출 완료");
+            console.log(documentResponse.data.id);
+
+            // file을 s3에 업로드 & file api 호출
+            for (const fileWithDescript of filesWithDescript) {
+                const fileUrl = await uploadFile(fileWithDescript.file);
+                console.log(typeof fileUrl);
+                const fileDto = {
+                    document_id: documentResponse.data.id,
+                    name: fileWithDescript.file.name,
+                    description: fileWithDescript.description,
+                    url: fileUrl,
+                };
+                const result = await fileApi(fileDto);
+                console.log(result);
+            }
+        } catch (error) {
+            console.error("문서 생성 오류:", error);
+            const errorMessage =
+                error.response?.data?.message ||
+                "An unexpected error occurred. Please try again.";
+            alert(`${errorMessage} 문서 생성에 실패했습니다.`);
+        }
         setIsOutputCreated(!isOutputCreated);
-        reportData.files.map((file) => uploadedFile(file));
         console.log(reportData);
     };
 
-    const handleFileName = (e) => {
-        setReportData({
-            ...reportData,
-            files: reportData.files.map((file, idx) => {
-                if (idx === e.target.key) {
-                    const [pureName, extension] = splitFileName(file.name);
-                    return { ...file, name: e.target.value + extension };
+    const handleFileName = (e, index) => {
+        setFilesWithDescript(
+            filesWithDescript.map((fileWithDescript, idx) => {
+                if (idx === index) {
+                    const oldFile = fileWithDescript.file;
+                    const [pureName, extension] = splitFileName(oldFile.name);
+                    const newFile = new File(
+                        [oldFile],
+                        e.target.value + extension,
+                        {
+                            type: oldFile.type,
+                            lastModified: oldFile.lastModified,
+                        }
+                    );
+                    return { ...fileWithDescript, file: newFile };
                 } else {
-                    return file;
+                    return fileWithDescript;
                 }
-            }),
-        });
+            })
+        );
     };
 
     const handleKeyDown = (e) => {
-        console.log(e.key);
         if (e.key === "Enter") {
-            console.log("엔터!");
             e.preventDefault(); // 기본 Enter 키 동작을 방지
             e.target.blur(); // 포커스를 제거
         }
@@ -153,24 +197,41 @@ const EssayPage = () => {
         return [fileName.substring(0, dotIndex), fileName.substring(dotIndex)];
     };
 
-    const uploadedFile = (file) => {
+    const handleFileDescription = (e, index) => {
+        setFilesWithDescript(
+            filesWithDescript.map((fileWithDescript, idx) => {
+                if (idx === index) {
+                    return { ...fileWithDescript, description: e.target.value };
+                } else {
+                    return fileWithDescript;
+                }
+            })
+        );
+    };
+
+    const uploadFile = (file) => {
         const params = {
             ACL: "public-read",
             Bucket: process.env.REACT_APP_BUCKET_NAME,
-            Key: "upload/" + file.name,
+            Key: "input/" + file.name,
             Body: file,
             ContentType: file.type,
         };
 
-        s3.upload(params, (err, data) => {
-            if (err) {
-                console.error("파일 업로드 실패: ", err);
-            } else {
-                console.log("파일 업로드 성공: ", data);
-                console.log(data.Location); // 저장된 url
-            }
+        return new Promise((resolve, reject) => {
+            s3.upload(params, (err, data) => {
+                if (err) {
+                    console.error("파일 업로드 실패: ", err);
+                    reject(err);
+                } else {
+                    console.log("파일 업로드 성공: ", data);
+                    console.log(data.Location);
+                    resolve(data.Location);
+                }
+            });
         });
     };
+
     /*
     useEffect(() => {
         if (!me) {
@@ -456,36 +517,45 @@ const EssayPage = () => {
                                         이름을 정확히 작성해주시고 첨부해주세요.{" "}
                                     </div>
                                     <div className="px-1 text-[11px] font-semibold w-full">
-                                        {reportData.files.length > 0 && (
+                                        {filesWithDescript.length > 0 && (
                                             <div>
-                                                {reportData.files.map(
-                                                    (file, index) => {
+                                                {filesWithDescript.map(
+                                                    (
+                                                        fileWithDescript,
+                                                        index
+                                                    ) => {
                                                         const [
                                                             pureName,
                                                             extension,
                                                         ] = splitFileName(
-                                                            file.name
+                                                            fileWithDescript
+                                                                .file.name
                                                         );
                                                         return (
                                                             <div>
                                                                 <div className="flex items-center justify-between ">
                                                                     <div className="flex-grow">
-                                                                        <span
+                                                                        <input
                                                                             contentEditable="true"
                                                                             className="editable flex-grow"
-                                                                            onInput={
-                                                                                handleFileName
-                                                                            }
+                                                                            onChange={(
+                                                                                e
+                                                                            ) => {
+                                                                                handleFileName(
+                                                                                    e,
+                                                                                    index
+                                                                                );
+                                                                            }}
                                                                             onKeyDown={
                                                                                 handleKeyDown
                                                                             }
                                                                             key={
                                                                                 index
                                                                             }
-                                                                            dangerouslySetInnerHTML={{
-                                                                                __html: pureName,
-                                                                            }}
-                                                                        ></span>
+                                                                            value={
+                                                                                pureName
+                                                                            }
+                                                                        />
                                                                         <span>
                                                                             {
                                                                                 extension
@@ -507,6 +577,29 @@ const EssayPage = () => {
                                                                 <textarea
                                                                     placeholder="파일에 대한 설명을 입력해 주세요."
                                                                     className="border w-full"
+                                                                    readOnly={
+                                                                        isOutputCreated
+                                                                    }
+                                                                    style={{
+                                                                        backgroundColor:
+                                                                            isOutputCreated
+                                                                                ? "#f5f5f5"
+                                                                                : "#ffffff",
+                                                                    }}
+                                                                    value={
+                                                                        fileWithDescript.description
+                                                                    }
+                                                                    onChange={(
+                                                                        e
+                                                                    ) => {
+                                                                        handleFileDescription(
+                                                                            e,
+                                                                            index
+                                                                        );
+                                                                    }}
+                                                                    onKeyDown={
+                                                                        handleKeyDown
+                                                                    }
                                                                 />
                                                             </div>
                                                         );
@@ -634,4 +727,4 @@ const EssayPage = () => {
     );
 };
 
-export default EssayPage;
+export default ReportPage;
