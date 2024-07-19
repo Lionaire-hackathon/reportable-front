@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from "../components/common/Header";
+import AnimatedLoading from "../components/common/AnimatedLoading";
 import useMe from "../apis/hook/useMe";
 import { useNavigate } from "react-router-dom";
 import dummyQuestions from "../data/dummyQuestions";
@@ -30,7 +31,8 @@ const EssayPage = () => {
         prompt: [""],
     });
     const [createdEssayUrl, setCreatedEssayUrl] = useState();
-    const [createdEssay, setCreatedEssay] = useState("에세이 들어올 자리");
+    const [createdEssay, setCreatedEssay] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleEssayData = (e) => {
         const { id, value } = e.target;
@@ -59,6 +61,7 @@ const EssayPage = () => {
 
     const handleEssaySubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         try {
             const essaySubmitData = {
                 title: essayData.topic,
@@ -82,10 +85,19 @@ const EssayPage = () => {
             );
             setResponseJSON(processedResponse);
             setHasAdditionalQuestions(processedResponse.needMorePrompt);
-            setAdditionalAnswers(
-                Array(processedResponse.prompt.length).fill("")
-            );
-            setIsOutputCreated(!isOutputCreated);
+
+            if (processedResponse.needMorePrompt === 1) {
+                setAdditionalAnswers(
+                    Array(processedResponse.prompt.length).fill("")
+                );
+            } else {
+                const finalResponse = await createReport(documentId);
+                setCreatedEssayUrl(finalResponse.data.url);
+                const essay = await getCreatedReport(documentId);
+                setCreatedEssay(essay.data);
+                console.log(essay.data);
+                setIsOutputCreated(true);
+            }
         } catch (error) {
             console.error("문서 생성 오류:", error);
             const errorMessage =
@@ -94,6 +106,7 @@ const EssayPage = () => {
             alert(`${errorMessage} 문서 생성에 실패했습니다.`);
         }
         console.log(essayData);
+        setIsLoading(false);
     };
 
     const mergeQnA = (questions, answers) => {
@@ -115,6 +128,7 @@ const EssayPage = () => {
 
     const handleFinalSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         const addPrompt = mergeQnA(responseJSON.prompt, additionalAnswers);
         const documentIdAndAddingPrompt = {
             documentId: documentId,
@@ -128,6 +142,7 @@ const EssayPage = () => {
         console.log(essay.data);
         setIsOutputCreated(true);
         setHasAdditionalQuestions(false);
+        setIsLoading(false);
     };
 
     const updateAdditionalAnswer = (index, answer) => {
@@ -158,16 +173,23 @@ const EssayPage = () => {
 
     return (
         <>
+            {isLoading && (
+                <>
+                    <div
+                        className="fixed top-0 bottom-0 left-0 right-0 bg-[rgba(217,217,217,0.20)] z-40 flex items-center justify-center"
+                        style={{ backdropFilter: "blur(5px)" }}
+                    >
+                        <AnimatedLoading className="z-50"></AnimatedLoading>
+                    </div>
+                </>
+            )}
             {hasAdditionalQuestions && (
                 <>
                     <div
-                        className="fixed top-0 bottom-0 left-0 right-0 bg-[rgba(217,217,217,0.20)] z-40 flex "
+                        className="fixed top-0 bottom-0 left-0 right-0 bg-[rgba(217,217,217,0.20)] z-20 flex "
                         style={{ backdropFilter: "blur(5px)" }}
-                        onClick={() => {
-                            setHasAdditionalQuestions(false);
-                        }}
                     ></div>
-                    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-[#ffffff] rounded-[10px] border-solid border-[#a0a0a0] border px-4 flex flex-col gap-[25px] items-center justify-center w-[40%] max-h-[600px]">
+                    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 bg-[#ffffff] rounded-[10px] border-solid border-[#a0a0a0] border px-4 flex flex-col gap-[25px] items-center justify-center w-[40%] max-h-[600px]">
                         <div className="mt-8 min-h-[20%] text-left text-xl font-semibold ">
                             <span>
                                 <span className="div-span">추가질문</span>
