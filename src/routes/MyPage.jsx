@@ -77,8 +77,6 @@ const MyPage = () => {
         }
     }, [me]);
 
-    console.log(me);
-
     return (
         me && (
             <>
@@ -382,7 +380,7 @@ const MyPage = () => {
                                 My Reports{" "}
                             </div>
                             <div className="flex flex-wrap justify-start items-start gap-6 w-full">
-                                {me.documents.length > 0 &&
+                                {me.documents > 0 &&
                                     me.documents.map((document, index) => {
                                         const bgColor = getRandomColor(index);
                                         return (
