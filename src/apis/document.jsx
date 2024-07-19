@@ -19,3 +19,6 @@ export const createReport = async (documentId) =>
 
 export const getCreatedReport = async (documentId) =>
     axiosClient.get(`/document/text/${documentId}`);
+
+export const getDocFile = async (documentId) =>
+    axiosClient.get(`document/doc/${documentId}`);

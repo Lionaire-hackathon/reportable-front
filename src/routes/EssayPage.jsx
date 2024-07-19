@@ -2,17 +2,17 @@ import { useEffect, useState } from "react";
 import Header from "../components/common/Header";
 import useMe from "../apis/hook/useMe";
 import { useNavigate } from "react-router-dom";
-import dummyQuestions from "../data/dummyQuestions";
 import Questionbox from "../components/common/Questionbox";
 import WordDocumentViewer from "../components/html/WordDocumentViewer";
 import ResetIcon from "../components/atom/ResetIcon";
 import CreateIcon from "../components/atom/CreateIcon";
 import {
-    documentApi,
-    askAdditionalQuestion,
-    answerAdditionalQuestion,
-    createReport,
-    getCreatedReport,
+  documentApi,
+  askAdditionalQuestion,
+  answerAdditionalQuestion,
+  createReport,
+  getCreatedReport,
+  getDocFile,
 } from "../apis/document";
 
 const EssayPage = () => {
@@ -25,10 +25,14 @@ const EssayPage = () => {
     requirement: "",
   });
   const [hasAdditionalQuestions, setHasAdditionalQuestions] = useState(false);
-  const [additionalQuestions, setAdditionalQuestions] =
-    useState(dummyQuestions);
+  const [additionalAnswers, setAdditionalAnswers] = useState([]);
   const [isOutputCreated, setIsOutputCreated] = useState(false);
-  const [pages, setPages] = useState([]);
+  const [documentId, setDocumentId] = useState();
+  const [responseJSON, setResponseJSON] = useState({
+    needMorePrompt: 0,
+    prompt: [""],
+  });
+  const [docUrl, setDocUrl] = useState("");
 
   const handleEssayData = (e) => {
     const { id, value } = e.target;
@@ -115,10 +119,11 @@ const EssayPage = () => {
     };
     await answerAdditionalQuestion(documentIdAndAddingPrompt);
     const finalResponse = await createReport(documentId);
-    setCreatedEssayUrl(finalResponse.data.url);
+    console.log(finalResponse.data);
     const essay = await getCreatedReport(documentId);
-    setCreatedEssay(essay.data);
     console.log(essay.data);
+    const wordUrl = await getDocFile(documentId);
+    setDocUrl(wordUrl.data);
     setIsOutputCreated(true);
     setHasAdditionalQuestions(false);
   };
@@ -142,30 +147,38 @@ const EssayPage = () => {
   return (
     <>
       {hasAdditionalQuestions && (
-        <div
-          className="fixed top-0 bottom-0 left-0 right-0 bg-[rgba(217,217,217,0.20)] z-40 flex items-center justify-center"
-          style={{ backdropFilter: "blur(5px)" }}
-        >
-          <div className="bg-[#ffffff] rounded-[10px] border-solid border-[#a0a0a0] border px-4 py-6 flex flex-col gap-[25px] items-center justify-center relative w-[500px]">
-            <div className="px-1 text-left text-xl font-semibold relative">
+        <>
+          <div
+            className="fixed top-0 bottom-0 left-0 right-0 bg-[rgba(217,217,217,0.20)] z-40 flex "
+            style={{ backdropFilter: "blur(5px)" }}
+            onClick={() => {
+              setHasAdditionalQuestions(false);
+            }}
+          ></div>
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-[#ffffff] rounded-[10px] border-solid border-[#a0a0a0] border px-4 flex flex-col gap-[25px] items-center justify-center w-[40%] max-h-[600px]">
+            <div className="mt-8 min-h-[20%] text-left text-xl font-semibold ">
               <span>
                 <span className="div-span">추가질문</span>
                 <span className="div-span2  text-orange-500">*</span>
               </span>{" "}
             </div>
-            <div className="flex flex-col gap-5 items-start justify-start shrink-0 w-full relative">
-              {additionalQuestions.map((question) => (
-                <Questionbox question={question} />
+            <div className="flex flex-col gap-5 items-start justify-start shrink-0 w-[95%] mx-auto !max-h-[400px] overflow-auto">
+              {responseJSON.prompt.map((question, index) => (
+                <Questionbox
+                  question={question}
+                  key={index}
+                  index={index}
+                  additionalAnswers={additionalAnswers}
+                  updateAdditionalAnswer={updateAdditionalAnswer}
+                />
               ))}
             </div>
             <button
-              className="bg-[#299792] rounded-[10px] flex flex-row items-center justify-center w-full h-[60px] relative shrink-0"
+              className="mb-8 min-h-[20%] bg-[#299792] rounded-[10px] flex flex-row items-center justify-center w-[95%] mx-auto h-[60px] shrink-0"
               style={{
                 boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
               }}
-              onClick={() => {
-                setHasAdditionalQuestions(false);
-              }}
+              onClick={handleFinalSubmit}
             >
               <div className="flex flex-row gap-1.5 items-center justify-center shrink-0 relative">
                 <div className="text-white text-center relative">CREATE </div>
@@ -173,7 +186,7 @@ const EssayPage = () => {
               </div>
             </button>
           </div>
-        </div>
+        </>
       )}
       <Header className="fixed" />
       <form
@@ -323,11 +336,7 @@ const EssayPage = () => {
         </button>
       </form>
       <div className="bg-[#d9d9d9] pt-[104px] pl-[313px] h-screen overflow-y-auto">
-        <WordDocumentViewer
-          documentUrl={
-            "https://reportable-file-bucket.s3.ap-northeast-2.amazonaws.com/documents/1997%EB%85%84%EC%9D%98+%EB%8F%99%EC%95%84%EC%8B%9C%EC%95%84+%EC%99%B8%ED%99%98%EC%9C%84%EA%B8%B0%EC%99%80+2007~2008%EB%85%84%EC%97%90+%EB%B0%9C%EC%83%9D%ED%95%9C+%EA%B8%80%EB%A1%9C%EB%B2%8C+%EA%B8%88%EC%9C%B5%EC%9C%84%EA%B8%B0%EC%9D%98+%EC%9B%90%EC%9D%B8+%EB%B0%8F+%EB%8B%B9%EC%8B%9C+%EC%99%B8%ED%99%98%EC%8B%9C%EC%9E%A5%EA%B3%BC+%EA%B8%88%EC%9C%B5%EC%8B%9C%EC%9E%A5+%EB%93%B1%EC%9D%84+%EC%A1%B0%EC%82%AC%ED%95%98%EC%97%AC+%EA%B8%B0%EC%88%A0%ED%95%98%EC%8B%9C%EC%98%A4.-529c087b-bfe8-4572-8001-fc46c5e043bf.docx"
-          }
-        />
+        <WordDocumentViewer documentUrl={docUrl} />
       </div>
     </>
   );
