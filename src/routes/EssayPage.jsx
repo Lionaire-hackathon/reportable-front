@@ -449,24 +449,17 @@ const EssayPage = () => {
                     </div>
                 </button>
             </form>
-            <div className="bg-[#d9d9d9] pt-[104px] pl-[313px] h-screen overflow-y-auto">
-                <WordDocumentViewer documentUrl={docUrl} />
-            </div>
-            <CreateIcon color="white" />
-          </div>
-        </button>
-      </form>
-      {docUrl ? (
-        <div className="bg-[#d9d9d9] pt-[104px] pl-[313px] h-screen overflow-y-auto">
-          <WordDocumentViewer documentUrl={docUrl} />
-        </div>
-      ) : (
-        <div className="bg-[#d9d9d9] pt-[104px] pl-[313px] flex flex-row items-center justify-center shrink-0 h-auto relative overflow-auto -z-10">
-          <div className="my-4 bg-[#ffffff] shrink-0 w-[629px] h-[891px] relative"></div>
-        </div>
-      )}
-    </>
-  );
+            {docUrl ? (
+                <div className="bg-[#d9d9d9] pt-[104px] pl-[313px] h-screen overflow-y-auto">
+                    <WordDocumentViewer documentUrl={docUrl} />
+                </div>
+            ) : (
+                <div className="bg-[#d9d9d9] pt-[104px] pl-[313px] flex flex-row items-center justify-center shrink-0 h-auto relative overflow-auto -z-10">
+                    <div className="my-4 bg-[#ffffff] shrink-0 w-[629px] h-[891px] relative"></div>
+                </div>
+            )}
+        </>
+    );
 };
 
 export default EssayPage;
