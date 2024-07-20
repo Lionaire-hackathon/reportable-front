@@ -77,8 +77,6 @@ const MyPage = () => {
         }
     }, [me]);
 
-    console.log(me);
-
     return (
         me && (
             <>
