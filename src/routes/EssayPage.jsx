@@ -416,42 +416,44 @@ const EssayPage = () => {
                             id="requirement"
                             placeholder="ex) 서론 부분을 독자들의 흥미를 이끄는
                                 내용으로 시작할 수 있게 해줘"
-              value={essayData.requirement}
-              readOnly={isOutputCreated}
-              onChange={handleEssayData}
-              style={{
-                backgroundColor: isOutputCreated ? "#f5f5f5" : "#ffffff",
-              }}
-              className=" overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative  text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
-            />
-          </div>
-        </div>
-        <button
-          className="bg-[#005f5f] rounded-[10px] bottom-1 flex flex-row gap-1 items-center justify-center mx-auto w-[289px] shrink-0 h-[60px] absolute"
-          style={{
-            boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-          }}
-          type="submit"
-        >
-          <div className="flex flex-row gap-1.5 items-center justify-start shrink-0 relative">
-            <div className="text-white text-center font-body-text-inter-14-medium-font-family text-body-text-inter-14-medium-font-size leading-body-text-inter-14-medium-line-height font-body-text-inter-14-medium-font-weight relative">
-              CREATE{" "}
-            </div>
-            <CreateIcon color="white" />
-          </div>
-        </button>
-      </form>
-      {docUrl ? (
-        <div className="bg-[#d9d9d9] pt-[104px] pl-[313px] h-screen overflow-y-auto">
-          <WordDocumentViewer documentUrl={docUrl} />
-        </div>
-      ) : (
-        <div className="bg-[#d9d9d9] pt-[104px] pl-[313px] flex flex-row items-center justify-center shrink-0 h-auto relative overflow-auto -z-10">
-          <div className="my-4 bg-[#ffffff] shrink-0 w-[629px] h-[891px] relative"></div>
-        </div>
-      )}
-    </>
-  );
+                            value={essayData.requirement}
+                            readOnly={isOutputCreated}
+                            onChange={handleEssayData}
+                            style={{
+                                backgroundColor: isOutputCreated
+                                    ? "#f5f5f5"
+                                    : "#ffffff",
+                            }}
+                            className=" overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                        />
+                    </div>
+                </div>
+                <button
+                    className="bg-[#005f5f] rounded-[10px] bottom-1 flex flex-row gap-1 items-center justify-center mx-auto w-[289px] shrink-0 h-[60px] absolute"
+                    style={{
+                        boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                    }}
+                    type="submit"
+                >
+                    <div className="flex flex-row gap-1.5 items-center justify-start shrink-0 relative">
+                        <div className="text-white text-center font-body-text-inter-14-medium-font-family text-body-text-inter-14-medium-font-size leading-body-text-inter-14-medium-line-height font-body-text-inter-14-medium-font-weight relative">
+                            CREATE{" "}
+                        </div>
+                        <CreateIcon color="white" />
+                    </div>
+                </button>
+            </form>
+            {docUrl ? (
+                <div className="bg-[#d9d9d9] pt-[104px] pl-[313px] h-screen overflow-y-auto">
+                    <WordDocumentViewer documentUrl={docUrl} />
+                </div>
+            ) : (
+                <div className="bg-[#d9d9d9] pt-[104px] pl-[313px] flex flex-row items-center justify-center shrink-0 h-auto relative overflow-auto -z-10">
+                    <div className="my-4 bg-[#ffffff] shrink-0 w-[629px] h-[891px] relative"></div>
+                </div>
+            )}
+        </>
+    );
 };
 
 export default EssayPage;
