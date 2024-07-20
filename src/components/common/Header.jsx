@@ -83,7 +83,7 @@ const Header = ({ className }) => {
                                     />
                                 </svg>
                                 <div className="text-[#131313] text-[16px] font-semibold mb-1">
-                                    {me.data.name}
+                                    {me.name}
                                 </div>
                             </div>
                         </>
