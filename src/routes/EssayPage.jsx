@@ -293,7 +293,7 @@ const EssayPage = () => {
                                         ? "#f5f5f5"
                                         : "#ffffff",
                                 }}
-                                className="overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                className="overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                             />
                         </div>
                     </div>
@@ -393,7 +393,7 @@ const EssayPage = () => {
                                         ? "#f5f5f5"
                                         : "#ffffff",
                                 }}
-                                className="overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                className="overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                             />
                         </div>
                     </div>
@@ -430,7 +430,7 @@ const EssayPage = () => {
                                     ? "#f5f5f5"
                                     : "#ffffff",
                             }}
-                            className=" overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative  text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                            className=" overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                         />
                     </div>
                 </div>

@@ -21,4 +21,4 @@ export const getCreatedReport = async (documentId) =>
     axiosClient.get(`/document/text/${documentId}`);
 
 export const getDocFile = async (documentId) =>
-    axiosClient.get(`document/doc/${documentId}`);
+    axiosClient.get(`/document/doc/${documentId}`);
