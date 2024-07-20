@@ -287,7 +287,7 @@ const EssayPage = () => {
                                         ? "#f5f5f5"
                                         : "#ffffff",
                                 }}
-                                className="overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                className="overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                             />
                         </div>
                     </div>
@@ -379,37 +379,42 @@ const EssayPage = () => {
                                 placeholder="서론, 본론, 결론, 참고문헌 등 따라야
                                         할 에세이의 양식이 있다면
                                         알려주세요."
-                value={essayData.format}
-                onChange={handleEssayData}
-                readOnly={isOutputCreated}
-                style={{
-                  backgroundColor: isOutputCreated ? "#f5f5f5" : "#ffffff",
-                }}
-                className="overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-[#9e9e9e] text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
-              />
-            </div>
-          </div>
-          <div className="bg-[#ffffff] rounded-[10px] p-4 flex flex-col gap-2.5 items-center justify-start shrink-0 relative w-[98.5%] ">
-            <div className="flex flex-col gap-2 items-start justify-start shrink-0 w-full relative">
-              <div className="flex flex-row items-center justify-between shrink-0 w-full relative">
-                <div className="flex flex-row items-center justify-between shrink-0 relative">
-                  <span className="px-1 text-[#000000] text-left font-['Inter-SemiBold',_sans-serif] text-base font-semibold relative">
-                    프롬프트{" "}
-                  </span>
-                  <CreateIcon color="black" />
-                </div>
-                <ResetIcon id="prompt" onClick={resetEssayData} />
-              </div>
-              <span className="px-1 text-[#000000] text-left font-['Inter-Regular',_sans-serif] text-[9px] font-normal relative">
-                레포트의 내용을 세밀하게 조정하고 싶다면, 아래 항목에 필요
-                사항을
-                <br />
-                작성해주세요{" "}
-              </span>
-            </div>
-            <textarea
-              id="requirement"
-              placeholder="ex) 서론 부분을 독자들의 흥미를 이끄는
+                                value={essayData.format}
+                                onChange={handleEssayData}
+                                readOnly={isOutputCreated}
+                                style={{
+                                    backgroundColor: isOutputCreated
+                                        ? "#f5f5f5"
+                                        : "#ffffff",
+                                }}
+                                className="overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                            />
+                        </div>
+                    </div>
+                    <div className="bg-[#ffffff] rounded-[10px] p-4 flex flex-col gap-2.5 items-center justify-start shrink-0 relative w-[98.5%] ">
+                        <div className="flex flex-col gap-2 items-start justify-start shrink-0 w-full relative">
+                            <div className="flex flex-row items-center justify-between shrink-0 w-full relative">
+                                <div className="flex flex-row items-center justify-between shrink-0 relative">
+                                    <span className="px-1 text-[#000000] text-left font-['Inter-SemiBold',_sans-serif] text-base font-semibold relative">
+                                        프롬프트{" "}
+                                    </span>
+                                    <CreateIcon color="black" />
+                                </div>
+                                <ResetIcon
+                                    id="prompt"
+                                    onClick={resetEssayData}
+                                />
+                            </div>
+                            <span className="px-1 text-[#000000] text-left font-['Inter-Regular',_sans-serif] text-[9px] font-normal relative">
+                                레포트의 내용을 세밀하게 조정하고 싶다면, 아래
+                                항목에 필요 사항을
+                                <br />
+                                작성해주세요{" "}
+                            </span>
+                        </div>
+                        <textarea
+                            id="requirement"
+                            placeholder="ex) 서론 부분을 독자들의 흥미를 이끄는
                                 내용으로 시작할 수 있게 해줘"
               value={essayData.requirement}
               readOnly={isOutputCreated}
