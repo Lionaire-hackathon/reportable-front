@@ -4,8 +4,15 @@ import useMe from "../apis/hook/useMe";
 import { useNavigate } from "react-router-dom";
 import Tag from "../components/common/Tag";
 import AWS from "aws-sdk";
-import { documentApi } from "../apis/document";
+import ResetIcon from "../components/atom/ResetIcon";
+import {
+    documentApi,
+    createReport,
+    getCreatedReport,
+    getDocFile,
+} from "../apis/document";
 import { fileApi } from "../apis/file";
+import AnimatedLoading from "../components/common/AnimatedLoading";
 
 // AWS 자격 증명을 환경 변수로부터 설정합니다.
 AWS.config.update({
@@ -33,12 +40,14 @@ const ReportPage = () => {
             "논의",
         ]),
         purposeAndMethod: "",
-        requirement: "",
+        prompt: "",
     });
     const [filesWithDescript, setFilesWithDescript] = useState([]);
     const fileUploadRef = useRef(null);
     //const [uploadedFiles, setUploadedFiles] = useState([]);
     const [isOutputCreated, setIsOutputCreated] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [documentId, setDocumentId] = useState();
 
     const handleFileChange = async (e) => {
         const newFiles = Array.from(e.target.files);
@@ -121,23 +130,21 @@ const ReportPage = () => {
 
     const handleReportSubmit = async (e) => {
         e.preventDefault();
-        for (const fileWithDescript of filesWithDescript) {
-            console.log(fileWithDescript.file);
-        }
+        setIsLoading(true);
         try {
             // document api 호출
             const documentDto = {
                 title: reportData.topic,
                 amount: reportData.length,
                 type: "research",
-                prompt: reportData.requirement,
+                prompt: reportData.prompt,
                 form: "",
                 elements: Array.from(reportData.contents).join(", "),
                 core: reportData.purposeAndMethod,
             };
             const documentResponse = await documentApi(documentDto);
             console.log("제출 완료");
-            console.log(documentResponse.data.id);
+            setDocumentId(documentResponse.data.id);
 
             // file을 s3에 업로드 & file api 호출
             for (const fileWithDescript of filesWithDescript) {
@@ -152,6 +159,15 @@ const ReportPage = () => {
                 const result = await fileApi(fileDto);
                 console.log(result);
             }
+
+            // Claude api를 사용해서 레포트 생성
+            console.log(documentResponse.data.id);
+            const finalResponse = await createReport(documentResponse.data.id);
+            // 필요없는 부분
+            const wordUrl = await getDocFile(documentResponse.data.id);
+            setIsLoading(false);
+            navigate(`/report/${documentResponse.data.id}`);
+            setIsOutputCreated(true);
         } catch (error) {
             console.error("문서 생성 오류:", error);
             const errorMessage =
@@ -159,8 +175,8 @@ const ReportPage = () => {
                 "An unexpected error occurred. Please try again.";
             alert(`${errorMessage} 문서 생성에 실패했습니다.`);
         }
-        setIsOutputCreated(!isOutputCreated);
         console.log(reportData);
+        setIsLoading(false);
     };
 
     const handleFileName = (e, index) => {
@@ -233,27 +249,25 @@ const ReportPage = () => {
         });
     };
 
-    /*
     useEffect(() => {
-        if (!me) {
+        if (!me && !isLoadingMe) {
             alert("로그인이 필요합니다.");
             navigate("/");
             navigate("/signin");
         }
     }, [me]);
-    */
 
     return (
         <>
-            <Header className="fixed" />
+            <Header className="fixed" headerType="report" />
             <form
-                className="top-0 left-0 flex flex-col gap-2.5 items-center justify-between shrink-0 w-[313px] h-full fixed"
+                className="top-0 left-0 flex flex-col gap-2.5 items-center justify-between shrink-0 w-[313px] h-full fixed z-20"
                 style={{
                     background: "linear-gradient(to left, #cae5e4, #cae5e4)",
                 }}
                 onSubmit={handleReportSubmit}
             >
-                <div className="flex flex-col items-center justify-start shrink-0 w-[289px] py-4 max-h-[80%] overflow-auto gap-[11px] absolute top-28 bottom-20">
+                <div className="flex flex-col items-center justify-start shrink-0 w-[289px] py-4 max-h-[80%] overflow-auto gap-[11px] absolute top-[76px] bottom-20">
                     <div
                         className="bg-[#ffffff] rounded-[10px] p-4 flex flex-col gap-0 items-center justify-center shrink-0 relative w-[98.5%]"
                         style={{
@@ -270,36 +284,23 @@ const ReportPage = () => {
                                         </span>
                                     </span>{" "}
                                 </div>
-                                <svg
-                                    className="cursor-pointer shrink-0 w-4 h-4 relative overflow-visible"
-                                    width="17"
-                                    height="17"
-                                    viewBox="0 0 17 17"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
+                                <ResetIcon
                                     id="topic"
                                     onClick={resetReportData}
-                                >
-                                    <path
-                                        fillRule="evenodd"
-                                        clipRule="evenodd"
-                                        d="M7.82 0.528976C9.20071 0.411147 10.5884 0.653982 11.847 1.23369C13.1056 1.81341 14.1921 2.71011 15 3.83598V2.24998C15 2.05106 15.079 1.8603 15.2197 1.71965C15.3603 1.57899 15.5511 1.49998 15.75 1.49998C15.9489 1.49998 16.1397 1.57899 16.2803 1.71965C16.421 1.8603 16.5 2.05106 16.5 2.24998V6.49998H12.25C12.0511 6.49998 11.8603 6.42096 11.7197 6.28031C11.579 6.13965 11.5 5.94889 11.5 5.74998C11.5 5.55106 11.579 5.3603 11.7197 5.21965C11.8603 5.07899 12.0511 4.99998 12.25 4.99998H13.977C13.2931 3.92988 12.3107 3.08356 11.1512 2.56556C9.9917 2.04757 8.70584 1.88058 7.45248 2.08524C6.19912 2.2899 5.03316 2.85723 4.09864 3.71715C3.16412 4.57708 2.50198 5.69192 2.194 6.92398C2.17128 7.02076 2.12955 7.11206 2.07123 7.19257C2.01291 7.27308 1.93917 7.34119 1.85429 7.39294C1.76942 7.4447 1.6751 7.47906 1.57682 7.49403C1.47854 7.50901 1.37827 7.5043 1.28182 7.48017C1.18538 7.45604 1.0947 7.41298 1.01505 7.3535C0.935404 7.29401 0.868375 7.21928 0.817865 7.13366C0.767355 7.04803 0.734371 6.95322 0.720832 6.85473C0.707293 6.75625 0.713469 6.65605 0.739 6.55998C1.14354 4.9424 2.0434 3.49166 3.31279 2.41052C4.58218 1.32939 6.15766 0.671906 7.819 0.529976L7.82 0.528976ZM4.42 15.381C5.49199 16.0164 6.69758 16.3925 7.94068 16.4795C9.18378 16.5665 10.43 16.3618 11.58 15.8819C12.73 15.402 13.752 14.6601 14.5646 13.7153C15.3771 12.7704 15.9577 11.6489 16.26 10.44C16.305 10.2482 16.2728 10.0464 16.1702 9.87814C16.0676 9.70993 15.903 9.58883 15.7119 9.54101C15.5207 9.4932 15.3185 9.52251 15.1488 9.62261C14.9791 9.72271 14.8556 9.88557 14.805 10.076C14.4969 11.3078 13.8347 12.4223 12.9002 13.282C11.9658 14.1417 10.8 14.7089 9.54688 14.9136C8.29373 15.1182 7.00809 14.9513 5.84871 14.4336C4.68933 13.9158 3.70699 13.0698 3.023 12H4.75C4.94891 12 5.13968 11.921 5.28033 11.7803C5.42098 11.6397 5.5 11.4489 5.5 11.25C5.5 11.0511 5.42098 10.8603 5.28033 10.7196C5.13968 10.579 4.94891 10.5 4.75 10.5H0.5V14.75C0.5 14.9489 0.579018 15.1397 0.71967 15.2803C0.860322 15.421 1.05109 15.5 1.25 15.5C1.44891 15.5 1.63968 15.421 1.78033 15.2803C1.92098 15.1397 2 14.9489 2 14.75V13.164C2.64478 14.0623 3.46879 14.8172 4.42 15.381Z"
-                                        fill="black"
-                                    />
-                                </svg>
+                                    isDisabled={isLoading}
+                                />
                             </div>
                             <textarea
                                 placeholder="작성할 보고서의 주제를 알려주세요."
                                 id="topic"
                                 value={reportData.topic}
-                                readOnly={isOutputCreated}
+                                readOnly={isLoading}
                                 onChange={handleReportData}
-                                style={{
-                                    backgroundColor: isOutputCreated
-                                        ? "#f5f5f5"
-                                        : "#ffffff",
-                                }}
-                                className="rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                className={`${
+                                    isLoading
+                                        ? "bg-[#f5f5f5] text-[#9e9e9e]"
+                                        : "bg-[#ffffff"
+                                } rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2`}
                             />
                         </div>
                     </div>
@@ -319,23 +320,11 @@ const ReportPage = () => {
                                         </span>
                                     </span>{" "}
                                 </div>
-                                <svg
-                                    className="cursor-pointer shrink-0 w-4 h-4 relative overflow-visible"
-                                    width="17"
-                                    height="17"
-                                    viewBox="0 0 17 17"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
+                                <ResetIcon
                                     id="length"
                                     onClick={resetReportData}
-                                >
-                                    <path
-                                        fillRule="evenodd"
-                                        clipRule="evenodd"
-                                        d="M7.82 0.528976C9.20071 0.411147 10.5884 0.653982 11.847 1.23369C13.1056 1.81341 14.1921 2.71011 15 3.83598V2.24998C15 2.05106 15.079 1.8603 15.2197 1.71965C15.3603 1.57899 15.5511 1.49998 15.75 1.49998C15.9489 1.49998 16.1397 1.57899 16.2803 1.71965C16.421 1.8603 16.5 2.05106 16.5 2.24998V6.49998H12.25C12.0511 6.49998 11.8603 6.42096 11.7197 6.28031C11.579 6.13965 11.5 5.94889 11.5 5.74998C11.5 5.55106 11.579 5.3603 11.7197 5.21965C11.8603 5.07899 12.0511 4.99998 12.25 4.99998H13.977C13.2931 3.92988 12.3107 3.08356 11.1512 2.56556C9.9917 2.04757 8.70584 1.88058 7.45248 2.08524C6.19912 2.2899 5.03316 2.85723 4.09864 3.71715C3.16412 4.57708 2.50198 5.69192 2.194 6.92398C2.17128 7.02076 2.12955 7.11206 2.07123 7.19257C2.01291 7.27308 1.93917 7.34119 1.85429 7.39294C1.76942 7.4447 1.6751 7.47906 1.57682 7.49403C1.47854 7.50901 1.37827 7.5043 1.28182 7.48017C1.18538 7.45604 1.0947 7.41298 1.01505 7.3535C0.935404 7.29401 0.868375 7.21928 0.817865 7.13366C0.767355 7.04803 0.734371 6.95322 0.720832 6.85473C0.707293 6.75625 0.713469 6.65605 0.739 6.55998C1.14354 4.9424 2.0434 3.49166 3.31279 2.41052C4.58218 1.32939 6.15766 0.671906 7.819 0.529976L7.82 0.528976ZM4.42 15.381C5.49199 16.0164 6.69758 16.3925 7.94068 16.4795C9.18378 16.5665 10.43 16.3618 11.58 15.8819C12.73 15.402 13.752 14.6601 14.5646 13.7153C15.3771 12.7704 15.9577 11.6489 16.26 10.44C16.305 10.2482 16.2728 10.0464 16.1702 9.87814C16.0676 9.70993 15.903 9.58883 15.7119 9.54101C15.5207 9.4932 15.3185 9.52251 15.1488 9.62261C14.9791 9.72271 14.8556 9.88557 14.805 10.076C14.4969 11.3078 13.8347 12.4223 12.9002 13.282C11.9658 14.1417 10.8 14.7089 9.54688 14.9136C8.29373 15.1182 7.00809 14.9513 5.84871 14.4336C4.68933 13.9158 3.70699 13.0698 3.023 12H4.75C4.94891 12 5.13968 11.921 5.28033 11.7803C5.42098 11.6397 5.5 11.4489 5.5 11.25C5.5 11.0511 5.42098 10.8603 5.28033 10.7196C5.13968 10.579 4.94891 10.5 4.75 10.5H0.5V14.75C0.5 14.9489 0.579018 15.1397 0.71967 15.2803C0.860322 15.421 1.05109 15.5 1.25 15.5C1.44891 15.5 1.63968 15.421 1.78033 15.2803C1.92098 15.1397 2 14.9489 2 14.75V13.164C2.64478 14.0623 3.46879 14.8172 4.42 15.381Z"
-                                        fill="black"
-                                    />
-                                </svg>
+                                    isDisabled={isLoading}
+                                />
                             </div>
                             <div className="flex flex-row gap-2.5 items-center justify-start self-stretch shrink-0 relative">
                                 <input
@@ -348,13 +337,12 @@ const ReportPage = () => {
                                     value={reportData.length}
                                     onChange={handleReportData}
                                     autoComplete="off"
-                                    readOnly={isOutputCreated}
-                                    style={{
-                                        backgroundColor: isOutputCreated
-                                            ? "#f5f5f5"
-                                            : "#ffffff",
-                                    }}
-                                    className="rounded border-solid border-[#C2C2C2] border px-3 flex flex-row gap-1 items-end justify-start shrink-0 w-[80%] h-8 relative overflow-hidden text-gray02-70 text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal"
+                                    readOnly={isLoading}
+                                    className={`${
+                                        isLoading
+                                            ? "bg-[#f5f5f5] text-[#9e9e9e]"
+                                            : "bg-[#ffffff"
+                                    } rounded border-solid border-[#C2C2C2] border px-3 flex flex-row gap-1 items-end justify-start shrink-0 w-[80%] h-8 relative overflow-hidden text-gray02-70 text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal`}
                                 />
                                 <div className="text-[#000000] text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal relative">
                                     자 이상{" "}
@@ -374,23 +362,11 @@ const ReportPage = () => {
                                     </span>{" "}
                                 </div>
                                 <div className="flex flex-row gap-[11px] items-center justify-start shrink-0 relative">
-                                    <svg
-                                        className="cursor-pointer shrink-0 w-4 h-4 relative overflow-visible "
-                                        width="17"
-                                        height="17"
-                                        viewBox="0 0 17 17"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
+                                    <ResetIcon
                                         id="contents"
                                         onClick={resetReportData}
-                                    >
-                                        <path
-                                            fillRule="evenodd"
-                                            clipRule="evenodd"
-                                            d="M7.82 0.528976C9.20071 0.411147 10.5884 0.653982 11.847 1.23369C13.1056 1.81341 14.1921 2.71011 15 3.83598V2.24998C15 2.05106 15.079 1.8603 15.2197 1.71965C15.3603 1.57899 15.5511 1.49998 15.75 1.49998C15.9489 1.49998 16.1397 1.57899 16.2803 1.71965C16.421 1.8603 16.5 2.05106 16.5 2.24998V6.49998H12.25C12.0511 6.49998 11.8603 6.42096 11.7197 6.28031C11.579 6.13965 11.5 5.94889 11.5 5.74998C11.5 5.55106 11.579 5.3603 11.7197 5.21965C11.8603 5.07899 12.0511 4.99998 12.25 4.99998H13.977C13.2931 3.92988 12.3107 3.08356 11.1512 2.56556C9.9917 2.04757 8.70584 1.88058 7.45248 2.08524C6.19912 2.2899 5.03316 2.85723 4.09864 3.71715C3.16412 4.57708 2.50198 5.69192 2.194 6.92398C2.17128 7.02076 2.12955 7.11206 2.07123 7.19257C2.01291 7.27308 1.93917 7.34119 1.85429 7.39294C1.76942 7.4447 1.6751 7.47906 1.57682 7.49403C1.47854 7.50901 1.37827 7.5043 1.28182 7.48017C1.18538 7.45604 1.0947 7.41298 1.01505 7.3535C0.935404 7.29401 0.868375 7.21928 0.817865 7.13366C0.767355 7.04803 0.734371 6.95322 0.720832 6.85473C0.707293 6.75625 0.713469 6.65605 0.739 6.55998C1.14354 4.9424 2.0434 3.49166 3.31279 2.41052C4.58218 1.32939 6.15766 0.671906 7.819 0.529976L7.82 0.528976ZM4.42 15.381C5.49199 16.0164 6.69758 16.3925 7.94068 16.4795C9.18378 16.5665 10.43 16.3618 11.58 15.8819C12.73 15.402 13.752 14.6601 14.5646 13.7153C15.3771 12.7704 15.9577 11.6489 16.26 10.44C16.305 10.2482 16.2728 10.0464 16.1702 9.87814C16.0676 9.70993 15.903 9.58883 15.7119 9.54101C15.5207 9.4932 15.3185 9.52251 15.1488 9.62261C14.9791 9.72271 14.8556 9.88557 14.805 10.076C14.4969 11.3078 13.8347 12.4223 12.9002 13.282C11.9658 14.1417 10.8 14.7089 9.54688 14.9136C8.29373 15.1182 7.00809 14.9513 5.84871 14.4336C4.68933 13.9158 3.70699 13.0698 3.023 12H4.75C4.94891 12 5.13968 11.921 5.28033 11.7803C5.42098 11.6397 5.5 11.4489 5.5 11.25C5.5 11.0511 5.42098 10.8603 5.28033 10.7196C5.13968 10.579 4.94891 10.5 4.75 10.5H0.5V14.75C0.5 14.9489 0.579018 15.1397 0.71967 15.2803C0.860322 15.421 1.05109 15.5 1.25 15.5C1.44891 15.5 1.63968 15.421 1.78033 15.2803C1.92098 15.1397 2 14.9489 2 14.75V13.164C2.64478 14.0623 3.46879 14.8172 4.42 15.381Z"
-                                            fill="black"
-                                        />
-                                    </svg>
+                                        isDisabled={isLoading}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -419,9 +395,7 @@ const ReportPage = () => {
                                         (content) => (
                                             <Tag
                                                 content={content}
-                                                isOutputCreated={
-                                                    isOutputCreated
-                                                }
+                                                isReadOnly={isLoading}
                                                 handleContentDelete={
                                                     handleContentDelete
                                                 }
@@ -432,7 +406,7 @@ const ReportPage = () => {
                                     type="button"
                                     onClick={handleModal}
                                     className={`${
-                                        isOutputCreated ? "hidden" : ""
+                                        isLoading ? "hidden" : ""
                                     } bg-white rounded-[50px] border-solid border-[#B5D0C9] border pb-[0.15rem] flex flex-row gap-1 items-center justify-center relative w-[24px] h-[24px]`}
                                 >
                                     <span>+</span>
@@ -451,36 +425,23 @@ const ReportPage = () => {
                                         </span>
                                     </span>{" "}
                                 </div>
-                                <svg
-                                    className="cursor-pointer shrink-0 w-4 h-4 relative overflow-visible"
-                                    width="16"
-                                    height="17"
-                                    viewBox="0 0 16 17"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
+                                <ResetIcon
                                     id="purposeAndMethod"
                                     onClick={resetReportData}
-                                >
-                                    <path
-                                        fillRule="evenodd"
-                                        clipRule="evenodd"
-                                        d="M7.32 0.528976C8.70071 0.411147 10.0884 0.653982 11.347 1.23369C12.6056 1.81341 13.6921 2.71011 14.5 3.83598V2.24998C14.5 2.05106 14.579 1.8603 14.7197 1.71965C14.8603 1.57899 15.0511 1.49998 15.25 1.49998C15.4489 1.49998 15.6397 1.57899 15.7803 1.71965C15.921 1.8603 16 2.05106 16 2.24998V6.49998H11.75C11.5511 6.49998 11.3603 6.42096 11.2197 6.28031C11.079 6.13965 11 5.94889 11 5.74998C11 5.55106 11.079 5.3603 11.2197 5.21965C11.3603 5.07899 11.5511 4.99998 11.75 4.99998H13.477C12.7931 3.92988 11.8107 3.08356 10.6512 2.56556C9.4917 2.04757 8.20584 1.88058 6.95248 2.08524C5.69912 2.2899 4.53316 2.85723 3.59864 3.71715C2.66412 4.57708 2.00198 5.69192 1.694 6.92398C1.67128 7.02076 1.62955 7.11206 1.57123 7.19257C1.51291 7.27308 1.43917 7.34119 1.35429 7.39294C1.26942 7.4447 1.1751 7.47906 1.07682 7.49403C0.97854 7.50901 0.878265 7.5043 0.781825 7.48017C0.685385 7.45604 0.594703 7.41298 0.515053 7.3535C0.435404 7.29401 0.368375 7.21928 0.317865 7.13366C0.267355 7.04803 0.234371 6.95322 0.220832 6.85473C0.207293 6.75625 0.213469 6.65605 0.239 6.55998C0.643544 4.9424 1.5434 3.49166 2.81279 2.41052C4.08218 1.32939 5.65766 0.671906 7.319 0.529976L7.32 0.528976ZM3.92 15.381C4.99199 16.0164 6.19758 16.3925 7.44068 16.4795C8.68378 16.5665 9.93001 16.3618 11.08 15.8819C12.23 15.402 13.252 14.6601 14.0646 13.7153C14.8771 12.7704 15.4577 11.6489 15.76 10.44C15.805 10.2482 15.7728 10.0464 15.6702 9.87814C15.5676 9.70993 15.403 9.58883 15.2119 9.54101C15.0207 9.4932 14.8185 9.52251 14.6488 9.62261C14.4791 9.72271 14.3556 9.88557 14.305 10.076C13.9969 11.3078 13.3347 12.4223 12.4002 13.282C11.4658 14.1417 10.3 14.7089 9.04688 14.9136C7.79373 15.1182 6.50809 14.9513 5.34871 14.4336C4.18933 13.9158 3.20699 13.0698 2.523 12H4.25C4.44891 12 4.63968 11.921 4.78033 11.7803C4.92098 11.6397 5 11.4489 5 11.25C5 11.0511 4.92098 10.8603 4.78033 10.7196C4.63968 10.579 4.44891 10.5 4.25 10.5H0V14.75C0 14.9489 0.0790176 15.1397 0.21967 15.2803C0.360322 15.421 0.551088 15.5 0.75 15.5C0.948912 15.5 1.13968 15.421 1.28033 15.2803C1.42098 15.1397 1.5 14.9489 1.5 14.75V13.164C2.14478 14.0623 2.96879 14.8172 3.92 15.381Z"
-                                        fill="black"
-                                    />
-                                </svg>
+                                    isDisabled={isLoading}
+                                />
                             </div>
                             <textarea
                                 id="purposeAndMethod"
                                 placeholder="진행한 실험이나 연구에 대한 핵심적인 내용을 설명해주세요."
                                 value={reportData.purposeAndMethod}
                                 onChange={handleReportData}
-                                readOnly={isOutputCreated}
-                                style={{
-                                    backgroundColor: isOutputCreated
-                                        ? "#f5f5f5"
-                                        : "#ffffff",
-                                }}
-                                className="rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                readOnly={isLoading}
+                                className={`${
+                                    isLoading
+                                        ? "bg-[#f5f5f5] text-[#9e9e9e]"
+                                        : "bg-[#ffffff"
+                                } rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2`}
                             />
                         </div>
                     </div>
@@ -488,25 +449,13 @@ const ReportPage = () => {
                         <div className="flex flex-col gap-1 items-start justify-start shrink-0 w-full relative">
                             <div className="flex flex-row items-center justify-between shrink-0 w-full relative">
                                 <div className="px-1 text-[#000000] text-left font-['Inter-SemiBold',_sans-serif] text-base font-semibold relative">
-                                    결과 보고서{" "}
+                                    참고 자료{" "}
                                 </div>
-                                <svg
-                                    className="cursor-pointer shrink-0 w-4 h-4 relative overflow-visible"
-                                    width="17"
-                                    height="16"
-                                    viewBox="0 0 17 16"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
+                                <ResetIcon
                                     id="files"
                                     onClick={resetReportData}
-                                >
-                                    <path
-                                        fillRule="evenodd"
-                                        clipRule="evenodd"
-                                        d="M7.82 0.0289756C9.20071 -0.0888534 10.5884 0.153982 11.847 0.733693C13.1056 1.31341 14.1921 2.21011 15 3.33598V1.74998C15 1.55106 15.079 1.3603 15.2197 1.21965C15.3603 1.07899 15.5511 0.999976 15.75 0.999976C15.9489 0.999976 16.1397 1.07899 16.2803 1.21965C16.421 1.3603 16.5 1.55106 16.5 1.74998V5.99998H12.25C12.0511 5.99998 11.8603 5.92096 11.7197 5.78031C11.579 5.63965 11.5 5.44889 11.5 5.24998C11.5 5.05106 11.579 4.8603 11.7197 4.71965C11.8603 4.57899 12.0511 4.49998 12.25 4.49998H13.977C13.2931 3.42988 12.3107 2.58356 11.1512 2.06556C9.9917 1.54757 8.70584 1.38058 7.45248 1.58524C6.19912 1.7899 5.03316 2.35723 4.09864 3.21715C3.16412 4.07708 2.50198 5.19192 2.194 6.42398C2.17128 6.52076 2.12955 6.61206 2.07123 6.69257C2.01291 6.77308 1.93917 6.84119 1.85429 6.89294C1.76942 6.9447 1.6751 6.97906 1.57682 6.99403C1.47854 7.00901 1.37827 7.0043 1.28182 6.98017C1.18538 6.95604 1.0947 6.91298 1.01505 6.8535C0.935404 6.79401 0.868375 6.71928 0.817865 6.63366C0.767355 6.54803 0.734371 6.45322 0.720832 6.35473C0.707293 6.25625 0.713469 6.15605 0.739 6.05998C1.14354 4.4424 2.0434 2.99166 3.31279 1.91052C4.58218 0.82939 6.15766 0.171906 7.819 0.0299756L7.82 0.0289756ZM4.42 14.881C5.49199 15.5164 6.69758 15.8925 7.94068 15.9795C9.18378 16.0665 10.43 15.8618 11.58 15.3819C12.73 14.902 13.752 14.1601 14.5646 13.2153C15.3771 12.2704 15.9577 11.1489 16.26 9.93997C16.305 9.74817 16.2728 9.54635 16.1702 9.37814C16.0676 9.20993 15.903 9.08883 15.7119 9.04101C15.5207 8.9932 15.3185 9.02251 15.1488 9.12261C14.9791 9.22271 14.8556 9.38557 14.805 9.57598C14.4969 10.8078 13.8347 11.9223 12.9002 12.782C11.9658 13.6417 10.8 14.2089 9.54688 14.4136C8.29373 14.6182 7.00809 14.4513 5.84871 13.9336C4.68933 13.4158 3.70699 12.5698 3.023 11.5H4.75C4.94891 11.5 5.13968 11.421 5.28033 11.2803C5.42098 11.1397 5.5 10.9489 5.5 10.75C5.5 10.5511 5.42098 10.3603 5.28033 10.2196C5.13968 10.079 4.94891 9.99998 4.75 9.99998H0.5V14.25C0.5 14.4489 0.579018 14.6397 0.71967 14.7803C0.860322 14.921 1.05109 15 1.25 15C1.44891 15 1.63968 14.921 1.78033 14.7803C1.92098 14.6397 2 14.4489 2 14.25V12.664C2.64478 13.5623 3.46879 14.3172 4.42 14.881Z"
-                                        fill="black"
-                                    />
-                                </svg>
+                                    isDisabled={isLoading}
+                                />
                             </div>
                             <div className="px-1 text-[#000000] text-left font-['Inter-Regular',_sans-serif] text-[9px] font-normal relative">
                                 결과 데이터를 이미지/엑셀 형식으로, 파일 이름을
@@ -564,12 +513,10 @@ const ReportPage = () => {
                                                         <textarea
                                                             placeholder="파일에 대한 설명을 입력해 주세요."
                                                             className="overflow-auto border w-full"
-                                                            readOnly={
-                                                                isOutputCreated
-                                                            }
+                                                            readOnly={isLoading}
                                                             style={{
                                                                 backgroundColor:
-                                                                    isOutputCreated
+                                                                    isLoading
                                                                         ? "#f5f5f5"
                                                                         : "#ffffff",
                                                             }}
@@ -604,9 +551,9 @@ const ReportPage = () => {
                         <button
                             type="button"
                             onClick={handleUpload}
-                            disabled={isOutputCreated}
+                            disabled={isLoading}
                             className={`${
-                                isOutputCreated
+                                isLoading
                                     ? "bg-[#F5F5F5] border-[#c5c5c5] text-[#9e9e9e]"
                                     : "bg-[#F7F5FF] border-[#694df9] text-[#694DF9]"
                             } self-stretch border border-[#694df9] text-[#694DF9] rounded-[4px]`}
@@ -635,23 +582,11 @@ const ReportPage = () => {
                                         />
                                     </svg>
                                 </div>
-                                <svg
-                                    className="cursor-pointer shrink-0 w-4 h-4 relative overflow-visible"
-                                    width="17"
-                                    height="16"
-                                    viewBox="0 0 17 16"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    id="requirement"
+                                <ResetIcon
+                                    id="prompt"
                                     onClick={resetReportData}
-                                >
-                                    <path
-                                        fillRule="evenodd"
-                                        clipRule="evenodd"
-                                        d="M7.82 0.0289756C9.20071 -0.0888534 10.5884 0.153982 11.847 0.733693C13.1056 1.31341 14.1921 2.21011 15 3.33598V1.74998C15 1.55106 15.079 1.3603 15.2197 1.21965C15.3603 1.07899 15.5511 0.999976 15.75 0.999976C15.9489 0.999976 16.1397 1.07899 16.2803 1.21965C16.421 1.3603 16.5 1.55106 16.5 1.74998V5.99998H12.25C12.0511 5.99998 11.8603 5.92096 11.7197 5.78031C11.579 5.63965 11.5 5.44889 11.5 5.24998C11.5 5.05106 11.579 4.8603 11.7197 4.71965C11.8603 4.57899 12.0511 4.49998 12.25 4.49998H13.977C13.2931 3.42988 12.3107 2.58356 11.1512 2.06556C9.9917 1.54757 8.70584 1.38058 7.45248 1.58524C6.19912 1.7899 5.03316 2.35723 4.09864 3.21715C3.16412 4.07708 2.50198 5.19192 2.194 6.42398C2.17128 6.52076 2.12955 6.61206 2.07123 6.69257C2.01291 6.77308 1.93917 6.84119 1.85429 6.89294C1.76942 6.9447 1.6751 6.97906 1.57682 6.99403C1.47854 7.00901 1.37827 7.0043 1.28182 6.98017C1.18538 6.95604 1.0947 6.91298 1.01505 6.8535C0.935404 6.79401 0.868375 6.71928 0.817865 6.63366C0.767355 6.54803 0.734371 6.45322 0.720832 6.35473C0.707293 6.25625 0.713469 6.15605 0.739 6.05998C1.14354 4.4424 2.0434 2.99166 3.31279 1.91052C4.58218 0.82939 6.15766 0.171906 7.819 0.0299756L7.82 0.0289756ZM4.42 14.881C5.49199 15.5164 6.69758 15.8925 7.94068 15.9795C9.18378 16.0665 10.43 15.8618 11.58 15.3819C12.73 14.902 13.752 14.1601 14.5646 13.2153C15.3771 12.2704 15.9577 11.1489 16.26 9.93997C16.305 9.74817 16.2728 9.54635 16.1702 9.37814C16.0676 9.20993 15.903 9.08883 15.7119 9.04101C15.5207 8.9932 15.3185 9.02251 15.1488 9.12261C14.9791 9.22271 14.8556 9.38557 14.805 9.57598C14.4969 10.8078 13.8347 11.9223 12.9002 12.782C11.9658 13.6417 10.8 14.2089 9.54688 14.4136C8.29373 14.6182 7.00809 14.4513 5.84871 13.9336C4.68933 13.4158 3.70699 12.5698 3.023 11.5H4.75C4.94891 11.5 5.13968 11.421 5.28033 11.2803C5.42098 11.1397 5.5 10.9489 5.5 10.75C5.5 10.5511 5.42098 10.3603 5.28033 10.2196C5.13968 10.079 4.94891 9.99998 4.75 9.99998H0.5V14.25C0.5 14.4489 0.579018 14.6397 0.71967 14.7803C0.860322 14.921 1.05109 15 1.25 15C1.44891 15 1.63968 14.921 1.78033 14.7803C1.92098 14.6397 2 14.4489 2 14.25V12.664C2.64478 13.5623 3.46879 14.3172 4.42 14.881Z"
-                                        fill="black"
-                                    />
-                                </svg>
+                                    isDisabled={isLoading}
+                                />
                             </div>
                             <div className="px-1 text-[#000000] text-left font-['Inter-Regular',_sans-serif] text-[9px] font-normal relative">
                                 레포트의 내용을 세밀하게 조정하고 싶다면, 아래
@@ -661,27 +596,29 @@ const ReportPage = () => {
                             </div>
                         </div>
                         <textarea
-                            id="requirement"
+                            id="prompt"
                             placeholder="ex) 서론 부분을 독자들의 흥미를 이끄는
                                     내용으로 시작할 수 있게 해줘"
-                            value={reportData.requirement}
+                            value={reportData.prompt}
                             onChange={handleReportData}
-                            readOnly={isOutputCreated}
-                            style={{
-                                backgroundColor: isOutputCreated
-                                    ? "#f5f5f5"
-                                    : "#ffffff",
-                            }}
-                            className="rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                            readOnly={isLoading}
+                            className={`${
+                                isLoading
+                                    ? "bg-[#f5f5f5] text-[#9e9e9e]"
+                                    : "bg-[#ffffff"
+                            } rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2`}
                         />
                     </div>
                 </div>
                 <button
-                    className="bg-[#005f5f] rounded-[10px] bottom-1 flex flex-row gap-1 items-center justify-center mx-auto w-[289px] shrink-0 h-[60px] absolute"
+                    className={`${
+                        isLoading && "hidden "
+                    } bg-[#005f5f] rounded-[10px] bottom-1 flex flex-row gap-1 items-center justify-center mx-auto w-[289px] shrink-0 h-[60px] absolute`}
                     style={{
                         boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                     }}
                     type="submit"
+                    disabled={isLoading}
                 >
                     <div className="flex flex-row gap-1.5 items-center justify-start shrink-0 relative">
                         <div className="text-white text-center font-body-text-inter-14-medium-font-family text-body-text-inter-14-medium-font-size leading-body-text-inter-14-medium-line-height font-body-text-inter-14-medium-font-weight relative">
@@ -703,9 +640,24 @@ const ReportPage = () => {
                     </div>
                 </button>
             </form>
-            <div className="bg-[#d9d9d9] pt-[104px] pl-[313px] flex flex-row items-center justify-center shrink-0 h-auto relative overflow-auto -z-10">
-                <div className="my-4 bg-[#ffffff] shrink-0 w-[629px] h-[891px] relative"></div>
-            </div>
+            {isLoading ? (
+                <>
+                    <div
+                        className="fixed top-0 bottom-0 left-0 right-0 bg-[rgba(217,217,217,0.20)] z-0 flex items-center justify-center"
+                        style={{ backdropFilter: "blur(5px)" }}
+                    ></div>
+                    <div className="bg-transparent top-[74px] bottom-0 left-[313px] right-0 flex flex-row items-center justify-center shrink-0 fixed overflow-auto z-10">
+                        <span className="loader"></span>
+                    </div>
+                    <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] flex flex-row items-center justify-center shrink-0 h-screen relative overflow-auto -z-10">
+                        <div className="my-4 bg-[#ffffff] shrink-0 w-[529px] h-[90%] relative flex flex-row items-center justify-center"></div>
+                    </div>
+                </>
+            ) : (
+                <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] flex flex-row items-center justify-center shrink-0 h-screen relative overflow-auto -z-10">
+                    <div className="my-4 bg-[#ffffff] shrink-0 w-[529px] h-[90%] relative flex flex-row items-center justify-start"></div>
+                </div>
+            )}
         </>
     );
 };
