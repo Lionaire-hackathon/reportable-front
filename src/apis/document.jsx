@@ -8,6 +8,12 @@ axios.defaults.baseURL = SERVER_API_URL;
 export const documentApi = async (documentDto) =>
     axiosClient.post("/document", documentDto);
 
+export const getDocumentInfo = async (documentId) =>
+    axiosClient.get(`/document/${documentId}`);
+
+export const deleteDocument = async (documentId) =>
+    axiosClient.delete(`/document/${documentId}`);
+
 export const askAdditionalQuestion = async (documentId) =>
     axiosClient.post(`/document/first-prompt/${documentId}`);
 

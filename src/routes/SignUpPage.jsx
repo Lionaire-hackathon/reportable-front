@@ -9,7 +9,7 @@ const SignUpPage = () => {
         name: "",
         password: "",
         passwordConfirm: "",
-        phoneNumber: "",
+        phone_number: "",
     });
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
@@ -289,7 +289,7 @@ const SignUpPage = () => {
                                 </div>
                                 <div className="h-[92px] w-full static left-0 flex flex-col gap-2">
                                     <label
-                                        htmlFor="phoneNumber"
+                                        htmlFor="phone_number"
                                         className="text-[#000000] text-left font-['Poppins-Regular',_sans-serif] text-base font-normal static right-[7.8%] left-[0%] w-[92.2%] h-[26.09%]"
                                     >
                                         휴대폰 번호(번호만){" "}
@@ -298,7 +298,7 @@ const SignUpPage = () => {
                                         <input
                                             required
                                             type="text"
-                                            id="phoneNumber"
+                                            id="phone_number"
                                             pattern="\d{11}"
                                             title="정확한 형식의 전화번호를 입력해주세요."
                                             placeholder="Enter your phone number"

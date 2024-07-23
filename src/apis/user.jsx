@@ -22,13 +22,13 @@ export const logout = async () => axiosClient.post("/auth/logout");
 export const verify = async () => axiosClient.post("/auth/verify");
 
 export const userApi = {
-    update(id, updateUserDto) {
-        return axiosClient.put(`/user/${id}`, updateUserDto);
+    async update(id, updateUserDto) {
+        return axiosClient.put(`/users/${id}`, updateUserDto);
     },
-    findOne(id) {
-        return axiosClient.get(`/user/${id}`);
+    async findOne(id) {
+        return axiosClient.get(`/users/${id}`);
     },
-    remove(id) {
-        return axiosClient.delete(`/user/${id}`);
+    async remove(id) {
+        return axiosClient.delete(`/users/${id}`);
     },
 };
