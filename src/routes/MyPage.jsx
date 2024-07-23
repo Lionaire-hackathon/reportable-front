@@ -39,7 +39,7 @@ const MyPage = () => {
 
     const handleScroll = (id) => {
         const element = document.getElementById(id);
-        const yOffset = -200; // 원하는 오프셋 값 (px)
+        const yOffset = id === "my-profile" ? -200 : -150;
         const y =
             element.getBoundingClientRect().top + window.pageYOffset + yOffset;
 
@@ -70,7 +70,7 @@ const MyPage = () => {
     };
 
     useEffect(() => {
-        if (!me) {
+        if (!me && !isLoadingMe) {
             alert("로그인이 필요합니다.");
             navigate("/");
             navigate("/signin");
@@ -180,13 +180,7 @@ const MyPage = () => {
                                 </svg>
                                 <div
                                     className="cursor-pointer text-[rgba(30,109,105,0.93)] hover:text-[#848484] text-left font-['Audiowide-Regular',_sans-serif] text-xl font-normal relative w-[152px]"
-                                    onClick={() =>
-                                        document
-                                            .getElementById("my-reports")
-                                            .scrollIntoView({
-                                                behavior: "smooth",
-                                            })
-                                    }
+                                    onClick={() => handleScroll("my-reports")}
                                 >
                                     My reports{" "}
                                 </div>
@@ -204,7 +198,7 @@ const MyPage = () => {
                                 My Profile{" "}
                             </div>
                             <svg
-                                className="cursor-pointer shrink-0 realtive"
+                                className="cursor-pointer shrink-0 relative"
                                 width="30"
                                 height="30"
                                 viewBox="0 0 30 30"
@@ -387,6 +381,7 @@ const MyPage = () => {
                                             <ReportIcon
                                                 documentType={document.type}
                                                 documentTitle={document.title}
+                                                documentId={document.id}
                                                 color={bgColor}
                                             />
                                         );
