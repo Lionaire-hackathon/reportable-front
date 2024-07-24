@@ -154,12 +154,11 @@ const ReportPage = () => {
                 const fileDto = {
                     document_id: documentResponse.data.id,
                     name: fileWithDescript.file.name,
-                    description: `<이 사진은 ${
-                        fileWithDescript.needAnalysis
-                            ? "결과 데이터 분석에 사용해줘> "
-                            : "보고서의 적당한 위치에 첨부해줘> "
-                    } \n ${fileWithDescript.description} `,
+                    description: fileWithDescript.description,
                     url: fileUrl,
+                    type: fileWithDescript.needAnalysis
+                        ? "analysis"
+                        : "attachment",
                 };
                 const result = await fileApi(fileDto);
                 console.log(result);
@@ -460,7 +459,7 @@ const ReportPage = () => {
                                 className={`${
                                     isLoading
                                         ? "bg-[#f5f5f5] text-[#9e9e9e]"
-                                        : "bg-[#ffffff"
+                                        : "bg-[#ffffff]"
                                 } rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2`}
                             />
                         </div>
@@ -542,7 +541,7 @@ const ReportPage = () => {
                                                                 isLoading
                                                                     ? "bg-[#373737] "
                                                                     : "bg-[#293f3e] cursor-pointer"
-                                                            } my-2 border rounded-xl flex flex-row gap-0 items-center justify-center w-full h-5 relative`}
+                                                            } my-2 rounded flex flex-row gap-0 items-center justify-center w-full h-5 relative`}
                                                             onClick={
                                                                 !isLoading
                                                                     ? () =>
@@ -553,51 +552,52 @@ const ReportPage = () => {
                                                             }
                                                         >
                                                             <div
-                                                                className={`rounded-xl flex flex-row gap-2.5 items-center justify-center self-stretch shrink-0 w-[50%] relative ${
+                                                                className={`rounded flex flex-row gap-2.5 items-center justify-center self-stretch shrink-0 w-[50%] relative ${
                                                                     fileWithDescript.needAnalysis
                                                                         ? isLoading
                                                                             ? "bg-gradient-to-b from-[#838383] to-[#818181] "
-                                                                            : "bg-gradient-to-b from-[#38AA8E] to-[#499985] "
+                                                                            : "bg-gradient-to-b from-[#e7FAF5]  to-[#e7FAF5] "
                                                                         : ""
                                                                 }`}
                                                                 style={{
                                                                     border: fileWithDescript.needAnalysis
-                                                                        ? "1px solid #000000"
+                                                                        ? "1px solid #21725E"
                                                                         : "none",
                                                                 }}
                                                             >
                                                                 <div
-                                                                    className={`text-center font-['Inter-Bold',_sans-serif] text-sm text-[8px] font-bold relative ${
+                                                                    className={`text-center font-['Inter-Bold',_sans-serif] text-[11px] font-bold relative ${
                                                                         fileWithDescript.needAnalysis
-                                                                            ? "text-[#e7e7e7]"
+                                                                            ? "text-[#21725E]"
                                                                             : "text-[#5f6265]"
                                                                     }`}
                                                                 >
-                                                                    분석 데이터
+                                                                    자료 분석만
                                                                 </div>
                                                             </div>
                                                             <div
-                                                                className={`rounded-xl flex flex-row gap-2.5 items-center justify-center self-stretch shrink-0 w-[50%] relative ${
+                                                                className={`rounded flex flex-row gap-2.5 items-center justify-center self-stretch shrink-0 w-[50%] relative ${
                                                                     !fileWithDescript.needAnalysis
                                                                         ? isLoading
                                                                             ? "bg-gradient-to-b from-[#838383] to-[#818181] "
-                                                                            : "bg-gradient-to-b from-[#38AA8E] to-[#499985] "
+                                                                            : "bg-gradient-to-b from-[#e7FAF5]  to-[#e7FAF5] "
                                                                         : ""
                                                                 }`}
                                                                 style={{
                                                                     border: fileWithDescript.needAnalysis
                                                                         ? "none"
-                                                                        : "1px solid #000000",
+                                                                        : "1px solid #21725E",
                                                                 }}
                                                             >
                                                                 <div
-                                                                    className={`text-center font-['Inter-Bold',_sans-serif] text-sm text-[8px] font-bold relative ${
+                                                                    className={`text-center font-['Inter-Bold',_sans-serif] text-[11px] font-bold relative ${
                                                                         !fileWithDescript.needAnalysis
-                                                                            ? "text-[#e7e7e7]"
+                                                                            ? "text-[#21725E]"
                                                                             : "text-[#5f6265]"
                                                                     }`}
                                                                 >
-                                                                    첨부 데이터
+                                                                    보고서
+                                                                    첨부까지
                                                                 </div>
                                                             </div>
                                                         </div>

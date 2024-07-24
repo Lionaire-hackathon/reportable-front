@@ -16,8 +16,17 @@ import {
     getDocFile,
 } from "../apis/document";
 
+const PageState = {
+    NORMAL: "NORMAL",
+    MAKE_DOCUMENT: "MAKE_DOCUMENT",
+    MAKE_ADDITIONAL_QUESTION: "MAKE_ADDITIONAL_QUESTION",
+    MAKE_TEXT_REPORT: "MAKE_TEXT_REPORT",
+    MAKE_DOCX_REPORT: "MAKE_DOCX_REPORT",
+};
+
 const EssayPage = () => {
     const { me, isLoadingMe } = useMe();
+    const [pageState, setPageState] = useState(PageState.NORMAL);
     const navigate = useNavigate();
     const [essayData, setEssayData] = useState({
         topic: "",
@@ -72,6 +81,7 @@ const EssayPage = () => {
 
     const handleEssaySubmit = async (e) => {
         e.preventDefault();
+        setPageState(PageState.MAKE_DOCUMENT);
         setIsLoading(true);
         try {
             const essaySubmitData = {
@@ -84,8 +94,8 @@ const EssayPage = () => {
                 core: "",
             };
             const documentResponse = await documentApi(essaySubmitData);
-            console.log("제출 완료");
             setDocumentId(documentResponse.data.id);
+            setPageState(PageState.MAKE_ADDITIONAL_QUESTION);
             // 추가 질문 유무 물어보기
             const responseObject = await askAdditionalQuestion(
                 documentResponse.data.id
@@ -102,9 +112,12 @@ const EssayPage = () => {
                     Array(processedResponse.prompt.length).fill("")
                 );
             } else {
+                setPageState(PageState.MAKE_TEXT_REPORT);
                 await createReport(documentResponse.data.id);
+                setPageState(PageState.MAKE_DOCX_REPORT);
                 await getDocFile(documentResponse.data.id);
                 navigate(`/essay/${documentResponse.data.id}`);
+                setPageState(PageState.NORMAL);
                 setIsLoading(false);
             }
         } catch (error) {
@@ -138,6 +151,7 @@ const EssayPage = () => {
     const handleFinalSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+        setPageState(PageState.MAKE_ADDITIONAL_QUESTION);
         setHasAdditionalQuestions(false);
         const addPrompt = mergeQnA(responseJSON.prompt, additionalAnswers);
         const documentIdAndAddingPrompt = {
@@ -145,19 +159,15 @@ const EssayPage = () => {
             addPrompt: addPrompt,
         };
         await answerAdditionalQuestion(documentIdAndAddingPrompt);
+        setPageState(PageState.MAKE_TEXT_REPORT);
         const finalResponse = await createReport(documentId);
-        //없어도 되는 부분
-        setCreatedEssayUrl(finalResponse.data.url);
-        const essay = await getCreatedReport(documentId);
-        setCreatedEssay(essay.data);
-        console.log(essay.data);
-        //
+        setPageState(PageState.MAKE_DOCX_REPORT);
         const wordUrl = await getDocFile(documentId);
         navigate(`/essay/${documentId}`);
 
         //필요없는 부분
         setDocUrl(wordUrl.data);
-        //setIsOutputCreated(true);
+        setPageState(PageState.NORMAL);
         setIsLoading(false);
         //
     };
@@ -168,6 +178,87 @@ const EssayPage = () => {
             newAnswers[index] = answer;
             return newAnswers;
         });
+    };
+
+    const getLoadingText = (pageState) => {
+        switch (pageState) {
+            case PageState.NORMAL:
+                return null;
+            case PageState.MAKE_DOCUMENT:
+                return (
+                    <>
+                        <span>문</span>
+                        <span>서</span>
+                        <span className="mx-1"></span>
+                        <span>정</span>
+                        <span>보</span>
+                        <span>를</span>
+                        <span className="mx-1"></span>
+                        <span>저</span>
+                        <span>장</span>
+                        <span>하</span>
+                        <span>는</span>
+                        <span className="mx-1"></span>
+                        <span>중</span>
+                    </>
+                );
+            case PageState.MAKE_ADDITIONAL_QUESTION:
+                return (
+                    <>
+                        <span>추</span>
+                        <span>가</span>
+                        <span> </span>
+                        <span>질</span>
+                        <span>문</span>
+                        <span>을</span>
+                        <span> </span>
+                        <span>생</span>
+                        <span>성</span>
+                        <span>하</span>
+                        <span>는</span>
+                        <span> </span>
+                        <span>중</span>
+                    </>
+                );
+            case PageState.MAKE_TEXT_REPORT:
+                return (
+                    <>
+                        <span>보</span>
+                        <span>고</span>
+                        <span>서</span>
+                        <span> </span>
+                        <span>내</span>
+                        <span>용</span>
+                        <span> </span>
+                        <span>작</span>
+                        <span>성</span>
+                        <span>하</span>
+                        <span>는</span>
+                        <span> </span>
+                        <span>중</span>
+                    </>
+                );
+            case PageState.MAKE_DOCX_REPORT:
+                return (
+                    <>
+                        <span>보</span>
+                        <span>고</span>
+                        <span>서</span>
+                        <span>를</span>
+                        <span> </span>
+                        <span>문</span>
+                        <span>서</span>
+                        <span>화</span>
+                        <span> </span>
+                        <span>하</span>
+                        <span>는</span>
+                        <span> </span>
+                        <span>중</span>
+                    </>
+                );
+            default:
+                return null;
+        }
     };
 
     useEffect(() => {
@@ -268,7 +359,7 @@ const EssayPage = () => {
                                 <ResetIcon
                                     id="topic"
                                     onClick={resetEssayData}
-                                    isDisabled={isLoading}
+                                    isDisabled={pageState !== PageState.NORMAL}
                                 />
                             </div>
                             <textarea
@@ -276,9 +367,9 @@ const EssayPage = () => {
                                 id="topic"
                                 value={essayData.topic}
                                 onChange={handleEssayData}
-                                readOnly={isLoading}
+                                readOnly={pageState !== PageState.NORMAL}
                                 className={`${
-                                    isLoading
+                                    pageState !== PageState.NORMAL
                                         ? "bg-[#f5f5f5] text-[#9e9e9e] "
                                         : "bg-[#ffffff] "
                                 } overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2`}
@@ -304,7 +395,7 @@ const EssayPage = () => {
                                 <ResetIcon
                                     id="length"
                                     onClick={resetEssayData}
-                                    isDisabled={isLoading}
+                                    isDisabled={pageState !== PageState.NORMAL}
                                 />
                             </div>
                             <div className="flex flex-row gap-2.5 items-center justify-start self-stretch shrink-0 relative">
@@ -317,10 +408,10 @@ const EssayPage = () => {
                                     placeholder="1500"
                                     value={essayData.length}
                                     onChange={handleEssayData}
-                                    readOnly={isLoading}
+                                    readOnly={pageState !== PageState.NORMAL}
                                     autoComplete="off"
                                     className={`${
-                                        isLoading
+                                        pageState !== PageState.NORMAL
                                             ? "bg-[#f5f5f5] text-[#9e9e9e] "
                                             : "bg-[#ffffff] "
                                     } rounded border-solid border-[#C2C2C2] border px-3 flex flex-row gap-1 items-end justify-start shrink-0 w-[80%] h-8 relative overflow-hidden text-gray02-70 text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal`}
@@ -340,7 +431,7 @@ const EssayPage = () => {
                                 <ResetIcon
                                     id="format"
                                     onClick={resetEssayData}
-                                    isDisabled={isLoading}
+                                    isDisabled={pageState !== PageState.NORMAL}
                                 />
                             </div>
                             <textarea
@@ -350,9 +441,9 @@ const EssayPage = () => {
                                         알려주세요."
                                 value={essayData.format}
                                 onChange={handleEssayData}
-                                readOnly={isLoading}
+                                readOnly={pageState !== PageState.NORMAL}
                                 className={`${
-                                    isLoading
+                                    pageState !== PageState.NORMAL
                                         ? "bg-[#f5f5f5] text-[#9e9e9e] "
                                         : "bg-[#ffffff] "
                                 } overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2`}
@@ -371,7 +462,7 @@ const EssayPage = () => {
                                 <ResetIcon
                                     id="prompt"
                                     onClick={resetEssayData}
-                                    isDisabled={isLoading}
+                                    isDisabled={pageState !== PageState.NORMAL}
                                 />
                             </div>
                             <span className="px-1 text-[#000000] text-left font-['Inter-Regular',_sans-serif] text-[9px] font-normal relative">
@@ -386,10 +477,10 @@ const EssayPage = () => {
                             placeholder="ex) 서론 부분을 독자들의 흥미를 이끄는
                                 내용으로 시작할 수 있게 해줘"
                             value={essayData.prompt}
-                            readOnly={isLoading}
+                            readOnly={pageState !== PageState.NORMAL}
                             onChange={handleEssayData}
                             className={`${
-                                isLoading
+                                pageState !== PageState.NORMAL
                                     ? "bg-[#f5f5f5] text-[#9e9e9e] "
                                     : "bg-[#ffffff] "
                             } overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2`}
@@ -398,13 +489,15 @@ const EssayPage = () => {
                 </div>
                 <button
                     className={`${
-                        (isLoading || hasAdditionalQuestions) && "hidden "
+                        (pageState !== PageState.NORMAL ||
+                            hasAdditionalQuestions) &&
+                        "hidden "
                     } bg-[#005f5f] rounded-[10px] bottom-1 flex flex-row gap-1 items-center justify-center mx-auto w-[289px] shrink-0 h-[60px] absolute`}
                     style={{
                         boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                     }}
                     type="submit"
-                    disabled={isLoading}
+                    disabled={pageState !== PageState.NORMAL}
                 >
                     <div className="flex flex-row gap-1.5 items-center justify-start shrink-0 relative">
                         <div className="text-white text-center font-body-text-inter-14-medium-font-family text-body-text-inter-14-medium-font-size leading-body-text-inter-14-medium-line-height font-body-text-inter-14-medium-font-weight relative">
@@ -418,13 +511,16 @@ const EssayPage = () => {
                 <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] h-screen overflow-y-auto">
                     <WordDocumentViewer documentUrl={docUrl} />
                 </div>
-            ) : isLoading ? (
+            ) : pageState !== PageState.NORMAL ? (
                 <>
                     <div
                         className="fixed top-0 bottom-0 left-0 right-0 bg-[rgba(217,217,217,0.20)] z-0 flex items-center justify-center"
                         style={{ backdropFilter: "blur(5px)" }}
                     ></div>
-                    <div className="bg-transparent top-[74px] bottom-0 left-[313px] right-0 flex flex-row items-center justify-center shrink-0 fixed overflow-auto z-10">
+                    <div className="bg-transparent top-[74px] bottom-0 left-[313px] right-0 flex flex-col gap-10 items-center justify-center shrink-0 fixed overflow-auto z-10">
+                        <div className="text-[18px] loading-text2 text-[#299792] flex flex-row">
+                            {getLoadingText(pageState)}
+                        </div>
                         <span className="loader"></span>
                     </div>
                     <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] flex flex-row items-center justify-center shrink-0 h-screen relative overflow-auto -z-10">
