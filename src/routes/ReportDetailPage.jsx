@@ -33,6 +33,19 @@ const ReportPage = () => {
         return [fileName.substring(0, dotIndex), fileName.substring(dotIndex)];
     };
 
+    const needAnalysis = (description) => {
+        const pattern = /<이\s사진은\s결과\s데이터\s분석에\s사용해줘>/;
+        return pattern.test(description);
+    };
+
+    const removeNeedAnalysis = (description) => {
+        const pattern1 = /<이\s사진은\s결과\s데이터\s분석에\s사용해줘>\s*/g;
+        const pattern2 = /<이\s사진은\s보고서의\s적당한\s위치에\s첨부해줘>\s*/g;
+        return needAnalysis(description)
+            ? description.replace(pattern1, "")
+            : description.replace(pattern2, "");
+    };
+
     useEffect(() => {
         const fetchDocumentInfo = async () => {
             try {
@@ -245,7 +258,7 @@ const ReportPage = () => {
                                                             file.name
                                                         );
                                                         return (
-                                                            <div>
+                                                            <div className="rounded border p-2">
                                                                 <div className="flex items-center justify-between ">
                                                                     <div className="flex-grow">
                                                                         <span
@@ -265,12 +278,74 @@ const ReportPage = () => {
                                                                         x
                                                                     </button>
                                                                 </div>
+                                                                <div className="bg-[#373737] my-2 border rounded-xl flex flex-row gap-0 items-center justify-center w-full h-5 relative">
+                                                                    <div
+                                                                        className={`rounded-xl flex flex-row gap-2.5 items-center justify-center self-stretch shrink-0 w-[50%] relative ${
+                                                                            needAnalysis(
+                                                                                file.description
+                                                                            )
+                                                                                ? "bg-gradient-to-b from-[#838383] to-[#818181] "
+                                                                                : ""
+                                                                        }`}
+                                                                        style={{
+                                                                            border: needAnalysis(
+                                                                                file.description
+                                                                            )
+                                                                                ? "1px solid #000000"
+                                                                                : "none",
+                                                                        }}
+                                                                    >
+                                                                        <div
+                                                                            className={`text-center font-['Inter-Bold',_sans-serif] text-sm text-[8px] font-bold relative ${
+                                                                                needAnalysis(
+                                                                                    file.description
+                                                                                )
+                                                                                    ? "text-[#e7e7e7]"
+                                                                                    : "text-[#5f6265]"
+                                                                            }`}
+                                                                        >
+                                                                            분석
+                                                                            데이터
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        className={`rounded-xl flex flex-row gap-2.5 items-center justify-center self-stretch shrink-0 w-[50%] relative ${
+                                                                            !needAnalysis(
+                                                                                file.description
+                                                                            )
+                                                                                ? "bg-gradient-to-b from-[#838383] to-[#818181] "
+                                                                                : ""
+                                                                        }`}
+                                                                        style={{
+                                                                            border: needAnalysis(
+                                                                                file.description
+                                                                            )
+                                                                                ? "none"
+                                                                                : "1px solid #000000",
+                                                                        }}
+                                                                    >
+                                                                        <div
+                                                                            className={`text-center font-['Inter-Bold',_sans-serif] text-sm text-[8px] font-bold relative ${
+                                                                                !needAnalysis(
+                                                                                    file.description
+                                                                                )
+                                                                                    ? "text-[#e7e7e7]"
+                                                                                    : "text-[#5f6265]"
+                                                                            }`}
+                                                                        >
+                                                                            첨부
+                                                                            데이터
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                                 <textarea
                                                                     placeholder="파일에 대한 설명을 입력해 주세요."
                                                                     className="bg-[#f5f5f5] text-[#9e9e9e] overflow-auto border w-full"
                                                                     readOnly
-                                                                    value={
-                                                                        file.description
+                                                                    value={() =>
+                                                                        removeNeedAnalysis(
+                                                                            file.description
+                                                                        )
                                                                     }
                                                                 />
                                                             </div>

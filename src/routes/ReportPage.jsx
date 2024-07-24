@@ -49,18 +49,19 @@ const ReportPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [documentId, setDocumentId] = useState();
 
-    const handleFileChange = async (e) => {
+    const handleFileChange = (e) => {
         const newFiles = Array.from(e.target.files);
-        const newFilesWithDescript = [];
-        for (const newFile of newFiles) {
-            newFilesWithDescript.push({
-                file: newFile,
-                description: "",
-                url: "",
-            });
-        }
-        setFilesWithDescript([...filesWithDescript, ...newFilesWithDescript]);
-        //setUploadedFiles((prevFiles) => [...prevFiles, ...newFiles]);
+        const newFilesWithDescript = newFiles.map((newFile) => ({
+            file: newFile,
+            description: "",
+            needAnalysis: false,
+            url: "",
+        }));
+
+        setFilesWithDescript((prevFilesWithDescript) => [
+            ...prevFilesWithDescript,
+            ...newFilesWithDescript,
+        ]);
     };
 
     const handleUpload = () => {
@@ -153,7 +154,11 @@ const ReportPage = () => {
                 const fileDto = {
                     document_id: documentResponse.data.id,
                     name: fileWithDescript.file.name,
-                    description: fileWithDescript.description,
+                    description: `<이 사진은 ${
+                        fileWithDescript.needAnalysis
+                            ? "결과 데이터 분석에 사용해줘> "
+                            : "보고서의 적당한 위치에 첨부해줘> "
+                    } \n ${fileWithDescript.description} `,
                     url: fileUrl,
                 };
                 const result = await fileApi(fileDto);
@@ -219,6 +224,21 @@ const ReportPage = () => {
             filesWithDescript.map((fileWithDescript, idx) => {
                 if (idx === index) {
                     return { ...fileWithDescript, description: e.target.value };
+                } else {
+                    return fileWithDescript;
+                }
+            })
+        );
+    };
+
+    const handleFileNeedAnalysis = (index) => {
+        setFilesWithDescript(
+            filesWithDescript.map((fileWithDescript, idx) => {
+                if (idx === index) {
+                    return {
+                        ...fileWithDescript,
+                        needAnalysis: !fileWithDescript.needAnalysis,
+                    };
                 } else {
                     return fileWithDescript;
                 }
@@ -463,7 +483,7 @@ const ReportPage = () => {
                             </div>
                             <div className="px-1 text-[11px] font-semibold w-full">
                                 {filesWithDescript.length > 0 && (
-                                    <div>
+                                    <div className="flex flex-col gap-2">
                                         {filesWithDescript.map(
                                             (fileWithDescript, index) => {
                                                 const [pureName, extension] =
@@ -472,12 +492,12 @@ const ReportPage = () => {
                                                             .name
                                                     );
                                                 return (
-                                                    <div>
+                                                    <div className="rounded border p-2">
                                                         <div className="flex items-center justify-between ">
-                                                            <div className="flex-grow">
+                                                            <div className="flex flex-row flex-grow justify-between mr-4">
                                                                 <input
                                                                     contentEditable="true"
-                                                                    className="editable flex-grow"
+                                                                    className="flex-grow"
                                                                     onChange={(
                                                                         e
                                                                     ) => {
@@ -493,14 +513,21 @@ const ReportPage = () => {
                                                                     value={
                                                                         pureName
                                                                     }
+                                                                    readOnly={
+                                                                        isLoading
+                                                                    }
                                                                 />
-                                                                <span>
+                                                                <div className="right-0">
                                                                     {extension}
-                                                                </span>
+                                                                </div>
                                                             </div>
                                                             <button
                                                                 type="button"
-                                                                className="text-center"
+                                                                className={`${
+                                                                    isLoading
+                                                                        ? "hidden "
+                                                                        : ""
+                                                                } text-center`}
                                                                 onClick={() => {
                                                                     handleFileDelete(
                                                                         index
@@ -509,6 +536,70 @@ const ReportPage = () => {
                                                             >
                                                                 x
                                                             </button>
+                                                        </div>
+                                                        <div
+                                                            className={`${
+                                                                isLoading
+                                                                    ? "bg-[#373737] "
+                                                                    : "bg-[#293f3e] cursor-pointer"
+                                                            } my-2 border rounded-xl flex flex-row gap-0 items-center justify-center w-full h-5 relative`}
+                                                            onClick={
+                                                                !isLoading
+                                                                    ? () =>
+                                                                          handleFileNeedAnalysis(
+                                                                              index
+                                                                          )
+                                                                    : null
+                                                            }
+                                                        >
+                                                            <div
+                                                                className={`rounded-xl flex flex-row gap-2.5 items-center justify-center self-stretch shrink-0 w-[50%] relative ${
+                                                                    fileWithDescript.needAnalysis
+                                                                        ? isLoading
+                                                                            ? "bg-gradient-to-b from-[#838383] to-[#818181] "
+                                                                            : "bg-gradient-to-b from-[#38AA8E] to-[#499985] "
+                                                                        : ""
+                                                                }`}
+                                                                style={{
+                                                                    border: fileWithDescript.needAnalysis
+                                                                        ? "1px solid #000000"
+                                                                        : "none",
+                                                                }}
+                                                            >
+                                                                <div
+                                                                    className={`text-center font-['Inter-Bold',_sans-serif] text-sm text-[8px] font-bold relative ${
+                                                                        fileWithDescript.needAnalysis
+                                                                            ? "text-[#e7e7e7]"
+                                                                            : "text-[#5f6265]"
+                                                                    }`}
+                                                                >
+                                                                    분석 데이터
+                                                                </div>
+                                                            </div>
+                                                            <div
+                                                                className={`rounded-xl flex flex-row gap-2.5 items-center justify-center self-stretch shrink-0 w-[50%] relative ${
+                                                                    !fileWithDescript.needAnalysis
+                                                                        ? isLoading
+                                                                            ? "bg-gradient-to-b from-[#838383] to-[#818181] "
+                                                                            : "bg-gradient-to-b from-[#38AA8E] to-[#499985] "
+                                                                        : ""
+                                                                }`}
+                                                                style={{
+                                                                    border: fileWithDescript.needAnalysis
+                                                                        ? "none"
+                                                                        : "1px solid #000000",
+                                                                }}
+                                                            >
+                                                                <div
+                                                                    className={`text-center font-['Inter-Bold',_sans-serif] text-sm text-[8px] font-bold relative ${
+                                                                        !fileWithDescript.needAnalysis
+                                                                            ? "text-[#e7e7e7]"
+                                                                            : "text-[#5f6265]"
+                                                                    }`}
+                                                                >
+                                                                    첨부 데이터
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                         <textarea
                                                             placeholder="파일에 대한 설명을 입력해 주세요."
