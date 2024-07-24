@@ -84,7 +84,7 @@ const ProfileEditPage = () => {
                 await userApi.update(me.id, updateUserDto);
                 alert("회원정보가 수정되었습니다!");
                 // 페이지를 리로드하지 않고 상태를 갱신
-                setUpdatedUserInfo(updateUserDto);
+                window.location.reload();
                 setIsEditing(false);
             } else {
                 form.reportValidity();
@@ -269,28 +269,15 @@ const ProfileEditPage = () => {
                                         />
                                     </svg>
                                 </div>
-                                {isEditing ? (
-                                    <input
-                                        className="bg-[#f2f2f2] text-[#9e9e9e] text-left font-body-xlarge-semibold-font-family text-body-xlarge-semibold-font-size leading-body-xlarge-semibold-line-height font-body-xlarge-semibold-font-weight relative flex-1 flex items-center justify-start"
-                                        style={{
-                                            letterSpacing:
-                                                "var(--body-xlarge-semibold-letter-spacing, 0.2px)",
-                                        }}
-                                        id="email"
-                                        value={updatedUserInfo.email}
-                                        onChange={handleInfoChange}
-                                    />
-                                ) : (
-                                    <div
-                                        className="text-[#212121] text-left font-body-xlarge-semibold-font-family text-body-xlarge-semibold-font-size leading-body-xlarge-semibold-line-height font-body-xlarge-semibold-font-weight relative flex-1 flex items-center justify-start"
-                                        style={{
-                                            letterSpacing:
-                                                "var(--body-xlarge-semibold-letter-spacing, 0.2px)",
-                                        }}
-                                    >
-                                        {me.email}
-                                    </div>
-                                )}
+                                <div
+                                    className="text-[#212121] text-left font-body-xlarge-semibold-font-family text-body-xlarge-semibold-font-size leading-body-xlarge-semibold-line-height font-body-xlarge-semibold-font-weight relative flex-1 flex items-center justify-start"
+                                    style={{
+                                        letterSpacing:
+                                            "var(--body-xlarge-semibold-letter-spacing, 0.2px)",
+                                    }}
+                                >
+                                    {me.email}
+                                </div>
                             </div>
                             <div className="bg-[#F2F2F2] rounded-2xl pt-[18px] pr-5 pb-[18px] pl-7 flex flex-row gap-6 items-center justify-start self-stretch shrink-0 relative w-full">
                                 <div className="flex items-center justify-center w-[24px] h-[24px]">
