@@ -17,9 +17,18 @@ import {
     getDocumentInfo,
 } from "../apis/document";
 
+const PageState = {
+    NORMAL: "NORMAL",
+    MAKE_DOCUMENT: "MAKE_DOCUMENT",
+    MAKE_ADDITIONAL_QUESTION: "MAKE_ADDITIONAL_QUESTION",
+    MAKE_TEXT_REPORT: "MAKE_TEXT_REPORT",
+    MAKE_DOCX_REPORT: "MAKE_DOCX_REPORT",
+};
+
 const EssayDetailPage = () => {
     const { documentId } = useParams();
     const [documentInfo, setDocumentInfo] = useState();
+    const [pageState, setPageState] = useState(PageState.NORMAL);
     useEffect(() => {
         const fetchDocumentInfo = async () => {
             try {
@@ -35,7 +44,6 @@ const EssayDetailPage = () => {
     const navigate = useNavigate();
 
     const { me, isLoadingMe } = useMe();
-    const [isLoading, setIsLoading] = useState(false);
     const [responseJSON, setResponseJSON] = useState({
         needMorePrompt: 0,
         prompt: [""],
@@ -62,7 +70,7 @@ const EssayDetailPage = () => {
 
     const handleEssaySubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
+        setPageState(PageState.MAKE_ADDITIONAL_QUESTION);
         try {
             // 추가 질문 유무 물어보기
             const responseObject = await askAdditionalQuestion(documentId);
@@ -77,9 +85,11 @@ const EssayDetailPage = () => {
                     Array(processedResponse.prompt.length).fill("")
                 );
             } else {
+                setPageState(PageState.MAKE_TEXT_REPORT);
                 const finalResponse = await createReport(documentId);
+                setPageState(PageState.MAKE_DOCX_REPORT);
                 const wordUrl = await getDocFile(documentId);
-                setIsLoading(false);
+                setPageState(PageState.NORMAL);
                 window.location.reload();
             }
         } catch (error) {
@@ -89,7 +99,6 @@ const EssayDetailPage = () => {
                 "An unexpected error occurred. Please try again.";
             alert(`${errorMessage} 문서 생성에 실패했습니다.`);
         }
-        setIsLoading(false);
     };
 
     const updateAdditionalAnswer = (index, answer) => {
@@ -124,7 +133,6 @@ const EssayDetailPage = () => {
 
     const handleFinalSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
         if (hasAdditionalQuestions) {
             setHasAdditionalQuestions(false);
             const addPrompt = mergeQnA(responseJSON.prompt, additionalAnswers);
@@ -136,13 +144,93 @@ const EssayDetailPage = () => {
             await answerAdditionalQuestion(documentIdAndAddingPrompt);
             console.log("B");
         }
+        setPageState(PageState.MAKE_TEXT_REPORT);
         await createReport(documentId);
-        console.log("C");
+        setPageState(PageState.MAKE_DOCX_REPORT);
         //없어도 되는 부분
         await getDocFile(documentId);
         window.location.reload();
-        //setIsLoading(false);
-        //
+    };
+
+    const getLoadingText = (pageState) => {
+        switch (pageState) {
+            case PageState.NORMAL:
+                return null;
+            case PageState.MAKE_DOCUMENT:
+                return (
+                    <>
+                        <span>문</span>
+                        <span>서</span>
+                        <span className="mx-1"></span>
+                        <span>정</span>
+                        <span>보</span>
+                        <span>를</span>
+                        <span className="mx-1"></span>
+                        <span>저</span>
+                        <span>장</span>
+                        <span>하</span>
+                        <span>는</span>
+                        <span className="mx-1"></span>
+                        <span>중</span>
+                    </>
+                );
+            case PageState.MAKE_ADDITIONAL_QUESTION:
+                return (
+                    <>
+                        <span>추</span>
+                        <span>가</span>
+                        <span className="mx-1"></span>
+                        <span>질</span>
+                        <span>문</span>
+                        <span>을</span>
+                        <span className="mx-1"></span>
+                        <span>생</span>
+                        <span>성</span>
+                        <span>하</span>
+                        <span>는</span>
+                        <span className="mx-1"></span>
+                        <span>중</span>
+                    </>
+                );
+            case PageState.MAKE_TEXT_REPORT:
+                return (
+                    <>
+                        <span>보</span>
+                        <span>고</span>
+                        <span>서</span>
+                        <span className="mx-1"></span>
+                        <span>내</span>
+                        <span>용</span>
+                        <span className="mx-1"></span>
+                        <span>작</span>
+                        <span>성</span>
+                        <span>하</span>
+                        <span>는</span>
+                        <span className="mx-1"></span>
+                        <span>중</span>
+                    </>
+                );
+            case PageState.MAKE_DOCX_REPORT:
+                return (
+                    <>
+                        <span>보</span>
+                        <span>고</span>
+                        <span>서</span>
+                        <span>를</span>
+                        <span className="mx-1"></span>
+                        <span>문</span>
+                        <span>서</span>
+                        <span>화</span>
+                        <span className="mx-1"></span>
+                        <span>하</span>
+                        <span>는</span>
+                        <span className="mx-1"></span>
+                        <span>중</span>
+                    </>
+                );
+            default:
+                return null;
+        }
     };
 
     return (
@@ -353,7 +441,8 @@ const EssayDetailPage = () => {
                         </div>
                         <button
                             className={`${
-                                documentInfo.wordUrl || isLoading
+                                documentInfo.wordUrl ||
+                                pageState !== PageState.NORMAL
                                     ? "hidden "
                                     : ""
                             } bg-[#005f5f] rounded-[10px] bottom-1 flex flex-row gap-1 items-center justify-center mx-auto w-[289px] shrink-0 h-[60px] absolute`}
@@ -383,13 +472,16 @@ const EssayDetailPage = () => {
                                 documentUrl={documentInfo.wordUrl}
                             />
                         </div>
-                    ) : isLoading ? (
+                    ) : pageState !== PageState.NORMAL ? (
                         <>
                             <div
                                 className="fixed top-0 bottom-0 left-0 right-0 bg-[rgba(217,217,217,0.20)] z-0 flex items-center justify-center"
                                 style={{ backdropFilter: "blur(5px)" }}
                             ></div>
-                            <div className="bg-transparent top-[74px] bottom-0 left-[313px] right-0 flex flex-row items-center justify-center shrink-0 fixed overflow-auto z-10">
+                            <div className="bg-transparent top-[74px] bottom-0 left-[313px] right-0 flex flex-col gap-10 items-center justify-center shrink-0 fixed overflow-auto z-10">
+                                <div className="text-[18px] loading-text2 text-[#299792] flex flex-row">
+                                    {getLoadingText(pageState)}
+                                </div>
                                 <span className="loader"></span>
                             </div>
                             <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] flex flex-row items-center justify-center shrink-0 h-screen relative overflow-auto -z-10">

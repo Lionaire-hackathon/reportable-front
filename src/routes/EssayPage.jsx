@@ -207,16 +207,16 @@ const EssayPage = () => {
                     <>
                         <span>추</span>
                         <span>가</span>
-                        <span> </span>
+                        <span className="mx-1"></span>
                         <span>질</span>
                         <span>문</span>
                         <span>을</span>
-                        <span> </span>
+                        <span className="mx-1"></span>
                         <span>생</span>
                         <span>성</span>
                         <span>하</span>
                         <span>는</span>
-                        <span> </span>
+                        <span className="mx-1"></span>
                         <span>중</span>
                     </>
                 );
@@ -226,15 +226,15 @@ const EssayPage = () => {
                         <span>보</span>
                         <span>고</span>
                         <span>서</span>
-                        <span> </span>
+                        <span className="mx-1"></span>
                         <span>내</span>
                         <span>용</span>
-                        <span> </span>
+                        <span className="mx-1"></span>
                         <span>작</span>
                         <span>성</span>
                         <span>하</span>
                         <span>는</span>
-                        <span> </span>
+                        <span className="mx-1"></span>
                         <span>중</span>
                     </>
                 );
@@ -245,14 +245,14 @@ const EssayPage = () => {
                         <span>고</span>
                         <span>서</span>
                         <span>를</span>
-                        <span> </span>
+                        <span className="mx-1"></span>
                         <span>문</span>
                         <span>서</span>
                         <span>화</span>
-                        <span> </span>
+                        <span className="mx-1"></span>
                         <span>하</span>
                         <span>는</span>
-                        <span> </span>
+                        <span className="mx-1"></span>
                         <span>중</span>
                     </>
                 );
