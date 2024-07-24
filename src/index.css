@@ -2,6 +2,167 @@
 @tailwind components;
 @tailwind utilities;
 
+.loading-text3 {
+    perspective: 1000px;
+}
+
+.loading-text3 span {
+    transform-origin: 50% 50% -25px;
+    transform-style: preserve-3d;
+    animation: loading-text3 1.6s infinite;
+}
+
+.loading-text3 span:nth-child(2) {
+    animation-delay: 0.05s;
+}
+.loading-text3 span:nth-child(3) {
+    animation-delay: 0.1s;
+}
+.loading-text3 span:nth-child(4) {
+    animation-delay: 0.15s;
+}
+.loading-text3 span:nth-child(5) {
+    animation-delay: 0.2s;
+}
+.loading-text3 span:nth-child(6) {
+    animation-delay: 0.25s;
+}
+.loading-text3 span:nth-child(7) {
+    animation-delay: 0.3s;
+}
+.loading-text3 span:nth-child(8) {
+    animation-delay: 0.35s;
+}
+.loading-text3 span:nth-child(9) {
+    animation-delay: 0.4s;
+}
+.loading-text3 span:nth-child(10) {
+    animation-delay: 0.45s;
+}
+.loading-text3 span:nth-child(11) {
+    animation-delay: 0.5s;
+}
+.loading-text3 span:nth-child(12) {
+    animation-delay: 0.55s;
+}
+.loading-text3 span:nth-child(13) {
+    animation-delay: 0.6s;
+}
+
+@keyframes loading-text3 {
+    0% {
+        transform: rotateX(-360deg);
+    }
+    70% {
+        transform: rotateX(0);
+    }
+}
+
+.loading-text2 span {
+    animation: loading-text2 0.7s infinite alternate;
+}
+
+.loading-text2 span:nth-child(2) {
+    animation-delay: 0.05s;
+}
+.loading-text2 span:nth-child(3) {
+    animation-delay: 0.1s;
+}
+.loading-text2 span:nth-child(4) {
+    animation-delay: 0.15s;
+}
+.loading-text2 span:nth-child(5) {
+    animation-delay: 0.2s;
+}
+.loading-text2 span:nth-child(6) {
+    animation-delay: 0.25s;
+}
+.loading-text2 span:nth-child(7) {
+    animation-delay: 0.3s;
+}
+.loading-text2 span:nth-child(8) {
+    animation-delay: 0.35s;
+}
+.loading-text2 span:nth-child(9) {
+    animation-delay: 0.4s;
+}
+.loading-text2 span:nth-child(10) {
+    animation-delay: 0.45s;
+}
+.loading-text2 span:nth-child(11) {
+    animation-delay: 0.5s;
+}
+.loading-text2 span:nth-child(12) {
+    animation-delay: 0.55s;
+}
+.loading-text2 span:nth-child(13) {
+    animation-delay: 0.6s;
+}
+
+@keyframes loading-text2 {
+    0% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* code #1 */
+.loading-text1 span {
+    animation: loading-text 0.8s infinite alternate;
+}
+
+/* 각 nth-child에 대해 animation-delay 설정 */
+.loading-text1 span:nth-child(1) {
+    animation-delay: 0s;
+}
+.loading-text1 span:nth-child(2) {
+    animation-delay: 0.05s;
+}
+.loading-text1 span:nth-child(3) {
+    animation-delay: 0.1s;
+}
+.loading-text1 span:nth-child(4) {
+    animation-delay: 0.15s;
+}
+.loading-text1 span:nth-child(5) {
+    animation-delay: 0.2s;
+}
+.loading-text1 span:nth-child(6) {
+    animation-delay: 0.25s;
+}
+.loading-text1 span:nth-child(7) {
+    animation-delay: 0.3s;
+}
+.loading-text1 span:nth-child(8) {
+    animation-delay: 0.35s;
+}
+.loading-text1 span:nth-child(9) {
+    animation-delay: 0.4s;
+}
+.loading-text1 span:nth-child(10) {
+    animation-delay: 0.45s;
+}
+.loading-text1 span:nth-child(11) {
+    animation-delay: 0.5s;
+}
+.loading-text1 span:nth-child(12) {
+    animation-delay: 0.55s;
+}
+.loading-text1 span:nth-child(13) {
+    animation-delay: 0.6s;
+}
+
+@keyframes loading-text {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
 /* HTML: <div class="loader"></div> */
 .loader {
     --d: 22px;

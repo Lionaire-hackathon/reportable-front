@@ -8,7 +8,7 @@ const ReportIcon = ({ documentType, documentTitle, documentId, color }) => {
         if (documentType === "essay") {
             navigate(`/essay/${documentId}`);
         } else {
-            navigate(`/report/${documentId}`);
+            navigate(`/research/${documentId}`);
         }
     };
 
