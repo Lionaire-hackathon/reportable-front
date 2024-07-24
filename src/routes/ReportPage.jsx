@@ -23,8 +23,17 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
+const PageState = {
+    NORMAL: "NORMAL",
+    MAKE_DOCUMENT: "MAKE_DOCUMENT",
+    UPLOAD_FILE: "UPLOAD_FILE",
+    MAKE_TEXT_REPORT: "MAKE_TEXT_REPORT",
+    MAKE_DOCX_REPORT: "MAKE_DOCX_REPORT",
+};
+
 const ReportPage = () => {
     const { me, isLoadingMe } = useMe();
+    const [pageState, setPageState] = useState(PageState.NORMAL);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newContent, setNewContent] = useState("");
     const navigate = useNavigate();
@@ -46,7 +55,6 @@ const ReportPage = () => {
     const fileUploadRef = useRef(null);
     //const [uploadedFiles, setUploadedFiles] = useState([]);
     const [isOutputCreated, setIsOutputCreated] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const [documentId, setDocumentId] = useState();
 
     const handleFileChange = (e) => {
@@ -131,7 +139,7 @@ const ReportPage = () => {
 
     const handleReportSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
+        setPageState(PageState.MAKE_DOCUMENT);
         try {
             // document api 호출
             const documentDto = {
@@ -148,6 +156,7 @@ const ReportPage = () => {
             setDocumentId(documentResponse.data.id);
 
             // file을 s3에 업로드 & file api 호출
+            setPageState(PageState.UPLOAD_FILE);
             for (const fileWithDescript of filesWithDescript) {
                 const fileUrl = await uploadFile(fileWithDescript.file);
                 console.log(typeof fileUrl);
@@ -165,13 +174,12 @@ const ReportPage = () => {
             }
 
             // Claude api를 사용해서 레포트 생성
-            console.log(documentResponse.data.id);
+            setPageState(PageState.MAKE_TEXT_REPORT);
             const finalResponse = await createReport(documentResponse.data.id);
-            // 필요없는 부분
+            setPageState(PageState.MAKE_DOCX_REPORT);
             const wordUrl = await getDocFile(documentResponse.data.id);
-            setIsLoading(false);
-            navigate(`/report/${documentResponse.data.id}`);
-            setIsOutputCreated(true);
+            setPageState(PageState.NORMAL);
+            navigate(`/research/${documentResponse.data.id}`);
         } catch (error) {
             console.error("문서 생성 오류:", error);
             const errorMessage =
@@ -180,7 +188,7 @@ const ReportPage = () => {
             alert(`${errorMessage} 문서 생성에 실패했습니다.`);
         }
         console.log(reportData);
-        setIsLoading(false);
+        setPageState(PageState.NORMAL);
     };
 
     const handleFileName = (e, index) => {
@@ -276,6 +284,87 @@ const ReportPage = () => {
         }
     }, [me]);
 
+    const getLoadingText = (pageState) => {
+        switch (pageState) {
+            case PageState.NORMAL:
+                return null;
+            case PageState.MAKE_DOCUMENT:
+                return (
+                    <>
+                        <span>문</span>
+                        <span>서</span>
+                        <span className="mx-1"></span>
+                        <span>정</span>
+                        <span>보</span>
+                        <span>를</span>
+                        <span className="mx-1"></span>
+                        <span>저</span>
+                        <span>장</span>
+                        <span>하</span>
+                        <span>는</span>
+                        <span className="mx-1"></span>
+                        <span>중</span>
+                    </>
+                );
+            case PageState.UPLOAD_FILE:
+                return (
+                    <>
+                        <span>첨</span>
+                        <span>부</span>
+                        <span>파</span>
+                        <span>일</span>
+                        <span>을</span>
+                        <span className="mx-1"></span>
+                        <span>업</span>
+                        <span>로</span>
+                        <span>드</span>
+                        <span>하</span>
+                        <span>는</span>
+                        <span className="mx-1"></span>
+                        <span>중</span>
+                    </>
+                );
+            case PageState.MAKE_TEXT_REPORT:
+                return (
+                    <>
+                        <span>보</span>
+                        <span>고</span>
+                        <span>서</span>
+                        <span className="mx-1"></span>
+                        <span>내</span>
+                        <span>용</span>
+                        <span className="mx-1"></span>
+                        <span>작</span>
+                        <span>성</span>
+                        <span>하</span>
+                        <span>는</span>
+                        <span className="mx-1"></span>
+                        <span>중</span>
+                    </>
+                );
+            case PageState.MAKE_DOCX_REPORT:
+                return (
+                    <>
+                        <span>보</span>
+                        <span>고</span>
+                        <span>서</span>
+                        <span>를</span>
+                        <span className="mx-1"></span>
+                        <span>문</span>
+                        <span>서</span>
+                        <span>화</span>
+                        <span className="mx-1"></span>
+                        <span>하</span>
+                        <span>는</span>
+                        <span className="mx-1"></span>
+                        <span>중</span>
+                    </>
+                );
+            default:
+                return null;
+        }
+    };
+
     return (
         <>
             <Header className="fixed" headerType="report" />
@@ -306,17 +395,17 @@ const ReportPage = () => {
                                 <ResetIcon
                                     id="topic"
                                     onClick={resetReportData}
-                                    isDisabled={isLoading}
+                                    isDisabled={pageState !== PageState.NORMAL}
                                 />
                             </div>
                             <textarea
                                 placeholder="작성할 보고서의 주제를 알려주세요."
                                 id="topic"
                                 value={reportData.topic}
-                                readOnly={isLoading}
+                                readOnly={pageState !== PageState.NORMAL}
                                 onChange={handleReportData}
                                 className={`${
-                                    isLoading
+                                    pageState !== PageState.NORMAL
                                         ? "bg-[#f5f5f5] text-[#9e9e9e]"
                                         : "bg-[#ffffff"
                                 } rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2`}
@@ -342,7 +431,7 @@ const ReportPage = () => {
                                 <ResetIcon
                                     id="length"
                                     onClick={resetReportData}
-                                    isDisabled={isLoading}
+                                    isDisabled={pageState !== PageState.NORMAL}
                                 />
                             </div>
                             <div className="flex flex-row gap-2.5 items-center justify-start self-stretch shrink-0 relative">
@@ -356,9 +445,9 @@ const ReportPage = () => {
                                     value={reportData.length}
                                     onChange={handleReportData}
                                     autoComplete="off"
-                                    readOnly={isLoading}
+                                    readOnly={pageState !== PageState.NORMAL}
                                     className={`${
-                                        isLoading
+                                        pageState !== PageState.NORMAL
                                             ? "bg-[#f5f5f5] text-[#9e9e9e]"
                                             : "bg-[#ffffff"
                                     } rounded border-solid border-[#C2C2C2] border px-3 flex flex-row gap-1 items-end justify-start shrink-0 w-[80%] h-8 relative overflow-hidden text-gray02-70 text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal`}
@@ -384,7 +473,9 @@ const ReportPage = () => {
                                     <ResetIcon
                                         id="contents"
                                         onClick={resetReportData}
-                                        isDisabled={isLoading}
+                                        isDisabled={
+                                            pageState !== PageState.NORMAL
+                                        }
                                     />
                                 </div>
                             </div>
@@ -414,7 +505,10 @@ const ReportPage = () => {
                                         (content) => (
                                             <Tag
                                                 content={content}
-                                                isReadOnly={isLoading}
+                                                isReadOnly={
+                                                    pageState !==
+                                                    PageState.NORMAL
+                                                }
                                                 handleContentDelete={
                                                     handleContentDelete
                                                 }
@@ -425,7 +519,9 @@ const ReportPage = () => {
                                     type="button"
                                     onClick={handleModal}
                                     className={`${
-                                        isLoading ? "hidden" : ""
+                                        pageState !== PageState.NORMAL
+                                            ? "hidden"
+                                            : ""
                                     } bg-white rounded-[50px] border-solid border-[#B5D0C9] border pb-[0.15rem] flex flex-row gap-1 items-center justify-center relative w-[24px] h-[24px]`}
                                 >
                                     <span>+</span>
@@ -447,7 +543,7 @@ const ReportPage = () => {
                                 <ResetIcon
                                     id="purposeAndMethod"
                                     onClick={resetReportData}
-                                    isDisabled={isLoading}
+                                    isDisabled={pageState !== PageState.NORMAL}
                                 />
                             </div>
                             <textarea
@@ -455,9 +551,9 @@ const ReportPage = () => {
                                 placeholder="진행한 실험이나 연구에 대한 핵심적인 내용을 설명해주세요."
                                 value={reportData.purposeAndMethod}
                                 onChange={handleReportData}
-                                readOnly={isLoading}
+                                readOnly={pageState !== PageState.NORMAL}
                                 className={`${
-                                    isLoading
+                                    pageState !== PageState.NORMAL
                                         ? "bg-[#f5f5f5] text-[#9e9e9e]"
                                         : "bg-[#ffffff]"
                                 } rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2`}
@@ -473,7 +569,7 @@ const ReportPage = () => {
                                 <ResetIcon
                                     id="files"
                                     onClick={resetReportData}
-                                    isDisabled={isLoading}
+                                    isDisabled={pageState !== PageState.NORMAL}
                                 />
                             </div>
                             <div className="px-1 text-[#000000] text-left font-['Inter-Regular',_sans-serif] text-[9px] font-normal relative">
@@ -513,7 +609,8 @@ const ReportPage = () => {
                                                                         pureName
                                                                     }
                                                                     readOnly={
-                                                                        isLoading
+                                                                        pageState !==
+                                                                        PageState.NORMAL
                                                                     }
                                                                 />
                                                                 <div className="right-0">
@@ -523,7 +620,8 @@ const ReportPage = () => {
                                                             <button
                                                                 type="button"
                                                                 className={`${
-                                                                    isLoading
+                                                                    pageState !==
+                                                                    PageState.NORMAL
                                                                         ? "hidden "
                                                                         : ""
                                                                 } text-center`}
@@ -538,12 +636,14 @@ const ReportPage = () => {
                                                         </div>
                                                         <div
                                                             className={`${
-                                                                isLoading
+                                                                pageState !==
+                                                                PageState.NORMAL
                                                                     ? "bg-[#373737] "
                                                                     : "bg-[#293f3e] cursor-pointer"
                                                             } my-2 rounded flex flex-row gap-0 items-center justify-center w-full h-5 relative`}
                                                             onClick={
-                                                                !isLoading
+                                                                pageState ===
+                                                                PageState.NORMAL
                                                                     ? () =>
                                                                           handleFileNeedAnalysis(
                                                                               index
@@ -554,7 +654,8 @@ const ReportPage = () => {
                                                             <div
                                                                 className={`rounded flex flex-row gap-2.5 items-center justify-center self-stretch shrink-0 w-[50%] relative ${
                                                                     fileWithDescript.needAnalysis
-                                                                        ? isLoading
+                                                                        ? pageState !==
+                                                                          PageState.NORMAL
                                                                             ? "bg-gradient-to-b from-[#838383] to-[#818181] "
                                                                             : "bg-gradient-to-b from-[#e7FAF5]  to-[#e7FAF5] "
                                                                         : ""
@@ -568,7 +669,10 @@ const ReportPage = () => {
                                                                 <div
                                                                     className={`text-center font-['Inter-Bold',_sans-serif] text-[11px] font-bold relative ${
                                                                         fileWithDescript.needAnalysis
-                                                                            ? "text-[#21725E]"
+                                                                            ? pageState !==
+                                                                              PageState.NORMAL
+                                                                                ? "text-[#e7e7e7]"
+                                                                                : "text-[#21725E]"
                                                                             : "text-[#5f6265]"
                                                                     }`}
                                                                 >
@@ -578,7 +682,8 @@ const ReportPage = () => {
                                                             <div
                                                                 className={`rounded flex flex-row gap-2.5 items-center justify-center self-stretch shrink-0 w-[50%] relative ${
                                                                     !fileWithDescript.needAnalysis
-                                                                        ? isLoading
+                                                                        ? pageState !==
+                                                                          PageState.NORMAL
                                                                             ? "bg-gradient-to-b from-[#838383] to-[#818181] "
                                                                             : "bg-gradient-to-b from-[#e7FAF5]  to-[#e7FAF5] "
                                                                         : ""
@@ -592,7 +697,10 @@ const ReportPage = () => {
                                                                 <div
                                                                     className={`text-center font-['Inter-Bold',_sans-serif] text-[11px] font-bold relative ${
                                                                         !fileWithDescript.needAnalysis
-                                                                            ? "text-[#21725E]"
+                                                                            ? pageState !==
+                                                                              PageState.NORMAL
+                                                                                ? "text-[#e7e7e7]"
+                                                                                : "text-[#21725E]"
                                                                             : "text-[#5f6265]"
                                                                     }`}
                                                                 >
@@ -604,10 +712,14 @@ const ReportPage = () => {
                                                         <textarea
                                                             placeholder="파일에 대한 설명을 입력해 주세요."
                                                             className="overflow-auto border w-full"
-                                                            readOnly={isLoading}
+                                                            readOnly={
+                                                                pageState !==
+                                                                PageState.NORMAL
+                                                            }
                                                             style={{
                                                                 backgroundColor:
-                                                                    isLoading
+                                                                    pageState !==
+                                                                    PageState.NORMAL
                                                                         ? "#f5f5f5"
                                                                         : "#ffffff",
                                                             }}
@@ -642,9 +754,9 @@ const ReportPage = () => {
                         <button
                             type="button"
                             onClick={handleUpload}
-                            disabled={isLoading}
+                            disabled={pageState !== PageState.NORMAL}
                             className={`${
-                                isLoading
+                                pageState !== PageState.NORMAL
                                     ? "bg-[#F5F5F5] border-[#c5c5c5] text-[#9e9e9e]"
                                     : "bg-[#F7F5FF] border-[#694df9] text-[#694DF9]"
                             } self-stretch border border-[#694df9] text-[#694DF9] rounded-[4px]`}
@@ -676,7 +788,7 @@ const ReportPage = () => {
                                 <ResetIcon
                                     id="prompt"
                                     onClick={resetReportData}
-                                    isDisabled={isLoading}
+                                    isDisabled={pageState !== PageState.NORMAL}
                                 />
                             </div>
                             <div className="px-1 text-[#000000] text-left font-['Inter-Regular',_sans-serif] text-[9px] font-normal relative">
@@ -692,9 +804,9 @@ const ReportPage = () => {
                                     내용으로 시작할 수 있게 해줘"
                             value={reportData.prompt}
                             onChange={handleReportData}
-                            readOnly={isLoading}
+                            readOnly={pageState !== PageState.NORMAL}
                             className={`${
-                                isLoading
+                                pageState !== PageState.NORMAL
                                     ? "bg-[#f5f5f5] text-[#9e9e9e]"
                                     : "bg-[#ffffff"
                             } rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2`}
@@ -703,13 +815,13 @@ const ReportPage = () => {
                 </div>
                 <button
                     className={`${
-                        isLoading && "hidden "
+                        pageState !== PageState.NORMAL && "hidden "
                     } bg-[#005f5f] rounded-[10px] bottom-1 flex flex-row gap-1 items-center justify-center mx-auto w-[289px] shrink-0 h-[60px] absolute`}
                     style={{
                         boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                     }}
                     type="submit"
-                    disabled={isLoading}
+                    disabled={pageState !== PageState.NORMAL}
                 >
                     <div className="flex flex-row gap-1.5 items-center justify-start shrink-0 relative">
                         <div className="text-white text-center font-body-text-inter-14-medium-font-family text-body-text-inter-14-medium-font-size leading-body-text-inter-14-medium-line-height font-body-text-inter-14-medium-font-weight relative">
@@ -731,13 +843,16 @@ const ReportPage = () => {
                     </div>
                 </button>
             </form>
-            {isLoading ? (
+            {pageState !== PageState.NORMAL ? (
                 <>
                     <div
                         className="fixed top-0 bottom-0 left-0 right-0 bg-[rgba(217,217,217,0.20)] z-0 flex items-center justify-center"
                         style={{ backdropFilter: "blur(5px)" }}
                     ></div>
-                    <div className="bg-transparent top-[74px] bottom-0 left-[313px] right-0 flex flex-row items-center justify-center shrink-0 fixed overflow-auto z-10">
+                    <div className="bg-transparent top-[74px] bottom-0 left-[313px] right-0 flex flex-col gap-10 items-center justify-center shrink-0 fixed overflow-auto z-10">
+                        <div className="text-[18px] loading-text2 text-[#299792] flex flex-row">
+                            {getLoadingText(pageState)}
+                        </div>
                         <span className="loader"></span>
                     </div>
                     <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] flex flex-row items-center justify-center shrink-0 h-screen relative overflow-auto -z-10">

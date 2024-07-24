@@ -17,15 +17,23 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
+const PageState = {
+    NORMAL: "NORMAL",
+    MAKE_DOCUMENT: "MAKE_DOCUMENT",
+    UPLOAD_FILE: "UPLOAD_FILE",
+    MAKE_TEXT_REPORT: "MAKE_TEXT_REPORT",
+    MAKE_DOCX_REPORT: "MAKE_DOCX_REPORT",
+};
+
 const ReportPage = () => {
     const { documentId } = useParams();
+    const [pageState, setPageState] = useState(PageState.NORMAL);
     const [elementList, setElementList] = useState([]);
     const [documentInfo, setDocumentInfo] = useState();
     const splitElements = (inputString) => {
         const list = inputString.split(", ").map((item) => item.trim());
         return list;
     };
-    const [isLoading, setIsLoading] = useState(false);
 
     const splitFileName = (fileName) => {
         const dotIndex = fileName.lastIndexOf(".");
@@ -60,11 +68,11 @@ const ReportPage = () => {
 
     const handleReportSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
+        setPageState(PageState.MAKE_TEXT_REPORT);
         try {
             // Claude api를 사용해서 레포트 생성
             await createReport(documentId);
-            // 필요없는 부분
+            setPageState(PageState.MAKE_DOCX_REPORT);
             await getDocFile(documentId);
         } catch (error) {
             console.error("문서 생성 오류:", error);
@@ -74,7 +82,88 @@ const ReportPage = () => {
             alert(`${errorMessage} 문서 생성에 실패했습니다.`);
         }
         window.location.reload();
-        setIsLoading(true);
+        setPageState(PageState.NORMAL);
+    };
+
+    const getLoadingText = (pageState) => {
+        switch (pageState) {
+            case PageState.NORMAL:
+                return null;
+            case PageState.MAKE_DOCUMENT:
+                return (
+                    <>
+                        <span>문</span>
+                        <span>서</span>
+                        <span className="mx-1"></span>
+                        <span>정</span>
+                        <span>보</span>
+                        <span>를</span>
+                        <span className="mx-1"></span>
+                        <span>저</span>
+                        <span>장</span>
+                        <span>하</span>
+                        <span>는</span>
+                        <span className="mx-1"></span>
+                        <span>중</span>
+                    </>
+                );
+            case PageState.UPLOAD_FILE:
+                return (
+                    <>
+                        <span>첨</span>
+                        <span>부</span>
+                        <span>파</span>
+                        <span>일</span>
+                        <span>을</span>
+                        <span className="mx-1"></span>
+                        <span>업</span>
+                        <span>로</span>
+                        <span>드</span>
+                        <span>하</span>
+                        <span>는</span>
+                        <span className="mx-1"></span>
+                        <span>중</span>
+                    </>
+                );
+            case PageState.MAKE_TEXT_REPORT:
+                return (
+                    <>
+                        <span>보</span>
+                        <span>고</span>
+                        <span>서</span>
+                        <span className="mx-1"></span>
+                        <span>내</span>
+                        <span>용</span>
+                        <span className="mx-1"></span>
+                        <span>작</span>
+                        <span>성</span>
+                        <span>하</span>
+                        <span>는</span>
+                        <span className="mx-1"></span>
+                        <span>중</span>
+                    </>
+                );
+            case PageState.MAKE_DOCX_REPORT:
+                return (
+                    <>
+                        <span>보</span>
+                        <span>고</span>
+                        <span>서</span>
+                        <span>를</span>
+                        <span className="mx-1"></span>
+                        <span>문</span>
+                        <span>서</span>
+                        <span>화</span>
+                        <span className="mx-1"></span>
+                        <span>하</span>
+                        <span>는</span>
+                        <span className="mx-1"></span>
+                        <span>중</span>
+                    </>
+                );
+            default:
+                return null;
+        }
     };
 
     return (
@@ -397,7 +486,8 @@ const ReportPage = () => {
                         </div>
                         <button
                             className={`${
-                                documentInfo.wordUrl || isLoading
+                                documentInfo.wordUrl ||
+                                pageState !== PageState.NORMAL
                                     ? "hidden "
                                     : ""
                             } bg-[#005f5f] rounded-[10px] bottom-1 flex flex-row gap-1 items-center justify-center mx-auto w-[289px] shrink-0 h-[60px] absolute`}
@@ -433,13 +523,16 @@ const ReportPage = () => {
                                 documentUrl={documentInfo.wordUrl}
                             />
                         </div>
-                    ) : isLoading ? (
+                    ) : pageState !== PageState.NORMAL ? (
                         <>
                             <div
                                 className="fixed top-0 bottom-0 left-0 right-0 bg-[rgba(217,217,217,0.20)] z-0 flex items-center justify-center"
                                 style={{ backdropFilter: "blur(5px)" }}
                             ></div>
-                            <div className="bg-transparent top-[74px] bottom-0 left-[313px] right-0 flex flex-row items-center justify-center shrink-0 fixed overflow-auto z-10">
+                            <div className="bg-transparent top-[74px] bottom-0 left-[313px] right-0 flex flex-col gap-10 items-center justify-center shrink-0 fixed overflow-auto z-10">
+                                <div className="text-[18px] loading-text2 text-[#299792] flex flex-row">
+                                    {getLoadingText(pageState)}
+                                </div>
                                 <span className="loader"></span>
                             </div>
                             <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] flex flex-row items-center justify-center shrink-0 h-screen relative overflow-auto -z-10">
