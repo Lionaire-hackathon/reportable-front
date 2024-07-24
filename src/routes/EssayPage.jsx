@@ -98,16 +98,10 @@ const EssayPage = () => {
                     Array(processedResponse.prompt.length).fill("")
                 );
             } else {
-                const finalResponse = await createReport(documentId);
-                setCreatedEssayUrl(finalResponse.data.url);
-                const essay = await getCreatedReport(documentId);
-                setCreatedEssay(essay.data);
-                console.log(essay.data);
-                const wordUrl = await getDocFile(documentId);
-                setDocUrl(wordUrl.data);
-                navigate(`/essay/${documentId}`);
+                await createReport(documentResponse.data.id);
+                await getDocFile(documentResponse.data.id);
+                navigate(`/essay/${documentResponse.data.id}`);
                 setIsLoading(false);
-                //setIsOutputCreated(true);
             }
         } catch (error) {
             console.error("문서 생성 오류:", error);
@@ -126,7 +120,7 @@ const EssayPage = () => {
     }
 
         let mergedString =
-            " <추가프롬프트> \n 다음은 너와 이전에 나누었던 에세이 작성에 대한 질의응답 정보야: ";
+            " <추가프롬프트> \n 다음은 너와 이전에 나누었던 에세이 작성에 대한 질의응답 정보야 ";
         for (let i = 0; i < questions.length; i++) {
             if (answers[i].trim() !== "") {
                 mergedString +=
