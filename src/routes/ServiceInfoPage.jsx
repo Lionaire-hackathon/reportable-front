@@ -321,7 +321,7 @@ const MyPage = () => {
                                 접근할 수 있습니다.{" "}
                             </div>
                         </div>
-                        <div className="bg-[#ffffff] rounded-[10px] border-solid border-[#d9d9d9] border pt-[50px] pr-[30px] pb-[50px] pl-[30px] flex flex-col gap-10 items-start justify-start shrink-0 w-full h-[1448px] relative">
+                        <div className="bg-[#ffffff] rounded-[10px] border-solid border-[#d9d9d9] border pt-[50px] pr-[30px] pb-[50px] pl-[30px] flex flex-col gap-10 items-start justify-start shrink-0 w-full h-auto relative">
                             <div className="flex flex-row items-center justify-between shrink-0 w-full relative">
                                 <img
                                     className="shrink-0 w-[36%] relative"
@@ -474,7 +474,7 @@ const MyPage = () => {
                                 작성페이지로 접근할 수 있습니다.{" "}
                             </div>
                         </div>
-                        <div className="bg-[#ffffff] rounded-[10px] border-solid border-[#d9d9d9] border pt-[50px] pr-[30px] pb-[50px] pl-[30px] flex flex-col gap-10 items-start justify-start shrink-0 w-full h-[977px] relative">
+                        <div className="bg-[#ffffff] rounded-[10px] border-solid border-[#d9d9d9] border pt-[50px] pr-[30px] pb-[50px] pl-[30px] flex flex-col gap-10 items-start justify-start shrink-0 w-full h-auto relative">
                             <div className="flex flex-row items-center justify-between shrink-0 w-full relative">
                                 <img
                                     className="shrink-0 w-[40%] relative"
@@ -577,103 +577,3 @@ const MyPage = () => {
 };
 
 export default MyPage;
-
-/*
-                <Header className="fixed" />
-                <div className="bg-[#cae5e4] w-[276px] h-screen top-0 fixed left-px  flex justify-center items-start pt-[200px] ">
-                    <div
-                        style={stickyStyle}
-                        className="flex flex-col gap-[50px] items-start justify-start sticky w-full"
-                    >
-                        <div className="mx-auto flex flex-row gap-5 items-center justify-center self-stretch shrink-0 relative">
-                            <svg
-                                className="w-[25px] h-[25px] relative overflow-visible "
-                                width="25"
-                                height="25"
-                                viewBox="0 0 25 25"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M12.5 0C5.6 0 0 5.6 0 12.5C0 19.4 5.6 25 12.5 25C19.4 25 25 19.4 25 12.5C25 5.6 19.4 0 12.5 0ZM13.75 18.75H11.25V11.25H13.75V18.75ZM13.75 8.75H11.25V6.25H13.75V8.75Z"
-                                    fill="#434343"
-                                />
-                            </svg>
-                            <div className="text-[#1e6d69] text-left font-semibold text-xlrelative">
-                                Service Information
-                            </div>
-                        </div>
-                        <div className="mx-auto flex flex-col gap-10 items-center justify-center self-stretch shrink-0 relative">
-                            <div className="flex flex-row gap-2.5 items-center justify-center self-stretch shrink-0 relative">
-                                <svg
-                                    className="shrink-0 w-6 h-6 relative overflow-visible"
-                                    width="24"
-                                    height="25"
-                                    viewBox="0 0 24 25"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <g clipPath="url(#clip0_111_2766)">
-                                        <path
-                                            d="M17.63 6.34C17.27 5.83 16.67 5.5 16 5.5L5 5.51C3.9 5.51 3 6.4 3 7.5V17.5C3 18.6 3.9 19.49 5 19.49L16 19.5C16.67 19.5 17.27 19.17 17.63 18.66L22 12.5L17.63 6.34Z"
-                                            fill="#1E6D69"
-                                        />
-                                    </g>
-                                    <defs>
-                                        <clipPath id="clip0_111_2766">
-                                            <rect
-                                                width="24"
-                                                height="24"
-                                                fill="white"
-                                                transform="translate(0 0.5)"
-                                            />
-                                        </clipPath>
-                                    </defs>
-                                </svg>
-                                <div
-                                    onClick={() => {
-                                        handleScroll("my-profile");
-                                    }}
-                                    className="cursor-pointer text-[rgba(30,109,105,0.93)] hover:text-[#848484] text-left font-['Audiowide-Regular',_sans-serif] text-xl font-normal relative w-[152px] "
-                                >
-                                    My profile{" "}
-                                </div>
-                            </div>
-                            <div className="flex flex-row gap-2.5 items-center justify-center self-stretch shrink-0 relative">
-                                <svg
-                                    className="shrink-0 w-6 h-6"
-                                    width="24"
-                                    height="25"
-                                    viewBox="0 0 24 25"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <g clipPath="url(#clip0_111_2771)">
-                                        <path
-                                            d="M17.63 6.34C17.27 5.83 16.67 5.5 16 5.5L5 5.51C3.9 5.51 3 6.4 3 7.5V17.5C3 18.6 3.9 19.49 5 19.49L16 19.5C16.67 19.5 17.27 19.17 17.63 18.66L22 12.5L17.63 6.34Z"
-                                            fill="#1E6D69"
-                                            className="hover:fill-[#1E6D69]"
-                                        />
-                                    </g>
-                                    <defs>
-                                        <clipPath id="clip0_111_2771">
-                                            <rect
-                                                width="24"
-                                                height="24"
-                                                fill="white"
-                                                transform="translate(0 0.5)"
-                                            />
-                                        </clipPath>
-                                    </defs>
-                                </svg>
-                                <div
-                                    className="cursor-pointer text-[rgba(30,109,105,0.93)] hover:text-[#848484] text-left font-['Audiowide-Regular',_sans-serif] text-xl font-normal relative w-[152px]"
-                                    onClick={() => handleScroll("my-reports")}
-                                >
-                                    My reports{" "}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-*/
