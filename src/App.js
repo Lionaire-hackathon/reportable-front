@@ -21,7 +21,7 @@ function App() {
                     <Route path="/signup" element={<SignUpPage />} />
                     <Route path="/signin" element={<SignInPage />} />
                     <Route path="/essay" element={<EssayPage />} />
-                    <Route path="/report" element={<ReportPage />} />
+                    <Route path="/research" element={<ReportPage />} />
                     <Route path="/mypage" element={<MyPage />} />
                     <Route path="/user" element={<ProfileEditPage />} />
                     <Route
@@ -29,7 +29,7 @@ function App() {
                         element={<EssayDetailPage />}
                     />
                     <Route
-                        path="/report/:documentId"
+                        path="/research/:documentId"
                         element={<ReportDetailPage />}
                     />
                     <Route path="/service" element={<ServiceInfoPage />} />
