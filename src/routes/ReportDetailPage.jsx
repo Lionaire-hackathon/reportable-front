@@ -520,7 +520,7 @@ const ReportPage = () => {
                     {documentInfo.wordUrl ? (
                         <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] h-screen overflow-y-auto">
                             <WordDocumentViewer
-                                documentUrl={documentInfo.wordUrl}
+                                document={documentInfo}
                             />
                         </div>
                     ) : pageState !== PageState.NORMAL ? (

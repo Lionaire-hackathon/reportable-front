@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import Header from "../components/common/Header";
-import AnimatedLoading from "../components/common/AnimatedLoading";
 import useMe from "../apis/hook/useMe";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Questionbox from "../components/common/Questionbox";
 import WordDocumentViewer from "../components/html/WordDocumentViewer";
 import ResetIcon from "../components/atom/ResetIcon";
@@ -469,7 +468,7 @@ const EssayDetailPage = () => {
                     {documentInfo.wordUrl ? (
                         <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] h-screen overflow-y-auto">
                             <WordDocumentViewer
-                                documentUrl={documentInfo.wordUrl}
+                                document={documentInfo}
                             />
                         </div>
                     ) : pageState !== PageState.NORMAL ? (

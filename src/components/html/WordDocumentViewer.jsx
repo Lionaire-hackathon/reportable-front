@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 
-const WordDocumentViewer = ({ documentUrl }) => {
+const WordDocumentViewer = ({ document }) => {
   const docs = [
     {
-      uri: documentUrl,
-      title: "Document 1",
-      fileName: "document1.docx",
+      uri: document.wordUrl,
+      title: document.title,
+      fileName: document.title,
     },
   ];
 
   return (
-    documentUrl && (
+    document.wordUrl && (
     <div className="flex justify-center items-center w-full h-full">
       <DocViewer
         documents={docs}
