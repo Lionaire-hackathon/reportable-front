@@ -4,8 +4,15 @@ import useMe from "../apis/hook/useMe";
 import { useNavigate, useParams } from "react-router-dom";
 import Tag from "../components/common/Tag";
 import AWS from "aws-sdk";
-import { getDocumentInfo, createReport, getDocFile } from "../apis/document";
+import {
+    getDocumentInfo,
+    createReport,
+    getDocFile,
+    gethtmlText,
+} from "../apis/document";
 import WordDocumentViewer from "../components/html/WordDocumentViewer";
+import HtmlViewer from "../components/html/HtmlViewer";
+import WordToHtmlViewer from "../components/html/WordToHtmlViewer";
 import ResetIcon from "../components/atom/ResetIcon";
 
 // AWS 자격 증명을 환경 변수로부터 설정합니다.
@@ -30,6 +37,11 @@ const ReportPage = () => {
     const [pageState, setPageState] = useState(PageState.NORMAL);
     const [elementList, setElementList] = useState([]);
     const [documentInfo, setDocumentInfo] = useState();
+    const [isEditing, setIsEditing] = useState(true);
+    const toggleEditing = () => {
+        setIsEditing(!isEditing);
+    };
+    const [htmlText, setHtmlText] = useState("");
     const splitElements = (inputString) => {
         const list = inputString.split(", ").map((item) => item.trim());
         return list;
@@ -47,6 +59,9 @@ const ReportPage = () => {
                 const returnObject = await getDocumentInfo(documentId);
                 setDocumentInfo(returnObject.data);
                 setElementList(splitElements(returnObject.data.elements));
+                const returnText = await gethtmlText(documentId);
+                console.log(returnText);
+                setHtmlText(returnText.data);
             } catch (error) {
                 console.error("Error fetching document info:", error);
             }
@@ -170,7 +185,12 @@ const ReportPage = () => {
         <>
             {documentInfo && (
                 <>
-                    <Header className="fixed" headerType="research" />
+                    <Header
+                        className="fixed"
+                        headerType="research"
+                        toggleEditing={toggleEditing}
+                        isEditing={isEditing}
+                    />
                     <div
                         className="top-0 left-0 flex flex-col gap-2.5 items-center justify-between shrink-0 w-[313px] h-full fixed z-10"
                         style={{
@@ -490,7 +510,7 @@ const ReportPage = () => {
                                 pageState !== PageState.NORMAL
                                     ? "hidden "
                                     : ""
-                            } bg-[#005f5f] rounded-[10px] bottom-1 flex flex-row gap-1 items-center justify-center mx-auto w-[289px] shrink-0 h-[60px] absolute`}
+                            } bg-[#008585] hover:bg-[#007373] active:bg-[#006060] rounded-[10px] bottom-1 flex flex-row gap-1 items-center justify-center mx-auto w-[289px] shrink-0 h-[60px] absolute`}
                             style={{
                                 boxShadow:
                                     "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
@@ -518,11 +538,17 @@ const ReportPage = () => {
                         </button>
                     </div>
                     {documentInfo.wordUrl ? (
-                        <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] h-screen overflow-y-auto">
-                            <WordDocumentViewer
-                                documentUrl={documentInfo.wordUrl}
-                            />
-                        </div>
+                        isEditing ? (
+                            <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] h-screen overflow-y-auto">
+                                <HtmlViewer htmlContent={htmlText} />
+                            </div>
+                        ) : (
+                            <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] h-screen overflow-y-auto">
+                                <WordDocumentViewer
+                                    documentUrl={documentInfo.wordUrl}
+                                />
+                            </div>
+                        )
                     ) : pageState !== PageState.NORMAL ? (
                         <>
                             <div

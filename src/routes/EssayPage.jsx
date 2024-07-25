@@ -300,7 +300,7 @@ const EssayPage = () => {
                             ))}
                         </div>
                         <button
-                            className="mb-8 min-h-[20%] bg-[#299792] rounded-[10px] flex flex-row items-center justify-center w-[95%] mx-auto h-[60px] shrink-0"
+                            className="bg-[#008585] hover:bg-[#007373] active:bg-[#006060] mb-8 min-h-[20%] rounded-[10px] flex flex-row items-center justify-center w-[95%] mx-auto h-[60px] shrink-0"
                             style={{
                                 boxShadow:
                                     "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
@@ -492,7 +492,7 @@ const EssayPage = () => {
                         (pageState !== PageState.NORMAL ||
                             hasAdditionalQuestions) &&
                         "hidden "
-                    } bg-[#005f5f] rounded-[10px] bottom-1 flex flex-row gap-1 items-center justify-center mx-auto w-[289px] shrink-0 h-[60px] absolute`}
+                    } bg-[#008585] hover:bg-[#007373] active:bg-[#006060] rounded-[10px] bottom-1 flex flex-row gap-1 items-center justify-center mx-auto w-[289px] shrink-0 h-[60px] absolute`}
                     style={{
                         boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                     }}

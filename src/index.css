@@ -2,6 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
+button {
+    transition: transform 200ms ease-in-out;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+.my-heading-1 {
+    @apply text-[1.333rem] font-bold text-center mb-4; /* 글자 크기 16pt, 굵은 글씨, 아래 여백 추가 */
+}
+
+.my-heading-2 {
+    @apply text-[1rem] font-bold mb-4; /* 글자 크기 12pt, 굵은 글씨, 아래 여백 추가 */
+}
+
+.my-heading-3 {
+    @apply text-[0.833rem] font-bold mb-4; /* 글자 크기 10pt, 굵은 글씨, 아래 여백 추가 */
+}
+
+.my-heading-4 {
+    @apply text-[0.75rem] font-bold mb-4; /* 글자 크기 9pt, 굵은 글씨, 아래 여백 추가 */
+}
+
+.my-heading-5 {
+    @apply text-[0.667rem] font-bold mb-4; /* 글자 크기 8pt, 굵은 글씨, 아래 여백 추가 */
+}
+
+.my-heading-6 {
+    @apply text-[0.5rem] font-bold mb-4; /* 글자 크기 6pt, 굵은 글씨, 아래 여백 추가 */
+}
+
+.my-normal {
+    @apply text-[0.70875rem] text-black my-2; /* 글자 크기 8.5pt, 검은색 텍스트, 기본 여백 */
+}
+
+.my-toc {
+    @apply text-[0.70875rem] text-black my-0; /* 글자 크기 8.5pt, 검은색 텍스트, 여백 없음 */
+}
+
 .loading-text3 {
     perspective: 1000px;
 }

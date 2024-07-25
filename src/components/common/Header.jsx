@@ -6,7 +6,12 @@ import { logout } from "../../apis/user";
 import { useParams, useNavigate } from "react-router-dom";
 import { getDocFile } from "../../apis/document";
 
-const Header = ({ className, headerType = "" }) => {
+const Header = ({
+    className,
+    headerType = "",
+    toggleEditing = null,
+    isEditing = null,
+}) => {
     const { documentId } = useParams();
     const { me, isLoadingMe } = useMe();
     const navigate = useNavigate();
@@ -83,6 +88,36 @@ const Header = ({ className, headerType = "" }) => {
                     </div>
                 </div>
                 <div className="flex flex-row gap-7 items-center justify-start shrink-0 relative">
+                    {isEditing !== null && (
+                        <label className="flex items-center cursor-pointer">
+                            <span className="mr-2 text-gray-700">
+                                {isEditing ? "Editing" : "Viewing"}
+                            </span>
+                            <input
+                                type="checkbox"
+                                checked={isEditing}
+                                onChange={toggleEditing}
+                                className="hidden"
+                            />
+                            <div className="relative">
+                                <div
+                                    className={`w-10 h-6 flex items-center  rounded-full p-1 transition-colors duration-300 ${
+                                        isEditing
+                                            ? "bg-[#299792]"
+                                            : "bg-gray-300"
+                                    }`}
+                                >
+                                    <div
+                                        className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
+                                            isEditing
+                                                ? "translate-x-4"
+                                                : "translate-x-0"
+                                        }`}
+                                    ></div>
+                                </div>
+                            </div>
+                        </label>
+                    )}
                     {me ? (
                         <>
                             {headerType === "" ? (
