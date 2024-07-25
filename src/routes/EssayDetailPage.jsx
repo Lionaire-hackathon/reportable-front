@@ -5,6 +5,8 @@ import useMe from "../apis/hook/useMe";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Questionbox from "../components/common/Questionbox";
 import WordDocumentViewer from "../components/html/WordDocumentViewer";
+import WordToHtmlViewer from "../components/html/WordToHtmlViewer";
+import HtmlViewer from "../components/html/HtmlViewer";
 import ResetIcon from "../components/atom/ResetIcon";
 import CreateIcon from "../components/atom/CreateIcon";
 import {
@@ -12,7 +14,7 @@ import {
     askAdditionalQuestion,
     answerAdditionalQuestion,
     createReport,
-    getCreatedReport,
+    gethtmlText,
     getDocFile,
     getDocumentInfo,
 } from "../apis/document";
@@ -28,12 +30,21 @@ const PageState = {
 const EssayDetailPage = () => {
     const { documentId } = useParams();
     const [documentInfo, setDocumentInfo] = useState();
+    const [htmlText, setHtmlText] = useState("");
+    const [isEditing, setIsEditing] = useState(true);
+    const toggleEditing = () => {
+        setIsEditing(!isEditing);
+    };
     const [pageState, setPageState] = useState(PageState.NORMAL);
     useEffect(() => {
         const fetchDocumentInfo = async () => {
             try {
                 const returnObject = await getDocumentInfo(documentId);
+                console.log(returnObject.data);
                 setDocumentInfo(returnObject.data);
+                const returnText = await gethtmlText(documentId);
+                console.log(returnText);
+                setHtmlText(returnText.data);
             } catch (error) {
                 console.error("Error fetching document info:", error);
             }
@@ -301,7 +312,12 @@ const EssayDetailPage = () => {
                             </div>
                         </>
                     )}
-                    <Header className="fixed" headerType="essay" />
+                    <Header
+                        className="fixed"
+                        headerType="essay"
+                        toggleEditing={toggleEditing}
+                        isEditing={isEditing}
+                    />
                     <div
                         className="top-0 left-0 flex flex-col gap-2.5 items-center justify-between shrink-0 w-[313px] h-full fixed z-10"
                         style={{
@@ -445,7 +461,7 @@ const EssayDetailPage = () => {
                                 pageState !== PageState.NORMAL
                                     ? "hidden "
                                     : ""
-                            } bg-[#005f5f] rounded-[10px] bottom-1 flex flex-row gap-1 items-center justify-center mx-auto w-[289px] shrink-0 h-[60px] absolute`}
+                            } bg-[#008585] hover:bg-[#007373] active:bg-[#006060] rounded-[10px] bottom-1 flex flex-row gap-1 items-center justify-center mx-auto w-[289px] shrink-0 h-[60px] absolute`}
                             style={{
                                 boxShadow:
                                     "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
@@ -467,11 +483,17 @@ const EssayDetailPage = () => {
                         </button>
                     </div>
                     {documentInfo.wordUrl ? (
-                        <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] h-screen overflow-y-auto">
-                            <WordDocumentViewer
-                                documentUrl={documentInfo.wordUrl}
-                            />
-                        </div>
+                        isEditing ? (
+                            <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] h-screen overflow-y-auto">
+                                <HtmlViewer htmlContent={htmlText} />
+                            </div>
+                        ) : (
+                            <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] h-screen overflow-y-auto">
+                                <WordDocumentViewer
+                                    documentUrl={documentInfo.wordUrl}
+                                />
+                            </div>
+                        )
                     ) : pageState !== PageState.NORMAL ? (
                         <>
                             <div

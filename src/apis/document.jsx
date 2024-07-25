@@ -23,7 +23,7 @@ export const answerAdditionalQuestion = async (documentIdAndAddingPrompt) =>
 export const createReport = async (documentId) =>
     axiosClient.put(`/document/content/${documentId}`);
 
-export const getCreatedReport = async (documentId) =>
+export const gethtmlText = async (documentId) =>
     axiosClient.get(`/document/text/${documentId}`);
 
 export const getDocFile = async (documentId) =>

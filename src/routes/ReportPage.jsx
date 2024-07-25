@@ -816,7 +816,7 @@ const ReportPage = () => {
                 <button
                     className={`${
                         pageState !== PageState.NORMAL && "hidden "
-                    } bg-[#005f5f] rounded-[10px] bottom-1 flex flex-row gap-1 items-center justify-center mx-auto w-[289px] shrink-0 h-[60px] absolute`}
+                    } bg-[#008585] hover:bg-[#007373] active:bg-[#006060] rounded-[10px] bottom-1 flex flex-row gap-1 items-center justify-center mx-auto w-[289px] shrink-0 h-[60px] absolute`}
                     style={{
                         boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                     }}
