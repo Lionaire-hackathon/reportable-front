@@ -50,14 +50,7 @@ const EssayPage = () => {
   const [createdEssayUrl, setCreatedEssayUrl] = useState();
   const [createdEssay, setCreatedEssay] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const handleEssayData = (e) => {
-    const { id, value } = e.target;
-    setEssayData({
-      ...essayData,
-      [id]: value,
-    });
-  };
+  
   const handleEssayData = (e) => {
     const { id, value } = e.target;
     setEssayData({
@@ -81,11 +74,6 @@ const EssayPage = () => {
     }
   };
 
-  // JSON 문자열의 큰따옴표를 올바르게 변환하는 함수
-  const fixQuotes = (jsonStr) => {
-    // 유니코드 이스케이프 시퀀스를 사용해 큰따옴표로 대체
-    return jsonStr.replace(/“|”/g, '"').replace(/”/g, '"').replace(/‘|’/g, "'");
-  };
   // JSON 문자열의 큰따옴표를 올바르게 변환하는 함수
   const fixQuotes = (jsonStr) => {
     // 유니코드 이스케이프 시퀀스를 사용해 큰따옴표로 대체
@@ -142,10 +130,6 @@ const EssayPage = () => {
     setIsLoading(false);
   };
 
-  const mergeQnA = (questions, answers) => {
-    if (questions.length !== answers.length) {
-      throw new Error("The arrays must have the same length");
-    }
   const mergeQnA = (questions, answers) => {
     if (questions.length !== answers.length) {
       throw new Error("The arrays must have the same length");
