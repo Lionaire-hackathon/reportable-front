@@ -10,13 +10,6 @@ import {
   askAdditionalQuestion,
   answerAdditionalQuestion,
   createReport,
-  getCreatedReport,
-  getDocFile,
-  documentApi,
-  askAdditionalQuestion,
-  answerAdditionalQuestion,
-  createReport,
-  getCreatedReport,
   getDocFile,
 } from "../apis/document";
 
@@ -50,7 +43,7 @@ const EssayPage = () => {
   const [createdEssayUrl, setCreatedEssayUrl] = useState();
   const [createdEssay, setCreatedEssay] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const handleEssayData = (e) => {
     const { id, value } = e.target;
     setEssayData({
