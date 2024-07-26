@@ -269,7 +269,12 @@ const ReportPage = () => {
                     reject(err);
                 } else {
                     console.log("파일 업로드 성공: ", data);
-                    console.log(data.Location);
+                    console.log(
+                        data.Location.replace(
+                            process.env.REACT_APP_S3_DOMAIN,
+                            process.env.REACT_APP_CLOUDFRONT_DOMAIN
+                        )
+                    );
                     resolve(data.Location);
                 }
             });

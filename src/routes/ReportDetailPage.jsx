@@ -226,7 +226,7 @@ const ReportPage = () => {
                                         id="topic"
                                         value={documentInfo.title}
                                         readOnly
-                                        className="bg-[#f5f5f5] text-[#9E9E9E] rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                        className="bg-[#f5f5f5] text-[#121212] rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                                     />
                                 </div>
                             </div>
@@ -263,7 +263,7 @@ const ReportPage = () => {
                                             value={documentInfo.amount}
                                             autoComplete="off"
                                             readOnly
-                                            className="bg-[#f5f5f5] text-[#9E9E9E] rounded border-solid border-[#C2C2C2] border px-3 flex flex-row gap-1 items-end justify-start shrink-0 w-[80%] h-8 relative overflow-hidden text-gray02-70 text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal"
+                                            className="bg-[#f5f5f5] text-[#121212] rounded border-solid border-[#C2C2C2] border px-3 flex flex-row gap-1 items-end justify-start shrink-0 w-[80%] h-8 relative overflow-hidden text-gray02-70 text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal"
                                         />
                                         <div className="text-[#000000] text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal relative">
                                             자 이상{" "}
@@ -323,7 +323,7 @@ const ReportPage = () => {
                                         placeholder="진행한 실험이나 연구에 대한 핵심적인 내용을 설명해주세요."
                                         value={documentInfo.core}
                                         readOnly
-                                        className="bg-[#f5f5f5] text-[#9e9e9e] rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                        className="bg-[#f5f5f5] text-[#121212] rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                                     />
                                 </div>
                             </div>
@@ -359,7 +359,7 @@ const ReportPage = () => {
                                                                 <div className="flex items-center justify-between ">
                                                                     <div className="flex-grow">
                                                                         <span
-                                                                            className="text-[#9e9e9e] flex-grow"
+                                                                            className="text-[#121212] flex-grow"
                                                                             key={
                                                                                 index
                                                                             }
@@ -433,7 +433,7 @@ const ReportPage = () => {
                                                                 </div>
                                                                 <textarea
                                                                     placeholder="파일에 대한 설명을 입력해 주세요."
-                                                                    className="bg-[#f5f5f5] text-[#9e9e9e] overflow-auto border w-full"
+                                                                    className="bg-[#f5f5f5] text-[#121212] overflow-auto border w-full"
                                                                     readOnly
                                                                     value={
                                                                         file.description
@@ -456,7 +456,7 @@ const ReportPage = () => {
                                 <button
                                     type="button"
                                     disabled
-                                    className="bg-[#F5F5F5] border-[#c5c5c5] text-[#9e9e9e] self-stretch border rounded-[4px]"
+                                    className="hidden bg-[#F5F5F5] border-[#c5c5c5] text-[#121212] self-stretch border rounded-[4px]"
                                 >
                                     파일 업로드
                                 </button>
@@ -500,7 +500,7 @@ const ReportPage = () => {
                                     내용으로 시작할 수 있게 해줘"
                                     value={documentInfo.prompt}
                                     readOnly
-                                    className="bg-[#f5f5f5] text-[#9e9e9e] rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                    className="bg-[#f5f5f5] text-[#121212] rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative overflow-auto text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                                 />
                             </div>
                         </div>
@@ -540,7 +540,10 @@ const ReportPage = () => {
                     {documentInfo.wordUrl ? (
                         isEditing ? (
                             <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] h-screen overflow-y-auto">
-                                <HtmlViewer htmlContent={htmlText} />
+                                <HtmlViewer
+                                    htmlContent={htmlText}
+                                    documentId={documentId}
+                                />
                             </div>
                         ) : (
                             <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] h-screen overflow-y-auto">

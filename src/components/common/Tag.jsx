@@ -9,7 +9,7 @@ const Tag = ({ content = "+", handleContentDelete = null, isReadOnly }) => {
         >
             <div
                 className={`${
-                    isReadOnly ? "text-[#9e9e9e]" : "text-[#21725E]"
+                    isReadOnly ? "text-[#121212]" : "text-[#21725E]"
                 } text-left text-[12px] relative`}
             >
                 {content}{" "}

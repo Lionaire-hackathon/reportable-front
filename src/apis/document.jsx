@@ -28,3 +28,6 @@ export const gethtmlText = async (documentId) =>
 
 export const getDocFile = async (documentId) =>
     axiosClient.get(`/document/doc/${documentId}`);
+
+export const editReport = async (editPromptDto) =>
+    axiosClient.put("/document/edit/", editPromptDto);
