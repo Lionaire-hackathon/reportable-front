@@ -4,7 +4,7 @@ import logo from "../../assets/images/logo.png";
 import useMe from "../../apis/hook/useMe";
 import { logout } from "../../apis/user";
 import { useParams, useNavigate } from "react-router-dom";
-import { getDocFile } from "../../apis/document";
+import { getDocumentInfo } from "../../apis/document";
 
 const Header = ({
     className,
@@ -32,8 +32,8 @@ const Header = ({
 
     const handleDownload = async () => {
         try {
-            const response = await getDocFile(documentId);
-            const url = response.data; // S3 문서의 URL을 가져옵니다.
+            const response = await getDocumentInfo(documentId);
+            const url = response.data.wordUrl; // S3 문서의 URL을 가져옵니다.
             const link = document.createElement("a");
             link.href = url;
             document.body.appendChild(link);

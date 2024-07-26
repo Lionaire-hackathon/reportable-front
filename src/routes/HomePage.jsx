@@ -2,9 +2,11 @@ import demo from "../assets/images/demo.png";
 import Header from "../components/common/Header";
 import Footer from "../components/common/Footer";
 import Toggle from "../components/common/Toggle";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
 
 const HomePage = () => {
+    const navigate = useNavigate();
     return (
         <>
             <Header className="fixed" />
@@ -111,13 +113,13 @@ const HomePage = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="bg-[#000000] rounded pt-2 pr-4 pb-2 pl-4 flex flex-row gap-1 items-center justify-center shrink-0 relative">
-                                    <Link
-                                        className="text-gray02-10 text-center font-['Inter-Bold',_sans-serif] text-sm leading-5 font-bold text-white relative"
-                                        to="/essay"
-                                    >
+                                <button
+                                    className="bg-[#000000] rounded pt-2 pr-4 pb-2 pl-4 flex flex-row gap-1 items-center justify-center shrink-0 relative"
+                                    onClick={() => navigate("/essay")}
+                                >
+                                    <div className="text-gray02-10 text-center font-['Inter-Bold',_sans-serif] text-sm leading-5 font-bold text-white relative">
                                         레포트 작성하러 가기{" "}
-                                    </Link>
+                                    </div>
                                     <svg
                                         className="shrink-0 w-4 h-4 relative overflow-visible"
                                         width="16"
@@ -138,7 +140,7 @@ const HomePage = () => {
                                             strokeLinejoin="round"
                                         />
                                     </svg>
-                                </div>
+                                </button>
                             </div>
                             <img
                                 className="shrink-0 w-[353px] h-[250px] relative"
@@ -149,18 +151,22 @@ const HomePage = () => {
                     </div>
                     <div className="flex flex-col flex-grow items-center justify-center shrink-0 w-full relative">
                         <div className="flex flex-row items-center justify-center self-stretch shrink-0 gap-[71px] relative">
-                            <Link
+                            <button
                                 className="flex w-[297px] h-[62px] p-2 pr-4 justify-center items-center gap-1.5 rounded border-2 border-[#299792] bg-white text-[#299792]"
-                                to="/essay"
+                                onClick={() => {
+                                    navigate("/essay");
+                                }}
                             >
                                 에세이 작성하기
-                            </Link>
-                            <Link
+                            </button>
+                            <button
                                 className="flex w-[297px] h-[62px] p-2 pr-4 justify-center items-center gap-1.5 rounded border-2 border-[#299792] bg-white text-[#299792]"
-                                to="/research"
+                                onClick={() => {
+                                    navigate("/research");
+                                }}
                             >
                                 보고서 작성하기
-                            </Link>
+                            </button>
                         </div>
                     </div>
                 </div>

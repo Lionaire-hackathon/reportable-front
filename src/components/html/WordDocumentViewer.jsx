@@ -10,6 +10,10 @@ const WordDocumentViewer = ({ documentUrl }) => {
         },
     ];
 
+    useEffect(() => {
+        console.log("Document URL:", documentUrl);
+    }, [documentUrl]);
+
     return (
         documentUrl && (
             <div className="flex justify-center items-center w-full h-full">

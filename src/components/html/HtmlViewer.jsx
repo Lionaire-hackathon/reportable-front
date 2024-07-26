@@ -1,10 +1,12 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import Modal from "../common/ModalOverlay"; // 수정된 Modal 경로
+import { editReport } from "../../apis/document";
 
 const A4Container = styled.div`
     width: 21cm;
     height: auto;
+    min-height: 29.7cm;
     padding: 2.54cm;
     margin: 1cm auto;
     border: 1px solid #d3d3d3;
@@ -78,10 +80,11 @@ const EditButton = styled.button`
     z-index: 1000;
 `;
 
-const A4Document = ({ htmlContent }) => {
+const A4Document = ({ htmlContent, documentId }) => {
     const [selectedParagraphs, setSelectedParagraphs] = useState([]);
     const [startParagraph, setStartParagraph] = useState(null);
     const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+    const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [prompt, setPrompt] = useState(""); // 추가된 상태
     const contentRef = useRef(null);
@@ -106,6 +109,9 @@ const A4Document = ({ htmlContent }) => {
     );
 
     const handleContainerClick = () => {
+        if (isModalOpen) {
+            return;
+        }
         const elements = Array.from(
             contentRef.current.querySelectorAll(
                 "h1, h2, h3, p:not(.empty-paragraph)"
@@ -118,6 +124,9 @@ const A4Document = ({ htmlContent }) => {
     };
 
     const handleParagraphClick = (event) => {
+        if (isModalOpen) {
+            return;
+        }
         event.stopPropagation();
         const element = event.target;
 
@@ -161,6 +170,12 @@ const A4Document = ({ htmlContent }) => {
                 setStartParagraph(element);
                 setSelectedParagraphs([paragraphId]);
                 element.classList.add("active-paragraph");
+
+                const rect = element.getBoundingClientRect();
+                setModalPosition({
+                    top: rect.top + window.scrollY,
+                    left: rect.left + window.scrollX - 410,
+                });
             } else {
                 // 선택 범위 끝
                 const startIndex = elements.findIndex(
@@ -231,16 +246,15 @@ const A4Document = ({ htmlContent }) => {
 
     const handleApiCall = async () => {
         if (selectedParagraphs.length > 0) {
+            setIsLoading(true);
             try {
-                const response = await fetch("YOUR_API_ENDPOINT", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ texts: selectedParagraphs, prompt }),
-                });
-                const data = await response.json();
-                console.log(data);
+                const editPromptDto = {
+                    document_id: documentId,
+                    prompt: prompt,
+                    content_before: selectedParagraphs,
+                };
+                await editReport(editPromptDto);
+                window.location.reload();
             } catch (error) {
                 console.log({
                     paragraphsToChange: selectedParagraphs,
@@ -259,12 +273,48 @@ const A4Document = ({ htmlContent }) => {
         }
     };
 
+    const getLoadingText = () => {
+        return (
+            <>
+                <span>보</span>
+                <span>고</span>
+                <span>서</span>
+                <span className="mx-1"></span>
+                <span>내</span>
+                <span>용</span>
+                <span className="mx-1"></span>
+                <span>수</span>
+                <span>정</span>
+                <span>하</span>
+                <span>는</span>
+                <span className="mx-1"></span>
+                <span>중</span>
+            </>
+        );
+    };
+
     return (
         <>
+            {isLoading && (
+                <>
+                    <div
+                        className="fixed top-0 bottom-0 left-0 right-0 bg-[rgba(217,217,217,0.20)] z-0 flex items-center justify-center z-10"
+                        style={{ backdropFilter: "blur(5px)" }}
+                    ></div>
+                    <div className="bg-transparent top-[74px] bottom-0 left-[313px] right-0 flex flex-col gap-10 items-center justify-center shrink-0 fixed overflow-auto z-10">
+                        <div className="text-[18px] loading-text2 text-[#299792] flex flex-row">
+                            {getLoadingText()}
+                        </div>
+                        <span className="loader"></span>
+                    </div>
+                </>
+            )}
             <A4Container onClick={handleContainerClick}>
                 <A4Content
                     ref={contentRef}
-                    dangerouslySetInnerHTML={{ __html: modifiedHtmlContent }}
+                    dangerouslySetInnerHTML={{
+                        __html: modifiedHtmlContent,
+                    }}
                     onClick={handleParagraphClick}
                 />
             </A4Container>

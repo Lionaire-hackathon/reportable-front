@@ -138,14 +138,15 @@ const EssayPage = () => {
 
         let mergedString =
             " <추가프롬프트> \n 다음은 너와 이전에 나누었던 에세이 작성에 대한 질의응답 정보야 ";
+        let isAllEmpty = true;
         for (let i = 0; i < questions.length; i++) {
             if (answers[i].trim() !== "") {
                 mergedString +=
                     " {질문: " + questions[i] + " 답변: " + answers[i] + "}";
+                isAllEmpty = false;
             }
         }
-        console.log(mergedString);
-        return mergedString;
+        return isAllEmpty ? "" : mergedString;
     };
 
     const handleFinalSubmit = async (e) => {
@@ -370,7 +371,7 @@ const EssayPage = () => {
                                 readOnly={pageState !== PageState.NORMAL}
                                 className={`${
                                     pageState !== PageState.NORMAL
-                                        ? "bg-[#f5f5f5] text-[#9e9e9e] "
+                                        ? "bg-[#f5f5f5] text-[#121212] "
                                         : "bg-[#ffffff] "
                                 } overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2`}
                             />
@@ -412,7 +413,7 @@ const EssayPage = () => {
                                     autoComplete="off"
                                     className={`${
                                         pageState !== PageState.NORMAL
-                                            ? "bg-[#f5f5f5] text-[#9e9e9e] "
+                                            ? "bg-[#f5f5f5] text-[#121212] "
                                             : "bg-[#ffffff] "
                                     } rounded border-solid border-[#C2C2C2] border px-3 flex flex-row gap-1 items-end justify-start shrink-0 w-[80%] h-8 relative overflow-hidden text-gray02-70 text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal`}
                                 />
@@ -444,7 +445,7 @@ const EssayPage = () => {
                                 readOnly={pageState !== PageState.NORMAL}
                                 className={`${
                                     pageState !== PageState.NORMAL
-                                        ? "bg-[#f5f5f5] text-[#9e9e9e] "
+                                        ? "bg-[#f5f5f5] text-[#121212] "
                                         : "bg-[#ffffff] "
                                 } overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2`}
                             />
@@ -481,7 +482,7 @@ const EssayPage = () => {
                             onChange={handleEssayData}
                             className={`${
                                 pageState !== PageState.NORMAL
-                                    ? "bg-[#f5f5f5] text-[#9e9e9e] "
+                                    ? "bg-[#f5f5f5] text-[#121212] "
                                     : "bg-[#ffffff] "
                             } overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2`}
                         />

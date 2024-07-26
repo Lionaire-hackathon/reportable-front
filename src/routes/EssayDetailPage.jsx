@@ -31,7 +31,7 @@ const EssayDetailPage = () => {
     const { documentId } = useParams();
     const [documentInfo, setDocumentInfo] = useState();
     const [htmlText, setHtmlText] = useState("");
-    const [isEditing, setIsEditing] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
     const toggleEditing = () => {
         setIsEditing(!isEditing);
     };
@@ -131,15 +131,16 @@ const EssayDetailPage = () => {
         }
 
         let mergedString =
-            " <추가프롬프트> \n 다음은 너와 이전에 나누었던 에세이 작성에 대한 질의응답 정보야: ";
+            " <추가프롬프트> \n 다음은 너와 이전에 나누었던 에세이 작성에 대한 질의응답 정보야 ";
+        let isAllEmpty = true;
         for (let i = 0; i < questions.length; i++) {
             if (answers[i].trim() !== "") {
                 mergedString +=
                     " {질문: " + questions[i] + " 답변: " + answers[i] + "}";
+                isAllEmpty = false;
             }
         }
-        console.log(mergedString);
-        return mergedString;
+        return isAllEmpty ? "" : mergedString;
     };
 
     const handleFinalSubmit = async (e) => {
@@ -319,7 +320,7 @@ const EssayDetailPage = () => {
                         isEditing={isEditing}
                     />
                     <div
-                        className="top-0 left-0 flex flex-col gap-2.5 items-center justify-between shrink-0 w-[313px] h-full fixed z-10"
+                        className="top-0 left-0 flex flex-col gap-2.5 items-center justify-between shrink-0 w-[313px] h-full fixed z-20"
                         style={{
                             background:
                                 "linear-gradient(to left, #cae5e4, #cae5e4)",
@@ -355,7 +356,7 @@ const EssayDetailPage = () => {
                                         id="topic"
                                         value={documentInfo.title}
                                         readOnly
-                                        className="bg-[#f5f5f5] text-[#9E9E9E] overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                        className="bg-[#f5f5f5] text-[#000000] overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                                     />
                                 </div>
                             </div>
@@ -394,7 +395,7 @@ const EssayDetailPage = () => {
                                             value={documentInfo.amount}
                                             readOnly
                                             autoComplete="off"
-                                            className="bg-[#f5f5f5] text-[#9E9E9E] rounded border-solid border-[#C2C2C2] border px-3 flex flex-row gap-1 items-end justify-start shrink-0 w-[80%] h-8 relative overflow-hidden text-gray02-70 text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal"
+                                            className="bg-[#f5f5f5] text-[#121212] rounded border-solid border-[#C2C2C2] border px-3 flex flex-row gap-1 items-end justify-start shrink-0 w-[80%] h-8 relative overflow-hidden text-gray02-70 text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal"
                                         />
                                         <div className="text-[#000000] text-left font-['Inter-Regular',_sans-serif] text-[11px] leading-5 font-normal relative">
                                             자 이상{" "}
@@ -405,7 +406,7 @@ const EssayDetailPage = () => {
                             <div className="bg-[#ffffff] rounded-[10px] p-4 flex flex-col gap-2.5 items-center justify-center shrink-0 relative w-[98.5%] ">
                                 <div className="flex flex-col gap-2.5 items-center justify-center shrink-0 w-full relative">
                                     <div className="flex flex-row items-center justify-between self-stretch shrink-0 relative w-full">
-                                        <span className="px-1 text-[#000000] text-left font-['Inter-SemiBold',_sans-serif] text-base font-semibold relative">
+                                        <span className="px-1 text-[#121212] text-left font-['Inter-SemiBold',_sans-serif] text-base font-semibold relative">
                                             양식{" "}
                                         </span>
                                         <ResetIcon
@@ -420,7 +421,7 @@ const EssayDetailPage = () => {
                                         알려주세요."
                                         value={documentInfo.form}
                                         readOnly
-                                        className="bg-[#f5f5f5] text-[#9E9E9E] overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                        className="bg-[#f5f5f5] text-[#121212] overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                                     />
                                 </div>
                             </div>
@@ -451,7 +452,7 @@ const EssayDetailPage = () => {
                                 내용으로 시작할 수 있게 해줘"
                                     value={documentInfo.prompt}
                                     readOnly
-                                    className="bg-[#f5f5f5] text-[#9E9E9E] overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
+                                    className="bg-[#f5f5f5] text-[#121212] overflow-auto rounded border-solid border-[#C2C2C2] border self-stretch shrink-0 h-[74px] relative text-left font-['Inter-Regular',_sans-serif] text-xs leading-5 font-normal p-2"
                                 />
                             </div>
                         </div>
@@ -485,7 +486,10 @@ const EssayDetailPage = () => {
                     {documentInfo.wordUrl ? (
                         isEditing ? (
                             <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] h-screen overflow-y-auto">
-                                <HtmlViewer htmlContent={htmlText} />
+                                <HtmlViewer
+                                    htmlContent={htmlText}
+                                    documentId={documentId}
+                                />
                             </div>
                         ) : (
                             <div className="bg-[#d9d9d9] pt-[74px] pl-[313px] h-screen overflow-y-auto">
