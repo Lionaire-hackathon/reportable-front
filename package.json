@@ -10,7 +10,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "anthropic": "^0.0.0",
-    "aws-sdk": "^2.1659.0",
+    "aws-sdk": "^2.1664.0",
     "axios": "^1.7.2",
     "cookies-next": "^4.2.1",
     "html-to-react": "^1.7.0",
