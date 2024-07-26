@@ -279,6 +279,7 @@ const ReportPage = () => {
         });
     };
 
+    /*
     useEffect(() => {
         if (!me && !isLoadingMe) {
             alert("로그인이 필요합니다.");
@@ -286,6 +287,7 @@ const ReportPage = () => {
             navigate("/signin");
         }
     }, [me]);
+    */
 
     const getLoadingText = (pageState) => {
         switch (pageState) {
