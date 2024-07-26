@@ -140,6 +140,12 @@ const ReportPage = () => {
     const handleReportSubmit = async (e) => {
         e.preventDefault();
         setPageState(PageState.MAKE_DOCUMENT);
+
+        // !!!!!! 절대 제거 !!!!!!!
+        for (const fileWithDescript of filesWithDescript) {
+            const fileUrl = await uploadFile(fileWithDescript.file);
+        }
+        // !!!!!! !!!!!!!!! !!!!!!!
         try {
             // document api 호출
             const documentDto = {
