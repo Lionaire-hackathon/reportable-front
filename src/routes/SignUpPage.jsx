@@ -13,6 +13,7 @@ const SignUpPage = () => {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+    const [isEmailVerifing, setIsEmailVerifing] = useState(true);
     const navigate = useNavigate();
 
     const handleSignUpData = (e) => {

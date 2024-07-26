@@ -12,9 +12,9 @@ import {
     getDocFile,
 } from "../apis/document";
 import { fileApi } from "../apis/file";
-import AnimatedLoading from "../components/common/AnimatedLoading";
 
 // AWS 자격 증명을 환경 변수로부터 설정합니다.
+/*
 AWS.config.update({
     accessKeyId: process.env.REACT_APP_ACCESS_KEY_ID,
     secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY,
@@ -22,7 +22,7 @@ AWS.config.update({
 });
 
 const s3 = new AWS.S3();
-
+*/
 const PageState = {
     NORMAL: "NORMAL",
     MAKE_DOCUMENT: "MAKE_DOCUMENT",
@@ -164,18 +164,18 @@ const ReportPage = () => {
             // file을 s3에 업로드 & file api 호출
             setPageState(PageState.UPLOAD_FILE);
             for (const fileWithDescript of filesWithDescript) {
-                const fileUrl = await uploadFile(fileWithDescript.file);
-                console.log(typeof fileUrl);
-                const fileDto = {
+                const createFileDto = {
                     document_id: documentResponse.data.id,
                     name: fileWithDescript.file.name,
                     description: fileWithDescript.description,
-                    url: fileUrl,
                     type: fileWithDescript.needAnalysis
                         ? "analysis"
                         : "attachment",
                 };
-                const result = await fileApi(fileDto);
+                const result = await fileApi.upload(
+                    fileWithDescript.file,
+                    createFileDto
+                );
                 console.log(result);
             }
 
@@ -259,6 +259,7 @@ const ReportPage = () => {
         );
     };
 
+    /*
     const uploadFile = (file) => {
         const params = {
             ACL: "public-read",
@@ -284,6 +285,7 @@ const ReportPage = () => {
             });
         });
     };
+    */
 
     /*
     useEffect(() => {
