@@ -2,11 +2,14 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { getNewAccessToken, getRefreshTokenFromCookie } from "./user";
 
-const baseURL = process.env.REACT_APP_ENV === "production" ? process.env.REACT_APP_PROD_SERVER_URI : process.env.REACT_APP_DEV_SERVER_URI;
+const baseURL =
+    process.env.REACT_APP_ENV === "production"
+        ? process.env.REACT_APP_PROD_SERVER_URL
+        : process.env.REACT_APP_DEV_SERVER_URL;
 
 axios.defaults.withCredentials = true;
-axios.defaults.headers.common['x-mn-api-version'] = 'v1';
-axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.headers.common["x-mn-api-version"] = "v1";
+axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 
 if (!baseURL) {
     throw new Error("BASE_URL IS MISSING");
@@ -33,7 +36,10 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
     (response) => response,
     async (error) => {
-        const { config, response: { status } } = error;
+        const {
+            config,
+            response: { status },
+        } = error;
         if (status === 403 || status === 401) {
             const originalRequest = config;
             try {
@@ -42,7 +48,7 @@ axiosClient.interceptors.response.use(
                 if (!refreshToken) return Promise.reject(error);
                 await getNewAccessToken(refreshToken);
                 const token = Cookies.get("accessToken");
-                console.log('accessToken', token);
+                console.log("accessToken", token);
                 originalRequest.headers["Authorization"] = `Bearer ${token}`;
                 console.log("refreshed token");
                 return axios(originalRequest);
