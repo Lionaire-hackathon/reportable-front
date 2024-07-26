@@ -159,7 +159,7 @@ const ReportPage = () => {
             setPageState(PageState.UPLOAD_FILE);
             for (const fileWithDescript of filesWithDescript) {
                 const fileUrl = await uploadFile(fileWithDescript.file);
-                console.log(typeof fileUrl);
+                console.log(fileUrl);
                 const fileDto = {
                     document_id: documentResponse.data.id,
                     name: fileWithDescript.file.name,

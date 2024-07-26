@@ -134,7 +134,7 @@ const SignUpPage = () => {
                                         <button
                                             type="button"
                                             onClick={handleEmailVerification}
-                                            className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md whitespace-nowrap h-[56px]"
+                                            className="ml-2 px-6 py-2 bg-[#299792] text-white rounded-md whitespace-nowrap h-[54px]"
                                         >
                                             인증
                                         </button>
@@ -327,7 +327,7 @@ const SignUpPage = () => {
                                         <button
                                             type="button"
                                             onClick={handlePhoneVerification}
-                                            className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md whitespace-nowrap h-[56px]"
+                                            className="ml-2 px-4 py-2 bg-[#299792] text-white rounded-md whitespace-nowrap h-[54px]"
                                         >
                                             인증
                                         </button>
