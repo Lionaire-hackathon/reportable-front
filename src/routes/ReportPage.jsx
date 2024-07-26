@@ -140,12 +140,6 @@ const ReportPage = () => {
     const handleReportSubmit = async (e) => {
         e.preventDefault();
         setPageState(PageState.MAKE_DOCUMENT);
-
-        // !!!!!! 절대 제거 !!!!!!!
-        for (const fileWithDescript of filesWithDescript) {
-            const fileUrl = await uploadFile(fileWithDescript.file);
-        }
-        // !!!!!! !!!!!!!!! !!!!!!!
         try {
             // document api 호출
             const documentDto = {
@@ -287,7 +281,6 @@ const ReportPage = () => {
     };
     */
 
-    /*
     useEffect(() => {
         if (!me && !isLoadingMe) {
             alert("로그인이 필요합니다.");
@@ -295,7 +288,6 @@ const ReportPage = () => {
             navigate("/signin");
         }
     }, [me]);
-    */
 
     const getLoadingText = (pageState) => {
         switch (pageState) {
