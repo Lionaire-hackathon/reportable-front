@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { getNewAccessToken, getRefreshTokenFromCookie } from "./user";
 
-const baseURL = "http://localhost:8080";
+const baseURL = process.env.REACT_APP_ENV === "production" ? process.env.REACT_APP_PROD_SERVER_URI : process.env.REACT_APP_DEV_SERVER_URI;
 
 axios.defaults.withCredentials = true;
 axios.defaults.headers.common['x-mn-api-version'] = 'v1';
