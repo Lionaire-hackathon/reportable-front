@@ -175,9 +175,29 @@ const ReportPage = () => {
 
             // Claude api를 사용해서 레포트 생성
             setPageState(PageState.MAKE_TEXT_REPORT);
-            const finalResponse = await createReport(documentResponse.data.id);
+            try {
+                await createReport(documentResponse.data.id);
+            } catch (error) {
+                console.error("createReport 오류: ", error);
+                const errorMessage =
+                    error.response?.data?.message ||
+                    "An unexpected error occurred. Please try again.";
+                alert(
+                    `${errorMessage} createReport 오류로 문서 생성에 실패했습니다.`
+                );
+            }
             setPageState(PageState.MAKE_DOCX_REPORT);
-            const wordUrl = await getDocFile(documentResponse.data.id);
+            try {
+                await getDocFile(documentResponse.data.id);
+            } catch (error) {
+                console.error("getDocFile 오류: ", error);
+                const errorMessage =
+                    error.response?.data?.message ||
+                    "An unexpected error occurred. Please try again.";
+                alert(
+                    `${errorMessage} getDocFile 오류로 문서 생성에 실패했습니다.`
+                );
+            }
             setPageState(PageState.NORMAL);
             navigate(`/research/${documentResponse.data.id}`);
         } catch (error) {
