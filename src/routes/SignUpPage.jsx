@@ -65,6 +65,16 @@ const SignUpPage = () => {
         setShowPasswordConfirm(!showPasswordConfirm);
     };
 
+    const handleEmailVerification = () => {
+        // 이메일 인증 로직 추가
+        alert("이메일 인증 버튼 클릭");
+    };
+
+    const handlePhoneVerification = () => {
+        // 휴대전화 인증 로직 추가
+        alert("휴대전화 인증 버튼 클릭");
+    };
+
     return (
         <div
             className="flex flex-col gap-0 items-center justify-center h-screen relative bg-cover"
@@ -121,6 +131,13 @@ const SignUpPage = () => {
                                             autoComplete="off"
                                             className="custom-input text-[#ababab] text-left font-['Poppins-Light',_sans-serif] text-sm font-light relative w-full py-4 px-4 border border-solid border-[#000000] rounded-md"
                                         />
+                                        <button
+                                            type="button"
+                                            onClick={handleEmailVerification}
+                                            className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md whitespace-nowrap h-[56px]"
+                                        >
+                                            인증
+                                        </button>
                                     </div>
                                 </div>
                                 <div className="h-[92px] w-full static left-0 flex flex-col gap-2">
@@ -302,11 +319,18 @@ const SignUpPage = () => {
                                             pattern="\d{11}"
                                             title="정확한 형식의 전화번호를 입력해주세요."
                                             placeholder="Enter your phone number"
-                                            value={signUpData.phoneNumber}
+                                            value={signUpData.phone_number}
                                             onChange={handleSignUpData}
                                             autoComplete="off"
                                             className="custom-input text-[#ababab] text-left font-['Poppins-Light',_sans-serif] text-sm font-light relative w-full py-4 px-4 border border-solid border-[#000000] rounded-md"
                                         />
+                                        <button
+                                            type="button"
+                                            onClick={handlePhoneVerification}
+                                            className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md whitespace-nowrap h-[56px]"
+                                        >
+                                            인증
+                                        </button>
                                     </div>
                                 </div>
                                 <button
