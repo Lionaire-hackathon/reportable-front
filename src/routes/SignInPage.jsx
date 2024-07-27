@@ -93,7 +93,6 @@ const SignInPage = () => {
                                 </label>
                                 <div className="bg-[#ffffff] rounded-md w-full flex items-center justify-center">
                                     <input
-                                        required
                                         type="email"
                                         id="email"
                                         placeholder="Enter your email address"
@@ -113,7 +112,6 @@ const SignInPage = () => {
                                 <div className="bg-[#ffffff] rounded-md w-full flex items-center justify-center">
                                     <div className="flex w-full items-center justify-between px-4 py-4 border border-solid border-[#000000] rounded-md">
                                         <input
-                                            required
                                             type={
                                                 showPassword
                                                     ? "text"
