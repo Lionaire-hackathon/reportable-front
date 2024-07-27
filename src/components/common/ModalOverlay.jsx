@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import Draggable from "react-draggable";
 
 const ModalOverlay = styled.div`
     position: fixed;
@@ -78,19 +79,25 @@ const Modal = ({ isOpen, onClose, onConfirm, prompt, setPrompt, position }) => {
 
     return (
         <ModalOverlay>
-            <ModalContainer position={position}>
-                <ModalHeader>이 부분을 어떻게 수정하고 싶으신가요?</ModalHeader>
-                <StyledTextarea
-                    rows="6"
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="원하시는 수정사항을 입력해주세요."
-                />
-                <ModalFooter>
-                    <ModalButton onClick={onClose}>Cancel</ModalButton>
-                    <ConfirmButton onClick={onConfirm}>Confirm</ConfirmButton>
-                </ModalFooter>
-            </ModalContainer>
+            <Draggable cancel="textarea">
+                <ModalContainer position={position}>
+                    <ModalHeader>
+                        이 부분을 어떻게 수정하고 싶으신가요?
+                    </ModalHeader>
+                    <StyledTextarea
+                        rows="6"
+                        value={prompt}
+                        onChange={(e) => setPrompt(e.target.value)}
+                        placeholder="원하시는 수정사항을 입력해주세요."
+                    />
+                    <ModalFooter>
+                        <ModalButton onClick={onClose}>Cancel</ModalButton>
+                        <ConfirmButton onClick={onConfirm}>
+                            Confirm
+                        </ConfirmButton>
+                    </ModalFooter>
+                </ModalContainer>
+            </Draggable>
         </ModalOverlay>
     );
 };
