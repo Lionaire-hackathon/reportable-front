@@ -43,7 +43,10 @@ const SignInPage = () => {
         e.preventDefault();
         e.stopPropagation();
         const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-        const GOOGLE_REDIRECT_URI = process.env.REACT_APP_ENV === "development" ? process.env.REACT_APP_DEV_GOOGLE_REDIRECT_URI : process.env.REACT_APP_PROD_GOOGLE_REDIRECT_URI;
+        const GOOGLE_REDIRECT_URI =
+            process.env.REACT_APP_ENV === "development"
+                ? process.env.REACT_APP_DEV_GOOGLE_REDIRECT_URI
+                : process.env.REACT_APP_PROD_GOOGLE_REDIRECT_URI;
         window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&response_type=code&client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}`;
     };
 
@@ -55,10 +58,9 @@ const SignInPage = () => {
                 opacity: "0.8",
             }}
         >
-            <form
+            <div
                 className="bg-[#ffffff] rounded-[10px] border-solid border-[#878787] border-[0.5px] flex flex-col gap-2.5 items-center justify-center shrink-0 w-[505px] h-[701px] relative"
                 style={{ boxShadow: "0px 4px 64px 0px rgba(0, 0, 0, 0.05)" }}
-                onSubmit={handleSignInSubmit}
             >
                 <div className="flex flex-col gap-[24px] items-center justify-start shrink-0 w-[83%] relative">
                     <div className="text-left font-['-',_sans-serif] text-[21px] font-normal relative self-stretch">
@@ -188,7 +190,7 @@ const SignInPage = () => {
                                 </div>
                             </div>
                             <button
-                                type="submit"
+                                onClick={handleSignInSubmit}
                                 className="flex flex-row items-center justify-center bg-[#000000] rounded-md !h-[57px] relative w-full my-1"
                             >
                                 <div className="text-[#ffffff] font-['Poppins-Medium',_sans-serif] text-base font-medium relative">
@@ -250,7 +252,7 @@ const SignInPage = () => {
                         </div>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     );
 };
