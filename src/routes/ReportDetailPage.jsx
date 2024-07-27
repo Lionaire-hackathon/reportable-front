@@ -37,7 +37,7 @@ const ReportPage = () => {
     const [pageState, setPageState] = useState(PageState.NORMAL);
     const [elementList, setElementList] = useState([]);
     const [documentInfo, setDocumentInfo] = useState();
-    const [isEditing, setIsEditing] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
     const toggleEditing = () => {
         setIsEditing(!isEditing);
     };
