@@ -44,6 +44,7 @@ axiosClient.interceptors.response.use(
             const originalRequest = config;
             try {
                 const getRefreshTokenRes = await getRefreshTokenFromCookie();
+                console.log("getRefreshTokenRes", getRefreshTokenRes);
                 const refreshToken = getRefreshTokenRes.data.refreshToken;
                 if (!refreshToken) return Promise.reject(error);
                 await getNewAccessToken(refreshToken);
@@ -55,6 +56,8 @@ axiosClient.interceptors.response.use(
             } catch (err) {
                 return Promise.reject(err);
             }
+        }else {
+            console.log("status", status);
         }
         return Promise.reject(error);
     }
