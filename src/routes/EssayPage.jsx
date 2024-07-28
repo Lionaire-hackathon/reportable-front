@@ -121,7 +121,7 @@ const EssayPage = () => {
         error.response?.data?.message ||
         "An unexpected error occurred. Please try again.";
       alert(errorMessage);
-      navigate("/");
+      if(errorMessage.includes("횟수 제한"))navigate("/");
     }
     console.log(essayData);
     setIsLoading(false);
