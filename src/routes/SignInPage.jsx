@@ -1,4 +1,5 @@
 import background from "../assets/images/background.jpg";
+import kakao_login from "../assets/images/kakao_login.png";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../apis/user";
@@ -39,11 +40,27 @@ const SignInPage = () => {
         setShowPassword(!showPassword);
     };
 
+    const handleKakaoLogin = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const KAKAO_REST_API_KEY = process.env.REACT_APP_KAKAO_REST_API_KEY;
+        const KAKAO_REDIRECT_URI =
+            process.env.REACT_APP_ENV === "development"
+                ? process.env.REACT_APP_DEV_KAKAO_REDIRECT_URI
+                : process.env.REACT_APP_PROD_KAKAO_REDIRECT_URI;
+
+        window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_REST_API_KEY}&redirect_uri=${KAKAO_REDIRECT_URI}`;
+    };
+
     const handleGoogleLogin = (e) => {
         e.preventDefault();
         e.stopPropagation();
         const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-        const GOOGLE_REDIRECT_URI = process.env.REACT_APP_ENV === "development" ? process.env.REACT_APP_DEV_GOOGLE_REDIRECT_URI : process.env.REACT_APP_PROD_GOOGLE_REDIRECT_URI;
+        const GOOGLE_REDIRECT_URI =
+            process.env.REACT_APP_ENV === "development"
+                ? process.env.REACT_APP_DEV_GOOGLE_REDIRECT_URI
+                : process.env.REACT_APP_PROD_GOOGLE_REDIRECT_URI;
         window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&response_type=code&client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}`;
     };
 
@@ -235,6 +252,15 @@ const SignInPage = () => {
                                         Sign in with Google{" "}
                                     </div>
                                 </div>
+                            </button>
+                            <button
+                                onClick={handleKakaoLogin}
+                                className="bg-[#FEE500] h-[47.75px] rounded-[9px] border-solid border-[#FEE500] border my-1 flex gap-2.5 items-center item-center justify-center relative"
+                            >
+                                <img
+                                    src={kakao_login}
+                                    className="h-full w-70"
+                                ></img>
                             </button>
                             <div className="flex justify-center relative items-center w-full gap-2">
                                 <div className="text-[#7d7d7d] text-[16px] font-light">
