@@ -1,70 +1,20 @@
-# Getting Started with Create React App
+# Reportable
+### 생성형 AI 기반 레포트 작성 서비스
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Introduction
+Reportable은 LLM(Anthropic API)을 이용하여 사용자가 요구하는 조건에 맞는 학술보고서를 작성해주는 서비스 플랫폼입니다. Reportable은 반복되는 문서작업에 피로감을 느끼는 대학생들과 직장인들에게 효율적이고 정확한 보고서 작성 도구를 제공합니다. 사용자는 간단한 입력을 통해 원하는 주제, 분량, 형식 등을 설정할 수 있으며, 인공지능이 이를 바탕으로 고품질의 맞춤형 보고서를 생성합니다.
 
-## Available Scripts
+## Reportable의 차별점
+### 1. 맞춤형 보고서 작성에 특화
+Reportable은 사용자 맞춤형 보고서를 생성하는 데 중점을 두고 있어, 개인화된 요구 사항을 충족시킬 수 있습니다.
+### 2. 특정 양식에 얽매이지 않음
+Reportable은 생성 모델을 사용하여 고품질의 자연스러운 문서를 작성하기 때문에 유연하고 다양한 요구를 충족시킬 수 있습니다.
+### 3. 효율성과 편의성 제공
+Reportable은 간단한 입력과 편리한 GUI를 통해 간단하게 고품질의 보고서를 작성해주기 때문에 시간과 노력을 절약할 수 있습니다.
 
-In the project directory, you can run:
+## Reportable은 어떻게 사용하나요?
+Reportable에서 작성할 수 있는 보고서의 유형은 essay와 research report 두 가지 종류로 나뉩니다. essay는 개인의 주관적인 생각과 논지를 중심으로 특정 주제에 대해 논리적으로 서술하는 것에 초점이 맞춰져 있습니다. 연구보고서는 좀 더 체계적이고 형식적인 양식 하에서 특정 주제에 대한 연구 결과를 객관적으로 보고하는 형태로, 사용자가 제공한 연구 결과를 바탕으로 명확한 답변을 제공하는 것에 초점이 맞춰져 있습니다.
 
-### `npm start`
+### Essay 작성하기
+Reportable의 홈페이지에서 essay 작성페이지로 접근할 수 있습니다.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
